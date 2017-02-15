@@ -15,7 +15,7 @@ Does what it says on the tin.
 
     my $acl = CGI::ACL->new();
     # ...
-    my $allowed = $acl->allow(info => CGI::Info->new());
+    my $denied = $acl->all_denied(info => CGI::Info->new());
 
 # SUBROUTINES/METHODS
 
@@ -34,7 +34,7 @@ Give an IP (or CIDR) that we allow to connect to us
 
 ## deny\_country
 
-Give a country, or a referecnce to a list of countries, that we will not allow access to
+Give a country, or a reference to a list of countries, that we will not allow access to
 
     use CGI::ACL;
 
@@ -52,14 +52,16 @@ If any of the restrictions return false, return false, which should allow access
     # Allow Google to connect to us
     my $acl = CGI::ACL->new()->allow_ip(ip => '8.35.80.39');
 
-    if($acl->all_denied(info => CGI::Info->new()) {
-        die 'Go away';
+    if($acl->all_denied(info => CGI::Info->new())) {
+        print 'You are not allowed to view this site';
+        return;
     }
 
     $acl = CGI::ACL->new()->deny_country(country => 'br');
 
-    if($acl->all_denied(lingua => CGI::Lingua->new())) {
-        die 'Brazilians cannot view this site for now';
+    if($acl->all_denied(lingua => CGI::Lingua->new(supported => ['en']))) {
+        print 'Brazilians cannot view this site for now';
+        return;
     }
 
 # AUTHOR

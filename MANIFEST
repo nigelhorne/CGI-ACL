@@ -1,3 +1,5 @@
+.appveyor.yml
+.travis.yml
 Changes
 ignore.txt
 lib/CGI/ACL.pm
@@ -8,7 +10,12 @@ README
 README.md
 t/00-load.t
 t/boiler.t
+t/changes.t
 t/country.t
 t/coverage.t
+t/critic.t
 t/ip.t
+t/pod-cm.t
+t/pod.t
+t/snippets.t
 t/spelling.t

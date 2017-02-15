@@ -187,7 +187,7 @@ sub all_denied {
 		$params{'info'} = shift;
 	}
 
-	if((!defined($params{'info'})) & !defined($params{'lingua'})) {
+	if((!defined($params{'info'})) && !defined($params{'lingua'})) {
 		Carp::carp 'Usage: all_denied($info/$lingua)';
 		return 1;
 	}

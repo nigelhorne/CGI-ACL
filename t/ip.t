@@ -30,7 +30,7 @@ IP: {
 	ok(!$acl->all_denied(info => $info));
 
 	$ENV{'REMOTE_ADDR'} = '212.58.246.78';
-	ok($acl->all_denied(info => $info));
+	ok($acl->all_denied($info));
 
 	does_carp(sub { $acl->allow_ip() });
 }

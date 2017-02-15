@@ -14,7 +14,12 @@ t/changes.t
 t/country.t
 t/coverage.t
 t/critic.t
+t/cv.t
+t/dist.t
+t/gv.t
 t/ip.t
+t/kwalitee.t
+t/noop.t
 t/pod-cm.t
 t/pod.t
 t/snippets.t

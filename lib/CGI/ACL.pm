@@ -92,7 +92,7 @@ sub allow_ip {
 
 =head2 deny_country
 
-Give a country, or a reference to a list of countries, that we will not allow access to
+Give a country, or a reference to a list of countries, that we will not allow to access us
 
     use CGI::ACL;
 

@@ -39,7 +39,7 @@ Give an IP (or CIDR) that we allow to connect to us
 
 ## deny\_country
 
-Give a country, or a reference to a list of countries, that we will not allow access to
+Give a country, or a reference to a list of countries, that we will not allow to access us
 
     use CGI::ACL;
 

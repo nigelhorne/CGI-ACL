@@ -25,7 +25,7 @@ IP: {
 
 	$acl = new_ok('CGI::ACL');
 
-	$acl->allow_ip('8.0.0.0/8');
+	$acl->allow_ip(ip => '8.0.0.0/8');
 	ok(!$acl->all_denied(info => $info));
 
 	$ENV{'REMOTE_ADDR'} = '212.58.246.78';

@@ -46,9 +46,6 @@ Does what it says on the tin.
 
 Creates a CGI::ACL object.
 
-Takes a parameter which is tells you about the environment you're running in, e.g.
-an L<CGI::Info> object.
-
 =cut
 
 sub new {
@@ -86,9 +83,48 @@ sub allow_ip {
 	}
 
 	if(!defined($params{'ip'})) {
-		Carp::carp 'Usage: allow_ips($ip_address)';
+		Carp::carp 'Usage: allow_ip($ip_address)';
 	} else {
 		$self->{_allowed_ips}->{$params{'ip'}} = 1;
+	}
+	return $self;
+}
+
+=head2 deny_country
+
+Give a country, or a referecnce to a list of countries, that we will not allow access to
+
+    use CGI::ACL;
+
+    # Don't allow the UK to connect to us
+    my $acl = CGI::ACL->new()->deny_country('UK');
+
+=cut
+
+sub deny_country {
+	my $self = shift;
+	my %params;
+	
+	if(ref($_[0]) eq 'HASH') {
+		%params = %{$_[0]};
+	} elsif(@_ % 2 == 0) {
+		%params = @_;
+	} else {
+		$params{'country'} = shift;
+	}
+
+	if(!defined($params{'country'})) {
+		Carp::carp 'Usage: deny_country($country)';
+	} else {
+		# This shenanegans allows country to be a scalar or list
+		my $c = $params{'country'};
+		if(ref($c) eq 'ARRAY') {
+			foreach my $country(@{$c}) {
+				$self->{_deny_countries}->{lc($country)} = 1;
+			}
+		} else {
+			$self->{_deny_countries}->{lc($c)} = 1;
+		}
 	}
 	return $self;
 }
@@ -98,6 +134,7 @@ sub allow_ip {
 If any of the restrictions return false, return false, which should allow access
 
     use CGI::Info;
+    use CGI::Lingua;
     use CGI::ACL;
 
     # Allow Google to connect to us
@@ -107,27 +144,35 @@ If any of the restrictions return false, return false, which should allow access
     	die 'Go away';
     }
 
+    $acl = CGI::ACL->new()->deny_country(country => 'br');
+
+    if($acl->all_denied(lingua => CGI::Lingua->new())) {
+    	die 'Brazilians cannot view this site for now';
+    }
+
 =cut
 
 sub all_denied {
 	my $self = shift;
 
-	if(!defined($self->{_allowed_ips})) {
+	if((!defined($self->{_allowed_ips})) && !defined($self->{_deny_countries})) {
 		return 0;
 	}
 
 	my $addr = $ENV{'REMOTE_ADDR'} ? $ENV{'REMOTE_ADDR'} : '127.0.0.1';
 
-	if($self->{_allowed_ips}->{$addr}) {
-		return 0;
-	}
+	if($self->{_allowed_ips}) {
+		if($self->{_allowed_ips}->{$addr}) {
+			return 0;
+		}
 
-	my @cidrlist;
-	foreach my $block(keys(%{$self->{_allowed_ips}})) {
-		@cidrlist = Net::CIDR::cidradd($block, @cidrlist);
-	}
-	if(Net::CIDR::cidrlookup($addr, @cidrlist)) {
-		return 0;
+		my @cidrlist;
+		foreach my $block(keys(%{$self->{_allowed_ips}})) {
+			@cidrlist = Net::CIDR::cidradd($block, @cidrlist);
+		}
+		if(Net::CIDR::cidrlookup($addr, @cidrlist)) {
+			return 0;
+		}
 	}
 
 	my %params;
@@ -140,12 +185,14 @@ sub all_denied {
 		$params{'info'} = shift;
 	}
 
-	if(!defined($params{'info'})) {
-		Carp::carp 'Usage: all_denied($info)';
+	if((!defined($params{'info'})) & !defined($params{'lingua'})) {
+		Carp::carp 'Usage: all_denied($info/$lingua)';
 		return 1;
 	}
 
-	# TODO - find other reasons to deny
+	if(my $lingua = $params{'lingua'}) {
+		return $self->{_deny_countries}->{$lingua->country()};
+	}
 
 	return 1;
 }

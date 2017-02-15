@@ -15,6 +15,7 @@ use warnings;
 use strict;
 use namespace::clean;
 use Carp;
+use Net::CIDR;
 
 =head1 NAME
 
@@ -65,11 +66,10 @@ sub new {
 
 Give an IP (or CIDR) that we allow to connect to us
 
-    use CGI::Info;
     use CGI::ACL;
 
     # Allow Google to connect to us
-    my $acl = CGI::ACL->new(info => CGI::Info->new())->allow_ip(ip => '8.35.80.39');
+    my $acl = CGI::ACL->new()->allow_ip(ip => '8.35.80.39');
 
 =cut
 
@@ -90,6 +90,64 @@ sub allow_ip {
 	} else {
 		$self->{_allowed_ips}->{$params{'ip'}} = 1;
 	}
+	return $self;
+}
+
+=head2 all_denied
+
+If any of the restrictions return false, return false, which should allow access
+
+    use CGI::Info;
+    use CGI::ACL;
+
+    # Allow Google to connect to us
+    my $acl = CGI::ACL->new()->allow_ip(ip => '8.35.80.39');
+
+    if($acl->all_denied(info => CGI::Info->new()) {
+    	die 'Go away';
+    }
+
+=cut
+
+sub all_denied {
+	my $self = shift;
+
+	if(!defined($self->{_allowed_ips})) {
+		return 0;
+	}
+
+	my $addr = $ENV{'REMOTE_ADDR'} ? $ENV{'REMOTE_ADDR'} : '127.0.0.1';
+
+	if($self->{_allowed_ips}->{$addr}) {
+		return 0;
+	}
+
+	my @cidrlist;
+	foreach my $block(keys(%{$self->{_allowed_ips}})) {
+		@cidrlist = Net::CIDR::cidradd($block, @cidrlist);
+	}
+	if(Net::CIDR::cidrlookup($addr, @cidrlist)) {
+		return 0;
+	}
+
+	my %params;
+	
+	if(ref($_[0]) eq 'HASH') {
+		%params = %{$_[0]};
+	} elsif(@_ % 2 == 0) {
+		%params = @_;
+	} else {
+		$params{'info'} = shift;
+	}
+
+	if(!defined($params{'info'})) {
+		Carp::carp 'Usage: all_denied($info)';
+		return 1;
+	}
+
+	# TODO - find other reasons to deny
+
+	return 1;
 }
 
 =head1 AUTHOR

@@ -1,6 +1,13 @@
+Changes
+ignore.txt
 lib/CGI/ACL.pm
 LICENSE
 Makefile.PL
 MANIFEST			This list of files
+README
+README.md
 t/00-load.t
+t/country.t
+t/coverage.t
 t/ip.t
+t/spelling.t

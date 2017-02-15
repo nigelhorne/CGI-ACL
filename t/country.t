@@ -2,9 +2,9 @@
 
 use strict;
 use warnings;
-use Test::Most tests => 14;
-use Test::NoWarnings;
+use Test::Most tests => 15;
 use Test::Carp;
+use Test::NoWarnings;
 
 BEGIN {
 	use_ok('CGI::ACL');
@@ -30,7 +30,7 @@ COUNTRY: {
 
 	ok($acl->all_denied(lingua => $lingua));
 
-	$acl->allow_ip('131.161.8.0/22');
+	$acl->allow_ip({ ip => '131.161.8.0/22' });
 
 	ok(!$acl->all_denied(lingua => $lingua));
 
@@ -43,4 +43,6 @@ COUNTRY: {
 	ok(!$acl->all_denied(lingua => new_ok('CGI::Lingua', [ supported => [ 'en' ] ])));
 
 	does_carp(sub { $acl->deny_country() });
+
+	does_carp(sub { $acl->all_denied() });
 }

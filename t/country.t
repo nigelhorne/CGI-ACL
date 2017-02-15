@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::Most tests => 10;
+use Test::Most tests => 13;
 use Test::NoWarnings;
 
 BEGIN {
@@ -33,7 +33,11 @@ COUNTRY: {
 
 	ok(!$acl->all_denied(lingua => $lingua));
 
-	$ENV{'REMOTE_ADDR'} = '69.172.201.153';	# Google
+	$ENV{'REMOTE_ADDR'} = '87.226.159.0';	# RT
 
-	ok($acl->all_denied(lingua => $lingua));
+	ok($acl->all_denied(lingua => new_ok('CGI::Lingua', [ supported => [ 'en' ] ])));
+
+	$ENV{'REMOTE_ADDR'} = '130.14.25.184';	# NCBI
+
+	ok(!$acl->all_denied(lingua => new_ok('CGI::Lingua', [ supported => [ 'en' ] ])));
 }

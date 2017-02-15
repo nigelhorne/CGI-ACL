@@ -7,6 +7,7 @@ MANIFEST			This list of files
 README
 README.md
 t/00-load.t
+t/boiler.t
 t/country.t
 t/coverage.t
 t/ip.t

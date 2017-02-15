@@ -2,8 +2,9 @@
 
 use strict;
 use warnings;
-use Test::Most tests => 10;
+use Test::Most tests => 11;
 use Test::NoWarnings;
+use Test::Carp;
 
 BEGIN {
 	use_ok('CGI::ACL');
@@ -21,7 +22,7 @@ IP: {
 	ok(!$acl->all_denied(info => $info));
 
 	$ENV{'REMOTE_ADDR'} = '8.35.80.39';
-	ok($acl->all_denied(info => $info));
+	ok($acl->all_denied({ info => $info }));
 
 	$acl = new_ok('CGI::ACL');
 
@@ -30,4 +31,6 @@ IP: {
 
 	$ENV{'REMOTE_ADDR'} = '212.58.246.78';
 	ok($acl->all_denied(info => $info));
+
+	does_carp(sub { $acl->allow_ip() });
 }

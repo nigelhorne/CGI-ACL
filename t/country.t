@@ -2,8 +2,9 @@
 
 use strict;
 use warnings;
-use Test::Most tests => 13;
+use Test::Most tests => 14;
 use Test::NoWarnings;
+use Test::Carp;
 
 BEGIN {
 	use_ok('CGI::ACL');
@@ -40,4 +41,6 @@ COUNTRY: {
 	$ENV{'REMOTE_ADDR'} = '130.14.25.184';	# NCBI
 
 	ok(!$acl->all_denied(lingua => new_ok('CGI::Lingua', [ supported => [ 'en' ] ])));
+
+	does_carp(sub { $acl->deny_country() });
 }

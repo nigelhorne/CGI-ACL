@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::Most tests => 15;
+use Test::Most tests => 16;
 use Test::Carp;
 use Test::NoWarnings;
 
@@ -14,23 +14,24 @@ BEGIN {
 COUNTRY: {
 	my $acl = new_ok('CGI::ACL');
 
-	$acl->deny_country('br');
-	$ENV{'REMOTE_ADDR'} = '131.161.10.233';	# Baidu
+	$acl->deny_country('gb');
+	$ENV{'REMOTE_ADDR'} = '212.159.106.41';
 
 	my $lingua = new_ok('CGI::Lingua', [ supported => ['en'] ]);
 
+	is($lingua->country, 'gb');
 	ok($acl->all_denied(lingua => $lingua));
 
 	my @country_list = (
 		'BY', 'MD', 'RU', 'CN', 'BR', 'UY', 'TR', 'MA', 'VE', 'SA', 'CY',
-		'CO', 'MX', 'IN', 'RS', 'PK', 'UA'
+		'CO', 'MX', 'IN', 'RS', 'PK', 'UA', 'GB',
 	);
 	$acl = new_ok('CGI::ACL')
 		->deny_country(country => \@country_list);
 
 	ok($acl->all_denied(lingua => $lingua));
 
-	$acl->allow_ip({ ip => '131.161.8.0/22' });
+	$acl->allow_ip({ ip => '212.159.106.0/24' });
 
 	ok(!$acl->all_denied(lingua => $lingua));
 

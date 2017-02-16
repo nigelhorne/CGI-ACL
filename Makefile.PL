@@ -23,7 +23,7 @@ WriteMakefile(
 	'autodie' => 0,
 	'IPC::System::Simple' => 0,
 	'CGI::Info' => 0,
-	'CGI::Lingua' => 0,
+	'CGI::Lingua' => 0.15,
     },
     PREREQ_PM => {
 	'Carp' => 0,

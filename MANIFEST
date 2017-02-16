@@ -19,6 +19,7 @@ t/dist.t
 t/gv.t
 t/ip.t
 t/kwalitee.t
+t/manifest.t
 t/noop.t
 t/pod-cm.t
 t/pod.t

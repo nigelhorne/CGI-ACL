@@ -20,6 +20,7 @@ t/gv.t
 t/ip.t
 t/kwalitee.t
 t/manifest.t
+t/metrics.t
 t/noop.t
 t/pod-cm.t
 t/pod.t

@@ -1,5 +1,5 @@
 [![Linux Build Status](https://travis-ci.org/nigelhorne/CGI-ACL.svg?branch=master)](https://travis-ci.org/nigelhorne/CGI-ACL)
-[![Windows Build status](https://ci.appveyor.com/api/projects/status/1t1yhvagx00c2qi8?svg=true)](https://ci.appveyor.com/project/nigelhorne/cgi-info)
+[![Windows Build status](https://ci.appveyor.com/api/projects/status/5wa2lsb6c86x9jp0?svg=true)](https://ci.appveyor.com/project/nigelhorne/cgi-acl)
 [![Dependency Status](https://dependencyci.com/github/nigelhorne/CGI-ACL/badge)](https://dependencyci.com/github/nigelhorne/CGI-ACL)
 [![Coverage Status](https://coveralls.io/repos/github/nigelhorne/CGI-ACL/badge.svg?branch=master)](https://coveralls.io/github/nigelhorne/CGI-ACL?branch=master)
 
@@ -9,7 +9,7 @@ Decide whether to allow a client to run this script
 
 # VERSION
 
-Version 0.01
+Version 0.02
 
 # SYNOPSIS
 

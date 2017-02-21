@@ -11,4 +11,5 @@ cover_db
 pod2htm*.tmp
 CGI-ACL-*
 .git
-*.swp
+.*.swp
+*.bak

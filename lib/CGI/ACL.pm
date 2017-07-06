@@ -10,6 +10,8 @@ package CGI::ACL;
 #	must apply in writing for a licence for use from Nigel Horne at the
 #	above e-mail.
 
+# TODO:  Add deby_all_countries() and allow_country() methods, so that we can easily block all but a few countries.
+
 use 5.006_001;
 use warnings;
 use strict;

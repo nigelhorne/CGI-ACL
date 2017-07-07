@@ -2,7 +2,6 @@
 [![Windows Build status](https://ci.appveyor.com/api/projects/status/5wa2lsb6c86x9jp0?svg=true)](https://ci.appveyor.com/project/nigelhorne/cgi-acl)
 [![Dependency Status](https://dependencyci.com/github/nigelhorne/CGI-ACL/badge)](https://dependencyci.com/github/nigelhorne/CGI-ACL)
 [![Coverage Status](https://coveralls.io/repos/github/nigelhorne/CGI-ACL/badge.svg?branch=master)](https://coveralls.io/github/nigelhorne/CGI-ACL?branch=master)
-
 # CGI::ACL
 
 Decide whether to allow a client to run this script
@@ -45,6 +44,19 @@ Give a country, or a reference to a list of countries, that we will not allow to
 
     # Don't allow the UK to connect to us
     my $acl = CGI::ACL->new()->deny_country('UK');
+
+    # Don't allow any countries to connect to us (a sort of 'default deny')
+    my $acl = CGI::ACL->new()->deny_country('*');
+
+## allow\_country
+
+Give a country, or a reference to a list of countries, that we will allow to access us
+
+    use CGI::ACL;
+
+    # Allow only the UK and US to connect to us
+    my @allow_list = ('GB', 'US');
+    my $acl = CGI::ACL->new()->deny_country->('*')->allow_country(country => \@allow_list);
 
 ## all\_denied
 

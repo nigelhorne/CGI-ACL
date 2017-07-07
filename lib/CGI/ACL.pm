@@ -10,7 +10,7 @@ package CGI::ACL;
 #	must apply in writing for a licence for use from Nigel Horne at the
 #	above e-mail.
 
-# TODO:  Add deby_all_countries() and allow_country() methods, so that we can easily block all but a few countries.
+# TODO:  Add deny_all_countries() and allow_country() methods, so that we can easily block all but a few countries.
 
 use 5.006_001;
 use warnings;
@@ -101,6 +101,9 @@ Give a country, or a reference to a list of countries, that we will not allow to
     # Don't allow the UK to connect to us
     my $acl = CGI::ACL->new()->deny_country('UK');
 
+    # Don't allow any countries to connect to us (a sort of 'default deny')
+    my $acl = CGI::ACL->new()->deny_country('*');
+
 =cut
 
 sub deny_country {
@@ -126,6 +129,46 @@ sub deny_country {
 			}
 		} else {
 			$self->{_deny_countries}->{lc($c)} = 1;
+		}
+	}
+	return $self;
+}
+
+=head2 allow_country
+
+Give a country, or a reference to a list of countries, that we will allow to access us
+
+    use CGI::ACL;
+
+    # Allow only the UK and US to connect to us
+    my @allow_list = ('GB', 'US');
+    my $acl = CGI::ACL->new()->deny_country->('*')->allow_country(country => \@allow_list);
+
+=cut
+
+sub allow_country {
+	my $self = shift;
+	my %params;
+	
+	if(ref($_[0]) eq 'HASH') {
+		%params = %{$_[0]};
+	} elsif(@_ % 2 == 0) {
+		%params = @_;
+	} else {
+		$params{'country'} = shift;
+	}
+
+	if(!defined($params{'country'})) {
+		Carp::carp 'Usage: allow_country($country)';
+	} else {
+		# This shenanegans allows country to be a scalar or list
+		my $c = $params{'country'};
+		if(ref($c) eq 'ARRAY') {
+			foreach my $country(@{$c}) {
+				$self->{_allow_countries}->{lc($country)} = 1;
+			}
+		} else {
+			$self->{_allow_countries}->{lc($c)} = 1;
 		}
 	}
 	return $self;
@@ -195,6 +238,9 @@ sub all_denied {
 	}
 
 	if(my $lingua = $params{'lingua'}) {
+		if($self->{_deny_countries}->{'*'}) {
+			return !$self->{_allow_countries}->{$lingua->country()};
+		}
 		return $self->{_deny_countries}->{$lingua->country()};
 	}
 

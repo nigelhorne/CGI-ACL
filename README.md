@@ -43,7 +43,7 @@ Give a country, or a reference to a list of countries, that we will not allow to
     use CGI::ACL;
 
     # Don't allow the UK to connect to us
-    my $acl = CGI::ACL->new()->deny_country('UK');
+    my $acl = CGI::ACL->new()->deny_country('GB');
 
     # Don't allow any countries to connect to us (a sort of 'default deny')
     my $acl = CGI::ACL->new()->deny_country('*');

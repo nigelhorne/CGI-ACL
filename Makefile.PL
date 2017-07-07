@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use ExtUtils::MakeMaker;
+use ExtUtils::MakeMaker 6.64;	# 6.64 for TEST_REQUIRES
 use File::Spec;
 
 WriteMakefile(
@@ -13,7 +13,7 @@ WriteMakefile(
       ? ('LICENSE'=> 'GPL')
       : ()),
     PL_FILES	=> {},
-    BUILD_REQUIRES => {
+    TEST_REQUIRES => {
 	'Test::Carp' => 0,
 	'Test::Most' => 0,
 	'File::Spec' => 0,
@@ -22,7 +22,6 @@ WriteMakefile(
 	# 'Test::Kwalitee' => 0,
 	'autodie' => 0,
 	'IPC::System::Simple' => 0,
-	'CGI::Info' => 0,
 	'CGI::Lingua' => 0.15,
     },
     PREREQ_PM => {

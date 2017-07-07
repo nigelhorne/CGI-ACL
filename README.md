@@ -2,6 +2,7 @@
 [![Windows Build status](https://ci.appveyor.com/api/projects/status/5wa2lsb6c86x9jp0?svg=true)](https://ci.appveyor.com/project/nigelhorne/cgi-acl)
 [![Dependency Status](https://dependencyci.com/github/nigelhorne/CGI-ACL/badge)](https://dependencyci.com/github/nigelhorne/CGI-ACL)
 [![Coverage Status](https://coveralls.io/repos/github/nigelhorne/CGI-ACL/badge.svg?branch=master)](https://coveralls.io/github/nigelhorne/CGI-ACL?branch=master)
+
 # CGI::ACL
 
 Decide whether to allow a client to run this script
@@ -14,12 +15,12 @@ Version 0.02
 
 Does what it says on the tin.
 
-    use CGI::Info;
+    use CGI::Lingua;
     use CGI::ACL;
 
     my $acl = CGI::ACL->new();
     # ...
-    my $denied = $acl->all_denied(info => CGI::Info->new());
+    my $denied = $acl->all_denied(info => CGI::Lingua->new());
 
 # SUBROUTINES/METHODS
 
@@ -60,16 +61,15 @@ Give a country, or a reference to a list of countries, that we will allow to acc
 
 ## all\_denied
 
-If any of the restrictions return false, return false, which should allow access
+If any of the restrictions return false then return false, which should allow access
 
-    use CGI::Info;
     use CGI::Lingua;
     use CGI::ACL;
 
     # Allow Google to connect to us
     my $acl = CGI::ACL->new()->allow_ip(ip => '8.35.80.39');
 
-    if($acl->all_denied(info => CGI::Info->new())) {
+    if($acl->all_denied()) {
         print 'You are not allowed to view this site';
         return;
     }
@@ -95,7 +95,7 @@ automatically be notified of progress on your bug as I make changes.
 
 # SEE ALSO
 
-[CGI::Info](https://metacpan.org/pod/CGI::Info)
+[CGI::Lingua](https://metacpan.org/pod/CGI::Lingua)
 
 # SUPPORT
 

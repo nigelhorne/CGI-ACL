@@ -35,12 +35,12 @@ our $VERSION = '0.02';
 
 Does what it says on the tin.
 
-    use CGI::Info;
+    use CGI::Lingua;
     use CGI::ACL;
 
     my $acl = CGI::ACL->new();
     # ...
-    my $denied = $acl->all_denied(info => CGI::Info->new());
+    my $denied = $acl->all_denied(info => CGI::Lingua->new());
 
 =head1 SUBROUTINES/METHODS
 
@@ -176,16 +176,15 @@ sub allow_country {
 
 =head2 all_denied
 
-If any of the restrictions return false, return false, which should allow access
+If any of the restrictions return false then return false, which should allow access
 
-    use CGI::Info;
     use CGI::Lingua;
     use CGI::ACL;
 
     # Allow Google to connect to us
     my $acl = CGI::ACL->new()->allow_ip(ip => '8.35.80.39');
 
-    if($acl->all_denied(info => CGI::Info->new())) {
+    if($acl->all_denied()) {
     	print 'You are not allowed to view this site';
 	return;
     }
@@ -222,26 +221,28 @@ sub all_denied {
 		}
 	}
 
-	my %params;
-	
-	if(ref($_[0]) eq 'HASH') {
-		%params = %{$_[0]};
-	} elsif(@_ % 2 == 0) {
-		%params = @_;
-	} else {
-		$params{'info'} = shift;
-	}
-
-	if((!defined($params{'info'})) && !defined($params{'lingua'})) {
-		Carp::carp 'Usage: all_denied($info/$lingua)';
-		return 1;
-	}
-
-	if(my $lingua = $params{'lingua'}) {
-		if($self->{_deny_countries}->{'*'}) {
-			return !$self->{_allow_countries}->{$lingua->country()};
+	if($self->{_deny_countries} || $self->{_allow_countries}) {
+		my %params;
+		
+		if(ref($_[0]) eq 'HASH') {
+			%params = %{$_[0]};
+		} elsif(@_ % 2 == 0) {
+			%params = @_;
+		} else {
+			$params{'lingua'} = shift;
 		}
-		return $self->{_deny_countries}->{$lingua->country()};
+
+		if(!defined($params{'lingua'})) {
+			Carp::carp 'Usage: all_denied($$lingua)';
+			return 1;
+		}
+
+		if(my $lingua = $params{'lingua'}) {
+			if($self->{_deny_countries}->{'*'}) {
+				return !$self->{_allow_countries}->{$lingua->country()};
+			}
+			return $self->{_deny_countries}->{$lingua->country()};
+		}
 	}
 
 	return 1;
@@ -261,7 +262,7 @@ automatically be notified of progress on your bug as I make changes.
 
 =head1 SEE ALSO
 
-L<CGI::Info>
+L<CGI::Lingua>
 
 =head1 SUPPORT
 

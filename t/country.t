@@ -29,11 +29,11 @@ COUNTRY: {
 	$acl = new_ok('CGI::ACL')
 		->deny_country(country => \@country_list);
 
-	ok($acl->all_denied(lingua => $lingua));
+	ok($acl->all_denied({ lingua => $lingua }));
 
 	$acl->allow_ip({ ip => '212.159.106.0/24' });
 
-	ok(!$acl->all_denied(lingua => $lingua));
+	ok(!$acl->all_denied($lingua));
 
 	$ENV{'REMOTE_ADDR'} = '87.226.159.0';	# RT
 

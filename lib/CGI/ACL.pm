@@ -75,7 +75,7 @@ Give an IP (or CIDR) that we allow to connect to us
 sub allow_ip {
 	my $self = shift;
 	my %params;
-	
+
 	if(ref($_[0]) eq 'HASH') {
 		%params = %{$_[0]};
 	} elsif(@_ % 2 == 0) {
@@ -109,7 +109,7 @@ Give a country, or a reference to a list of countries, that we will not allow to
 sub deny_country {
 	my $self = shift;
 	my %params;
-	
+
 	if(ref($_[0]) eq 'HASH') {
 		%params = %{$_[0]};
 	} elsif(@_ % 2 == 0) {
@@ -148,7 +148,7 @@ Give a country, or a reference to a list of countries, that we will allow to acc
 sub allow_country {
 	my $self = shift;
 	my %params;
-	
+
 	if(ref($_[0]) eq 'HASH') {
 		%params = %{$_[0]};
 	} elsif(@_ % 2 == 0) {
@@ -221,7 +221,7 @@ sub all_denied {
 
 	if($self->{_deny_countries} || $self->{_allow_countries}) {
 		my %params;
-		
+
 		if(ref($_[0]) eq 'HASH') {
 			%params = %{$_[0]};
 		} elsif(@_ % 2 == 0) {

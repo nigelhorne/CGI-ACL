@@ -84,10 +84,10 @@ sub allow_ip {
 		$params{'ip'} = shift;
 	}
 
-	if(!defined($params{'ip'})) {
-		Carp::carp 'Usage: allow_ip($ip_address)';
-	} else {
+	if(defined($params{'ip'})) {
 		$self->{_allowed_ips}->{$params{'ip'}} = 1;
+	} else {
+		Carp::carp 'Usage: allow_ip($ip_address)';
 	}
 	return $self;
 }
@@ -118,11 +118,8 @@ sub deny_country {
 		$params{'country'} = shift;
 	}
 
-	if(!defined($params{'country'})) {
-		Carp::carp 'Usage: deny_country($country)';
-	} else {
+	if(defined(my $c = $params{'country'})) {
 		# This shenanegans allows country to be a scalar or list
-		my $c = $params{'country'};
 		if(ref($c) eq 'ARRAY') {
 			foreach my $country(@{$c}) {
 				$self->{_deny_countries}->{lc($country)} = 1;
@@ -130,6 +127,8 @@ sub deny_country {
 		} else {
 			$self->{_deny_countries}->{lc($c)} = 1;
 		}
+	} else {
+		Carp::carp 'Usage: deny_country($country)';
 	}
 	return $self;
 }
@@ -158,11 +157,8 @@ sub allow_country {
 		$params{'country'} = shift;
 	}
 
-	if(!defined($params{'country'})) {
-		Carp::carp 'Usage: allow_country($country)';
-	} else {
+	if(defined(my $c = $params{'country'})) {
 		# This shenanegans allows country to be a scalar or list
-		my $c = $params{'country'};
 		if(ref($c) eq 'ARRAY') {
 			foreach my $country(@{$c}) {
 				$self->{_allow_countries}->{lc($country)} = 1;
@@ -170,6 +166,8 @@ sub allow_country {
 		} else {
 			$self->{_allow_countries}->{lc($c)} = 1;
 		}
+	} else {
+		Carp::carp 'Usage: allow_country($country)';
 	}
 	return $self;
 }

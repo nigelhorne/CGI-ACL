@@ -60,7 +60,7 @@ COUNTRY: {
 
 	does_carp(sub { $acl->deny_country() });
 
-	does_carp(sub { $acl->allow_country() });
+	does_carp(sub { $acl->allow_country({}) });
 
 	does_carp(sub { $acl->all_denied() });
 }

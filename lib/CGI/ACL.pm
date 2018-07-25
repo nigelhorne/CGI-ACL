@@ -1,7 +1,7 @@
 package CGI::ACL;
 
 # Author Nigel Horne: njh@bandsman.co.uk
-# Copyright (C) 2017, Nigel Horne
+# Copyright (C) 2018, Nigel Horne
 
 # Usage is subject to licence terms.
 # The licence terms of this software are as follows:
@@ -78,6 +78,8 @@ sub allow_ip {
 
 	if(ref($_[0]) eq 'HASH') {
 		%params = %{$_[0]};
+	} elsif(ref($_[0])) {
+		Carp::carp('Usage: allow_ip($ip_address)');
 	} elsif(@_ % 2 == 0) {
 		%params = @_;
 	} else {
@@ -87,7 +89,7 @@ sub allow_ip {
 	if(defined($params{'ip'})) {
 		$self->{_allowed_ips}->{$params{'ip'}} = 1;
 	} else {
-		Carp::carp 'Usage: allow_ip($ip_address)';
+		Carp::carp('Usage: allow_ip($ip_address)');
 	}
 	return $self;
 }
@@ -112,6 +114,8 @@ sub deny_country {
 
 	if(ref($_[0]) eq 'HASH') {
 		%params = %{$_[0]};
+	} elsif(ref($_[0])) {
+		Carp::carp('Usage: deny_country($ip_address)');
 	} elsif(@_ % 2 == 0) {
 		%params = @_;
 	} else {
@@ -128,7 +132,7 @@ sub deny_country {
 			$self->{_deny_countries}->{lc($c)} = 1;
 		}
 	} else {
-		Carp::carp 'Usage: deny_country($country)';
+		Carp::carp('Usage: deny_country($ip_address)');
 	}
 	return $self;
 }
@@ -151,6 +155,8 @@ sub allow_country {
 
 	if(ref($_[0]) eq 'HASH') {
 		%params = %{$_[0]};
+	} elsif(ref($_[0])) {
+		Carp::carp('Usage: allow_country($country)');
 	} elsif(@_ % 2 == 0) {
 		%params = @_;
 	} else {
@@ -167,7 +173,7 @@ sub allow_country {
 			$self->{_allow_countries}->{lc($c)} = 1;
 		}
 	} else {
-		Carp::carp 'Usage: allow_country($country)';
+		Carp::carp('Usage: allow_country($country)');
 	}
 	return $self;
 }
@@ -292,9 +298,9 @@ L<http://search.cpan.org/dist/CGI-ACL/>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2017 Nigel Horne.
+Copyright 2017,2018 Nigel Horne.
 
-This program is released under the following licence: GPL
+This program is released under the following licence: GPL2
 
 =cut
 

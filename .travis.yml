@@ -48,3 +48,4 @@ script:
 
 after_success:
   - coverage-report
+  - cover -test -report coveralls

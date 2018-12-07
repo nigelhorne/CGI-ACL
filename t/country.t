@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::Most tests => 24;
+use Test::Most tests => 26;
 use Test::Carp;
 use Test::NoWarnings;
 
@@ -59,8 +59,8 @@ COUNTRY: {
 	ok($acl->all_denied(lingua => new_ok('CGI::Lingua', [ supported => [ 'en' ] ])));
 
 	does_carp(sub { $acl->deny_country() });
-
+	does_carp(sub { $acl->deny_country(\'not a ref to a hash') });
 	does_carp(sub { $acl->allow_country({}) });
-
+	does_carp(sub { $acl->allow_country(\'not a ref to a hash') });
 	does_carp(sub { $acl->all_denied() });
 }

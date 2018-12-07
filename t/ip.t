@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::Most tests => 9;
+use Test::Most tests => 10;
 use Test::NoWarnings;
 use Test::Carp;
 
@@ -30,4 +30,5 @@ IP: {
 	ok($acl->all_denied());
 
 	does_carp(sub { $acl->allow_ip() });
+	does_carp(sub { $acl->allow_ip(\'not a ref to a hash') });
 }

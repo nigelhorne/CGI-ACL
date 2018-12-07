@@ -9,7 +9,7 @@ Decide whether to allow a client to run this script
 
 # VERSION
 
-Version 0.02
+Version 0.03
 
 # SYNOPSIS
 

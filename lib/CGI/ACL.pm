@@ -56,8 +56,6 @@ sub new {
 
 	return unless(defined($class));
 
-	my %args = (ref($_[0]) eq 'HASH') ? %{$_[0]} : @_;
-
 	return bless { }, $class;
 }
 

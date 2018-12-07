@@ -23,7 +23,13 @@ t/metrics.t
 t/no404s.t
 t/noop.t
 t/noopentickets.t
+t/noplan.t
 t/pod-cm.t
 t/pod.t
+t/port.t
+t/prereq.t
 t/snippets.t
 t/spelling.t
+t/strict.t
+t/unused.t
+t/vars.t

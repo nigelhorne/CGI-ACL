@@ -29,8 +29,8 @@ install:
   - cmd: mkdir %APPVEYOR_BUILD_FOLDER%\tmp
   - cmd: set TMPDIR=%APPVEYOR_BUILD_FOLDER%\tmp
   - cpan App::cpanminus
+  - cpanm -v Locale::Object::Country DBD::SQLite
   - cmd: cpanm -q --showdeps --with-develop --with-suggests . | findstr /v "^perl\>" | cpanm -n
-  - cpanm -v Locale::Object::Country
   - cpanm -v --installdeps .
   - cmd: 'echo End install at: & time /t'
 

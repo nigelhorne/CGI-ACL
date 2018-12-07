@@ -109,10 +109,6 @@ You can also look for information at:
 
     [http://rt.cpan.org/NoAuth/Bugs.html?Dist=CGI-ACL](http://rt.cpan.org/NoAuth/Bugs.html?Dist=CGI-ACL)
 
-- AnnoCPAN: Annotated CPAN documentation
-
-    [http://annocpan.org/dist/CGI-ACL](http://annocpan.org/dist/CGI-ACL)
-
 - CPAN Ratings
 
     [http://cpanratings.perl.org/d/CGI-ACL](http://cpanratings.perl.org/d/CGI-ACL)
@@ -123,6 +119,6 @@ You can also look for information at:
 
 # LICENSE AND COPYRIGHT
 
-Copyright 2017 Nigel Horne.
+Copyright 2017,2018 Nigel Horne.
 
-This program is released under the following licence: GPL
+This program is released under the following licence: GPL2

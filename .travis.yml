@@ -17,16 +17,13 @@ perl:
   - "5.18-shrplib"
 
 matrix:
-  allow_features:
-    - perl: blead
   include:
     - perl: 5.18
       env: COVERAGE=1
+  allow_failures:
+    - perl: "blead"
 
-sudo: false
-
-before_script:
-  - coverage-setup
+# sudo: false
 
 before_install:
   - git clone git://github.com/travis-perl/helpers ~/travis-perl-helpers
@@ -41,6 +38,9 @@ install:
   - cpan-install --deps
   - cpan-install --coverage
   - cpanm -n Devel::Cover::Report::Coveralls Test::Pod::Spelling::CommonMistakes Test::Portability::Files Test::Carp CHI DBD::SQLite DBI CGI::Lingua
+
+before_script:
+  - coverage-setup
 
 script:
   # perl Makefile.PL && make && cover -test -report coveralls

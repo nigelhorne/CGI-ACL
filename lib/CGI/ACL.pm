@@ -280,10 +280,6 @@ You can also look for information at:
 
 L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=CGI-ACL>
 
-=item * AnnoCPAN: Annotated CPAN documentation
-
-L<http://annocpan.org/dist/CGI-ACL>
-
 =item * CPAN Ratings
 
 L<http://cpanratings.perl.org/d/CGI-ACL>

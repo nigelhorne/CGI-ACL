@@ -40,7 +40,7 @@ install:
   - sudo apt-get update -q
   - cpan-install --deps
   - cpan-install --coverage
-  - cpanm -n Devel::Cover::Report::Coveralls Test::Pod::Spelling::CommonMistakes Test::Portability::Files Test::Carp CHI DBD::SQLite DBI
+  - cpanm -n Devel::Cover::Report::Coveralls Test::Pod::Spelling::CommonMistakes Test::Portability::Files Test::Carp CHI DBD::SQLite DBI CGI::Lingua
 
 script:
   # perl Makefile.PL && make && cover -test -report coveralls

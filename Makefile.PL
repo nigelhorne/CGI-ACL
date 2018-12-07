@@ -14,6 +14,7 @@ WriteMakefile(
 	  : ()),
 	PL_FILES	=> {},
 	TEST_REQUIRES => {
+		'CGI::Lingua' => 0.15,
 		'Data::Dumper' => 0,
 		'English' => 0,
 		'Test::Carp' => 0,
@@ -26,7 +27,6 @@ WriteMakefile(
 		# 'Test::Perl::Metrics::Simple' => 0,
 		'autodie' => 0,
 		'IPC::System::Simple' => 0,
-		'CGI::Lingua' => 0.15,
 		'WWW::RT::CPAN' => 0
 	},
 	PREREQ_PM => {

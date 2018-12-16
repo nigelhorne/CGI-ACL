@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::Most tests => 26;
+use Test::Most tests => 28;
 use Test::Carp;
 use Test::NoWarnings;
 
@@ -57,6 +57,9 @@ COUNTRY: {
 	$ENV{'REMOTE_ADDR'} = '87.226.159.0';	# RT
 
 	ok($acl->all_denied(lingua => new_ok('CGI::Lingua', [ supported => [ 'en' ] ])));
+
+	$ENV{'REMOTE_ADDR'} = '127.0.0.1';
+	ok(!$acl->all_denied(new_ok('CGI::Lingua', [ supported => [ 'en' ] ])));
 
 	does_carp(sub { $acl->deny_country() });
 	does_carp(sub { $acl->deny_country(\'not a ref to a hash') });

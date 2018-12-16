@@ -235,15 +235,21 @@ sub all_denied {
 		}
 
 		if(!defined($params{'lingua'})) {
-			Carp::carp 'Usage: all_denied($$lingua)';
+			Carp::carp('Usage: all_denied($$lingua)');
 			return 1;
 		}
 
 		if(my $lingua = $params{'lingua'}) {
-			if($self->{_deny_countries}->{'*'}) {
-				return !$self->{_allow_countries}->{$lingua->country()};
+			if(my $country = $lingua->country()) {
+				if($self->{_deny_countries}->{'*'}) {
+					return !$self->{_allow_countries}->{$country};
+				}
+				return $self->{_deny_countries}->{$country};
+			} elsif($addr eq '127.0.0.1') {
+				# Allow local access
+				# TODO: Is that always sensible?
+				return 0;
 			}
-			return $self->{_deny_countries}->{$lingua->country()};
 		}
 	}
 

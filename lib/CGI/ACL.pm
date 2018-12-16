@@ -178,7 +178,8 @@ sub allow_country {
 
 =head2 all_denied
 
-If any of the restrictions return false then return false, which should allow access
+If any of the restrictions return false then return false, which should allow access.
+Note that by default localhost isn't allowed access, call allow_ip('127.0.0.1') to enable it.
 
     use CGI::Lingua;
     use CGI::ACL;
@@ -242,14 +243,13 @@ sub all_denied {
 		if(my $lingua = $params{'lingua'}) {
 			if(my $country = $lingua->country()) {
 				if($self->{_deny_countries}->{'*'}) {
+					# Default deny
 					return !$self->{_allow_countries}->{$country};
 				}
+				# Default allow
 				return $self->{_deny_countries}->{$country};
-			} elsif($addr eq '127.0.0.1') {
-				# Allow local access
-				# TODO: Is that always sensible?
-				return 0;
 			}
+			# Unknown country - disallow access
 		}
 	}
 

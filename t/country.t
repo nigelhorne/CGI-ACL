@@ -15,11 +15,11 @@ COUNTRY: {
 	my $acl = new_ok('CGI::ACL');
 
 	$acl->deny_country('gb');
-	$ENV{'REMOTE_ADDR'} = '212.159.106.41';
+	$ENV{'REMOTE_ADDR'} = '212.159.106.41';	# F9
 
 	my $lingua = new_ok('CGI::Lingua', [ supported => ['en'] ]);
 
-	is($lingua->country, 'gb');
+	is($lingua->country(), 'gb');
 	ok($acl->all_denied(lingua => $lingua));
 
 	my @country_list = (
@@ -31,7 +31,7 @@ COUNTRY: {
 
 	ok($acl->all_denied({ lingua => $lingua }));
 
-	$acl->allow_ip({ ip => '212.159.106.0/24' });
+	$acl->allow_ip({ ip => '212.159.106.0/24' });	# F9
 
 	ok(!$acl->all_denied($lingua));
 
@@ -59,7 +59,7 @@ COUNTRY: {
 	ok($acl->all_denied(lingua => new_ok('CGI::Lingua', [ supported => [ 'en' ] ])));
 
 	$ENV{'REMOTE_ADDR'} = '127.0.0.1';
-	ok(!$acl->all_denied(new_ok('CGI::Lingua', [ supported => [ 'en' ] ])));
+	ok($acl->all_denied(new_ok('CGI::Lingua', [ supported => [ 'en' ] ])));
 
 	does_carp(sub { $acl->deny_country() });
 	does_carp(sub { $acl->deny_country(\'not a ref to a hash') });

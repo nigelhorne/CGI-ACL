@@ -286,10 +286,6 @@ You can also look for information at:
 
 L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=CGI-ACL>
 
-=item * CPAN Ratings
-
-L<http://cpanratings.perl.org/d/CGI-ACL>
-
 =item * Search CPAN
 
 L<http://search.cpan.org/dist/CGI-ACL/>

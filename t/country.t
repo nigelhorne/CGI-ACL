@@ -66,7 +66,7 @@ COUNTRY: {
 
 	# Test country in a scalar
 	$acl = new_ok('CGI::ACL');
-	$acl->deny_country('*')->allow_country(country => 'US');
+	$acl->deny_country('*')->allow_country('US');
 
 	$ENV{'REMOTE_ADDR'} = '212.159.106.41';	# F9
 

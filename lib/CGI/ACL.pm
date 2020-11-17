@@ -282,13 +282,29 @@ You can also look for information at:
 
 =over 4
 
+=item * MetaCPAN
+
+L<https://metacpan.org/release/CGI-ACL>
+
 =item * RT: CPAN's request tracker
 
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=CGI-ACL>
+L<https://rt.cpan.org/NoAuth/Bugs.html?Dist=CGI-ACL>
 
-=item * Search CPAN
+=item * CPANTS
 
-L<http://search.cpan.org/dist/CGI-ACL/>
+L<http://cpants.cpanauthors.org/dist/CGI-ACL>
+
+=item * CPAN Testers' Matrix
+
+L<http://matrix.cpantesters.org/?dist=CGI-ACL>
+
+=item * CPAN Ratings
+
+L<http://cpanratings.perl.org/d/CGI-ACL>
+
+=item * CPAN Testers Dependencies
+
+L<http://deps.cpantesters.org/?module=CGI::ACL>
 
 =back
 
@@ -300,4 +316,4 @@ This program is released under the following licence: GPL2
 
 =cut
 
-1; # End of CGI::ACL
+1;

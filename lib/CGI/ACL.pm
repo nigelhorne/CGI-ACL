@@ -240,6 +240,9 @@ sub all_denied {
 			return 1;
 		}
 
+		if($self->{_deny_countries}->{'*'} && !defined($self->{_allow_countries})) {
+			return 0;
+		}
 		if(my $lingua = $params{'lingua'}) {
 			if(my $country = $lingua->country()) {
 				if($self->{_deny_countries}->{'*'}) {

@@ -40,7 +40,7 @@ Does what it says on the tin.
 
     my $acl = CGI::ACL->new();
     # ...
-    my $denied = $acl->all_denied(info => CGI::Lingua->new());
+    my $denied = $acl->all_denied(info => CGI::Lingua->new(supported => 'en'));
 
 =head1 SUBROUTINES/METHODS
 
@@ -114,6 +114,7 @@ sub deny_country {
 		%params = %{$_[0]};
 	} elsif(ref($_[0])) {
 		Carp::carp('Usage: deny_country($ip_address)');
+		return;
 	} elsif(@_ % 2 == 0) {
 		%params = @_;
 	} else {
@@ -143,7 +144,7 @@ Give a country, or a reference to a list of countries, that we will allow to acc
 
     # Allow only the UK and US to connect to us
     my @allow_list = ('GB', 'US');
-    my $acl = CGI::ACL->new()->deny_country->('*')->allow_country(country => \@allow_list);
+    my $acl = CGI::ACL->new()->deny_country('*')->allow_country(country => \@allow_list);
 
 =cut
 
@@ -235,15 +236,10 @@ sub all_denied {
 			$params{'lingua'} = shift;
 		}
 
-		if(!defined($params{'lingua'})) {
-			Carp::carp('Usage: all_denied($$lingua)');
-			return 1;
-		}
-
-		if($self->{_deny_countries}->{'*'} && !defined($self->{_allow_countries})) {
-			return 0;
-		}
 		if(my $lingua = $params{'lingua'}) {
+			if($self->{_deny_countries}->{'*'} && !defined($self->{_allow_countries})) {
+				return 0;
+			}
 			if(my $country = $lingua->country()) {
 				if($self->{_deny_countries}->{'*'}) {
 					# Default deny
@@ -253,6 +249,8 @@ sub all_denied {
 				return $self->{_deny_countries}->{$country};
 			}
 			# Unknown country - disallow access
+		} else {
+			Carp::carp('Usage: all_denied($lingua)');
 		}
 	}
 
@@ -313,7 +311,7 @@ L<http://deps.cpantesters.org/?module=CGI::ACL>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2017,2018 Nigel Horne.
+Copyright 2017-2021 Nigel Horne.
 
 This program is released under the following licence: GPL2
 

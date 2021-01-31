@@ -22,7 +22,7 @@ Does what it says on the tin.
 
     my $acl = CGI::ACL->new();
     # ...
-    my $denied = $acl->all_denied(info => CGI::Lingua->new());
+    my $denied = $acl->all_denied(info => CGI::Lingua->new(supported => 'en'));
 
 # SUBROUTINES/METHODS
 
@@ -59,7 +59,7 @@ Give a country, or a reference to a list of countries, that we will allow to acc
 
     # Allow only the UK and US to connect to us
     my @allow_list = ('GB', 'US');
-    my $acl = CGI::ACL->new()->deny_country->('*')->allow_country(country => \@allow_list);
+    my $acl = CGI::ACL->new()->deny_country('*')->allow_country(country => \@allow_list);
 
 ## all\_denied
 
@@ -134,6 +134,6 @@ You can also look for information at:
 
 # LICENSE AND COPYRIGHT
 
-Copyright 2017,2018 Nigel Horne.
+Copyright 2017-2021 Nigel Horne.
 
 This program is released under the following licence: GPL2

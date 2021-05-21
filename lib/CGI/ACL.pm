@@ -122,7 +122,7 @@ sub deny_country {
 	}
 
 	if(defined(my $c = $params{'country'})) {
-		# This shenanegans allows country to be a scalar or list
+		# This shenanigans allows country to be a scalar or list
 		if(ref($c) eq 'ARRAY') {
 			foreach my $country(@{$c}) {
 				$self->{_deny_countries}->{lc($country)} = 1;
@@ -163,7 +163,7 @@ sub allow_country {
 	}
 
 	if(defined(my $c = $params{'country'})) {
-		# This shenanegans allows country to be a scalar or list
+		# This shenanigans allows country to be a scalar or list
 		if(ref($c) eq 'ARRAY') {
 			foreach my $country(@{$c}) {
 				$self->{_allow_countries}->{lc($country)} = 1;

@@ -11,7 +11,7 @@ CGI::ACL - Decide whether to allow a client to run this script
 
 # VERSION
 
-Version 0.03
+Version 0.04
 
 # SYNOPSIS
 

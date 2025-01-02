@@ -212,7 +212,8 @@ sub allow_country {
 Evaluates all restrictions (IP and country) and determines if access is denied.
 
 If any of the restrictions return false then return false, which should allow access.
-Access is denied by default if no restrictions are set.
+Access is allowed by default if no restrictions are set,
+however as soon as any restriction is set you may find you need to explicitly allow access.
 Note, therefore, that by default localhost isn't allowed access, call allow_ip('127.0.0.1') to enable it.
 
     use CGI::Lingua;

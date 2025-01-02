@@ -3,6 +3,15 @@ use warnings;
 use ExtUtils::MakeMaker 6.64;	# 6.64 for TEST_REQUIRES
 use File::Spec;
 
+my $dist = {
+	COMPRESS => 'gzip -9f',
+	SUFFIX => 'gz'
+};
+
+if($^O eq 'darwin') {
+	$dist->{'TAR'} = 'gtar';
+}
+
 WriteMakefile(
 	NAME		=> 'CGI::ACL',
 	AUTHOR		=> q{Nigel Horne <njh@bandsman.co.uk>},
@@ -20,6 +29,7 @@ WriteMakefile(
 		'Test::Carp' => 0,
 		'Test::EOF' => 0,
 		'Test::EOL' => 0,
+		'Test::MockObject' => 0,
 		'Test::Most' => 0,
 		'Test::Needs' => 0,
 		'File::Spec' => 0,
@@ -35,6 +45,7 @@ WriteMakefile(
 		'WWW::RT::CPAN' => 0
 	}, PREREQ_PM => {
 		'Carp' => 0,
+		'File::Spec' => 3.4,
 		'namespace::clean' => 0,
 		'Net::CIDR' => 0,
 	},

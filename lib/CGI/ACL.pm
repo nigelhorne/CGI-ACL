@@ -1,7 +1,7 @@
 package CGI::ACL;
 
 # Author Nigel Horne: njh@bandsman.co.uk
-# Copyright (C) 2017-2024, Nigel Horne
+# Copyright (C) 2017-2025, Nigel Horne
 
 # Usage is subject to licence terms.
 # The licence terms of this software are as follows:
@@ -10,7 +10,7 @@ package CGI::ACL;
 #	must apply in writing for a licence for use from Nigel Horne at the
 #	above e-mail.
 
-# TODO:  Add deny_all_countries() and allow_country() methods, so that we can easily block all but a few countries.
+# TODO:  Add deny_all_countries() method, so that we can easily block all but a few countries.
 
 use 5.006_001;
 use warnings;
@@ -18,6 +18,7 @@ use strict;
 use namespace::clean;
 use Carp;
 use Net::CIDR;
+use Scalar::Util;
 
 =head1 NAME
 
@@ -33,7 +34,8 @@ our $VERSION = '0.05';
 
 =head1 SYNOPSIS
 
-Does what it says on the tin.
+Does what it says on the tin,
+providing control client access to a CGI script based on IP addresses and geographical location (countries).
 
     use CGI::Lingua;
     use CGI::ACL;
@@ -42,38 +44,53 @@ Does what it says on the tin.
     # ...
     my $denied = $acl->all_denied(info => CGI::Lingua->new(supported => 'en'));
 
+The module optionally integrates with L<CGI::Lingua> for detecting the client's country.
+
 =head1 SUBROUTINES/METHODS
 
 =head2 new
 
-Creates a CGI::ACL object.
+Creates an instance of the CGI::ACL class.
+Handles both hash and hashref arguments.
+Includes basic error handling for invalid arguments.
+
+    my $acl = CGI::ACL->new(allowed_ips => { '127.0.0.1' => 1 });
 
 =cut
 
 sub new
 {
-	my $class = $_[0];
+	my $class = shift;
 
-	shift;
-	my %args = (ref($_[0]) eq 'HASH') ? %{$_[0]} : @_;
+	# Handle hash or hashref arguments
+	my %args;
+	if((@_ == 1) && (ref $_[0] eq 'HASH')) {
+		%args = %{$_[0]};
+	} elsif((@_ % 2) == 0) {
+		%args = @_;
+	} else {
+		carp(__PACKAGE__, ': Invalid arguments passed to new()');
+		return;
+	}
 
 	if(!defined($class)) {
-		# Using CGI::ACL->new(), not CGI::ACL::new()
-		# carp(__PACKAGE__, ' use ->new() not ::new() to instantiate');
-		# return;
-
+		if((scalar keys %args) > 0) {
+			carp(__PACKAGE__, ' use ->new() not ::new() to instantiate');
+			return;
+		}
 		# FIXME: this only works when no arguments are given
 		$class = __PACKAGE__;
-	} elsif(ref($class)) {
+	} elsif(Scalar::Util::blessed($class)) {
 		# clone the given object
 		return bless { %{$class}, %args }, ref($class);
 	}
-	return bless { }, $class;
+
+	return bless { %args }, $class;
 }
 
 =head2 allow_ip
 
-Give an IP (or CIDR) that we allow to connect to us
+Give an IP (or CIDR block) that we allow to connect to us.
 
     use CGI::ACL;
 
@@ -97,7 +114,7 @@ sub allow_ip {
 	}
 
 	if(defined($params{'ip'})) {
-		$self->{_allowed_ips}->{$params{'ip'}} = 1;
+		$self->{allowed_ips}->{$params{'ip'}} = 1;
 	} else {
 		Carp::carp('Usage: allow_ip($ip_address)');
 	}
@@ -137,10 +154,10 @@ sub deny_country {
 		# This shenanigans allows country to be a scalar or list
 		if(ref($c) eq 'ARRAY') {
 			foreach my $country(@{$c}) {
-				$self->{_deny_countries}->{lc($country)} = 1;
+				$self->{deny_countries}->{lc($country)} = 1;
 			}
 		} else {
-			$self->{_deny_countries}->{lc($c)} = 1;
+			$self->{deny_countries}->{lc($c)} = 1;
 		}
 	} else {
 		Carp::carp('Usage: deny_country($ip_address)');
@@ -150,7 +167,8 @@ sub deny_country {
 
 =head2 allow_country
 
-Give a country, or a reference to a list of countries, that we will allow to access us
+Give a country, or a reference to a list of countries, that we will allow to access us,
+overriding the deny list if needed.
 
     use CGI::ACL;
 
@@ -178,10 +196,10 @@ sub allow_country {
 		# This shenanigans allows country to be a scalar or list
 		if(ref($c) eq 'ARRAY') {
 			foreach my $country(@{$c}) {
-				$self->{_allow_countries}->{lc($country)} = 1;
+				$self->{allow_countries}->{lc($country)} = 1;
 			}
 		} else {
-			$self->{_allow_countries}->{lc($c)} = 1;
+			$self->{allow_countries}->{lc($c)} = 1;
 		}
 	} else {
 		Carp::carp('Usage: allow_country($country)');
@@ -191,8 +209,11 @@ sub allow_country {
 
 =head2 all_denied
 
+Evaluates all restrictions (IP and country) and determines if access is denied.
+
 If any of the restrictions return false then return false, which should allow access.
-Note that by default localhost isn't allowed access, call allow_ip('127.0.0.1') to enable it.
+Access is denied by default if no restrictions are set.
+Note, therefore, that by default localhost isn't allowed access, call allow_ip('127.0.0.1') to enable it.
 
     use CGI::Lingua;
     use CGI::ACL;
@@ -217,19 +238,19 @@ Note that by default localhost isn't allowed access, call allow_ip('127.0.0.1') 
 sub all_denied {
 	my $self = shift;
 
-	if((!defined($self->{_allowed_ips})) && !defined($self->{_deny_countries})) {
+	if((!defined($self->{allowed_ips})) && !defined($self->{deny_countries})) {
 		return 0;
 	}
 
 	my $addr = $ENV{'REMOTE_ADDR'} ? $ENV{'REMOTE_ADDR'} : '127.0.0.1';
 
-	if($self->{_allowed_ips}) {
-		if($self->{_allowed_ips}->{$addr}) {
+	if($self->{allowed_ips}) {
+		if($self->{allowed_ips}->{$addr}) {
 			return 0;
 		}
 
 		my @cidrlist;
-		foreach my $block(keys(%{$self->{_allowed_ips}})) {
+		foreach my $block(keys(%{$self->{allowed_ips}})) {
 			@cidrlist = Net::CIDR::cidradd($block, @cidrlist);
 		}
 		if(Net::CIDR::cidrlookup($addr, @cidrlist)) {
@@ -237,7 +258,7 @@ sub all_denied {
 		}
 	}
 
-	if($self->{_deny_countries} || $self->{_allow_countries}) {
+	if($self->{deny_countries} || $self->{allow_countries}) {
 		my %params;
 
 		if(ref($_[0]) eq 'HASH') {
@@ -249,16 +270,17 @@ sub all_denied {
 		}
 
 		if(my $lingua = $params{'lingua'}) {
-			if($self->{_deny_countries}->{'*'} && !defined($self->{_allow_countries})) {
+			if($self->{deny_countries}->{'*'} && !defined($self->{allow_countries})) {
 				return 0;
 			}
 			if(my $country = $lingua->country()) {
-				if($self->{_deny_countries}->{'*'}) {
+				$country = lc($country);
+				if($self->{deny_countries}->{'*'}) {
 					# Default deny
-					return !$self->{_allow_countries}->{$country};
+					return $self->{allow_countries}->{$country} ? 0 : 1;
 				}
 				# Default allow
-				return $self->{_deny_countries}->{$country};
+				return $self->{deny_countries}->{$country} ? 1 : 0;
 			}
 			# Unknown country - disallow access
 		} else {
@@ -319,7 +341,7 @@ L<http://deps.cpantesters.org/?module=CGI::ACL>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2017-2024 Nigel Horne.
+Copyright 2017-2025 Nigel Horne.
 
 This program is released under the following licence: GPL2
 

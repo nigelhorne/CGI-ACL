@@ -22,7 +22,6 @@ t/eol.t
 t/gv.t
 t/ip.t
 t/kwalitee.t
-t/links.t
 t/manifest.t
 t/metrics.t
 t/no404s.t
@@ -30,6 +29,7 @@ t/noop.t
 t/noopentickets.t
 t/noplan.t
 t/pod-cm.t
+t/pod-links.t
 t/pod-synopsis.t
 t/pod.t
 t/pod_spelling.t

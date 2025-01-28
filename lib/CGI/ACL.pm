@@ -12,6 +12,11 @@ package CGI::ACL;
 
 # TODO:  Add deny_all_countries() method, so that we can easily block all but a few countries.
 
+# TODO: Add a rate limiter to block brute-force attacks
+# use Net::CIDR::Lite;
+# my $rate_limiter = Net::CIDR::Lite->new;
+# $rate_limiter->add("$_/32") for @recent_ips;  # Track IPs in a shared cache
+
 use 5.006_001;
 use warnings;
 use strict;

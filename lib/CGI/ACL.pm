@@ -309,6 +309,8 @@ L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=CGI-ACL>.
 I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
 
+A VPN or proxy would most likely bypass the IP-based access control.
+
 =head1 SEE ALSO
 
 L<CGI::Lingua>

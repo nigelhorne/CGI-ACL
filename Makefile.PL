@@ -28,8 +28,6 @@ WriteMakefile(
 		'English' => 0,
 		'Test::Carp' => 0,
 		'Test::DescribeMe' => 0,
-		'Test::EOF' => 0,
-		'Test::EOL' => 0,
 		'Test::MockObject' => 0,
 		'Test::Most' => 0,
 		'Test::Needs' => 0,

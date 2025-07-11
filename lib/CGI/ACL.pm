@@ -147,7 +147,7 @@ sub deny_country {
 	if(ref($_[0]) eq 'HASH') {
 		%params = %{$_[0]};
 	} elsif(ref($_[0])) {
-		Carp::carp('Usage: deny_country($ip_address)');
+		Carp::carp('Usage: deny_country($country)');
 		return;
 	} elsif(@_ % 2 == 0) {
 		%params = @_;

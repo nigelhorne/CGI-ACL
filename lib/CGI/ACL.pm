@@ -23,8 +23,9 @@ use strict;
 use namespace::clean;
 use Carp;
 use Net::CIDR;
-use Scalar::Util;
 use Regexp::Common qw/net/;
+use Scalar::Util;
+use Socket;
 
 =head1 NAME
 
@@ -253,6 +254,21 @@ sub all_denied {
 
 	return 1 unless $addr =~ /^$RE{net}{IPv4}$/ || $addr =~ /^$RE{net}{IPv6}$/;
 
+	if(my $hostname = _verified_rdns($addr)) {
+		# You can whitelist domains:
+		return 0 if $hostname =~ /\.googlebot\.com$/;
+
+		# Block AWS EC2
+		return 1 if $hostname =~ /\.compute-1\.amazonaws\.com$/;
+		return 1 if $hostname =~ /\.compute\.amazonaws\.com$/;
+
+		# Block Google Cloud
+		return 1 if $hostname =~ /\.bc\.googleusercontent\.com$/;
+
+		# Block Azure
+		return 1 if $hostname =~ /\.cloudapp\.net$/;
+	}
+
 	if($self->{allowed_ips}) {
 		if($self->{allowed_ips}->{$addr}) {
 			return 0;
@@ -298,6 +314,25 @@ sub all_denied {
 	}
 
 	return 1;
+}
+
+sub _verified_rdns {
+	my $ip = $_[0];
+
+	# Convert dotted quad to packed format
+	my $packed = inet_aton($ip) or return;
+
+	# Step 1: reverse lookup
+	my ($hostname) = gethostbyaddr($packed, AF_INET) or return;
+
+	# Step 2: forward lookup
+		my @forward_ips = map { inet_ntoa($_) }
+		grep { defined }
+		map { inet_aton($_) }
+		($hostname);
+
+	# Step 3: confirm match
+	return ($hostname && grep { $_ eq $ip } @forward_ips) ? $hostname : undef;
 }
 
 =head1 AUTHOR

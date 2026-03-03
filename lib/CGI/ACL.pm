@@ -1,7 +1,7 @@
 package CGI::ACL;
 
 # Author Nigel Horne: njh@bandsman.co.uk
-# Copyright (C) 2017-2025, Nigel Horne
+# Copyright (C) 2017-2026, Nigel Horne
 
 # Usage is subject to licence terms.
 # The licence terms of this software are as follows:
@@ -24,6 +24,7 @@ use namespace::clean;
 use Carp;
 use Net::CIDR;
 use Scalar::Util;
+use Regexp::Common qw/net/;
 
 =head1 NAME
 
@@ -250,6 +251,8 @@ sub all_denied {
 
 	my $addr = $ENV{'REMOTE_ADDR'} ? $ENV{'REMOTE_ADDR'} : '127.0.0.1';
 
+	return 1 unless $addr =~ /^$RE{net}{IPv4}$/ || $addr =~ /^$RE{net}{IPv6}$/;
+
 	if($self->{allowed_ips}) {
 		if($self->{allowed_ips}->{$addr}) {
 			return 0;
@@ -349,7 +352,7 @@ L<http://deps.cpantesters.org/?module=CGI::ACL>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2017-2025 Nigel Horne.
+Copyright 2017-2026 Nigel Horne.
 
 This program is released under the following licence: GPL2
 

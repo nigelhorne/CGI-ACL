@@ -47,6 +47,7 @@ WriteMakefile(
 		'File::Spec' => 3.4,
 		'namespace::clean' => 0,
 		'Net::CIDR' => 0,
+		'Regexp::Common' => 0
 	},
 	dist		=> { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
 	clean		=> { FILES => 'CGI-ACL-*' },

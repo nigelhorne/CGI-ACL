@@ -1,4 +1,5 @@
 Changes
+cpanfile
 ignore.txt
 lib/CGI/ACL.pm
 LICENSE

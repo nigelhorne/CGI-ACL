@@ -19,6 +19,7 @@ on 'test' => sub {
 	requires 'Test::DescribeMe';
 	requires 'Test::Distribution';
 	requires 'Test::Kwalitee';
+	requires 'Test::MockModule';
 	requires 'Test::MockObject';
 	requires 'Test::Most';
 	requires 'Test::Needs';

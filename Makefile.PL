@@ -29,6 +29,7 @@ WriteMakefile(
 		'Test::Carp' => 0,
 		'Test::DescribeMe' => 0,
 		'Test::MockObject' => 0,
+		'Test::MockModule' => 0,
 		'Test::Most' => 0,
 		'Test::Needs' => 0,
 		'File::Spec' => 0,

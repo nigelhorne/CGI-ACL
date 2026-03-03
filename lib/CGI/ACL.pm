@@ -254,19 +254,8 @@ sub all_denied {
 
 	return 1 unless $addr =~ /^$RE{net}{IPv4}$/ || $addr =~ /^$RE{net}{IPv6}$/;
 
-	if(my $hostname = _verified_rdns($addr)) {
-		# You can whitelist domains:
-		return 0 if $hostname =~ /\.googlebot\.com$/;
-
-		# Block AWS EC2
-		return 1 if $hostname =~ /\.compute-1\.amazonaws\.com$/;
-		return 1 if $hostname =~ /\.compute\.amazonaws\.com$/;
-
-		# Block Google Cloud
-		return 1 if $hostname =~ /\.bc\.googleusercontent\.com$/;
-
-		# Block Azure
-		return 1 if $hostname =~ /\.cloudapp\.net$/;
+	if ($self->{deny_cloud}) {
+		return 1 if _is_cloud_host($addr);
 	}
 
 	if($self->{allowed_ips}) {
@@ -316,6 +305,39 @@ sub all_denied {
 	return 1;
 }
 
+sub _is_cloud_host {
+	my $ip = $_[0];
+
+	my $hostname = verified_rdns($ip) or return 0;
+
+	# AWS
+	return 1 if $hostname =~ /\.compute(-\d+)?\.amazonaws\.com$/;
+	return 1 if $hostname =~ /\.compute\.amazonaws\.com$/;
+
+	# Google Cloud
+	return 1 if $hostname =~ /\.bc\.googleusercontent\.com$/;
+
+	# Azure
+	return 1 if $hostname =~ /\.cloudapp\.net$/;
+	return 1 if $hostname =~ /\.azure\.com$/;
+
+	# DigitalOcean
+	return 1 if $hostname =~ /digitalocean/;
+
+	# Linode
+	return 1 if $hostname =~ /\.members\.linode\.com$/;
+
+	# Hetzner
+	return 1 if $hostname =~ /hetzner/;
+	return 1 if $hostname =~ /your-server\.de$/;
+
+	# OVH
+	return 1 if $hostname =~ /\.ovh\.net$/;
+	return 1 if $hostname =~ /^ip-\d+-\d+-\d+-\d+\.eu$/;
+
+	return 0;
+}
+
 sub _verified_rdns {
 	my $ip = $_[0];
 
@@ -335,9 +357,46 @@ sub _verified_rdns {
 	return ($hostname && grep { $_ eq $ip } @forward_ips) ? $hostname : undef;
 }
 
+=head2 deny_cloud
+
+Enables blocking of requests originating from major cloud-hosting providers
+such as Amazon Web Services (AWS), Google Cloud Platform (GCP), Microsoft Azure,
+DigitalOcean, Linode, Hetzner, and OVH.
+
+This method relies on verified reverse DNS lookups to classify the client's
+network origin.
+A reverse DNS lookup is performed on the client's IP address,
+and the resulting hostname is then forward-confirmed to ensure that it is not spoofed.
+If the hostname matches known patterns associated with cloud infrastructure providers,
+access is denied.
+
+This feature is useful for preventing automated bots, scrapers, and abusive
+traffic commonly launched from cloud environments, while still allowing access
+from residential and business networks.
+
+    use CGI::ACL;
+
+    my $acl = CGI::ACL->new()->deny_cloud();
+
+    if($acl->all_denied()) {
+        print "Access from cloud-hosted systems is not permitted.";
+        exit;
+    }
+
+Returns the object instance to allow method chaining.
+
+=cut
+
+sub deny_cloud {
+	my $self = shift;
+
+	$self->{deny_cloud} = 1;
+	return $self;
+}
+
 =head1 AUTHOR
 
-Nigel Horne, C<< <njh at bandsman.co.uk> >>
+Nigel Horne, C<< <njh at nigelhorne.com> >>
 
 =head1 BUGS
 

@@ -49,7 +49,7 @@ WriteMakefile(
 		'Net::CIDR' => 0,
 		'Regexp::Common' => 0
 	},
-	dist		=> { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
+	dist => $dist,
 	clean		=> { FILES => 'CGI-ACL-*' },
 	META_MERGE		=> {
 		'meta-spec' => { version => 2 },

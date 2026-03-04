@@ -24,7 +24,6 @@ on 'test' => sub {
 	requires 'Test::Most';
 	requires 'Test::Needs';
 	requires 'Test::NoWarnings';
-	requires 'Test::Perl::Metrics::Simple';
 	requires 'WWW::RT::CPAN';
 	requires 'autodie';
 	requires 'strict';

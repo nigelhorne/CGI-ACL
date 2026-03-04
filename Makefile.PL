@@ -36,7 +36,6 @@ WriteMakefile(
 		'Test::NoWarnings' => 0,
 		'Test::CleanNamespaces' => 0,
 		'Test::Distribution' => 0,
-		'Test::Kwalitee' => 0,
 		'autodie' => 0,
 		'strict' => 0,
 		'warnings' => 0,

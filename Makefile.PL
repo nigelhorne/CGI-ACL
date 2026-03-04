@@ -14,7 +14,7 @@ if($^O eq 'darwin') {
 
 WriteMakefile(
 	NAME		=> 'CGI::ACL',
-	AUTHOR		=> q{Nigel Horne <njh@bandsman.co.uk>},
+	AUTHOR		=> q{Nigel Horne <njh@nigelhorne.com>},
 	VERSION_FROM	=> 'lib/CGI/ACL.pm',
 	ABSTRACT_FROM	=> 'lib/CGI/ACL.pm',
 	((defined($ExtUtils::MakeMaker::VERSION) &&
@@ -37,7 +37,6 @@ WriteMakefile(
 		'Test::CleanNamespaces' => 0,
 		'Test::Distribution' => 0,
 		'Test::Kwalitee' => 0,
-		# 'Test::Perl::Metrics::Simple' => 0,
 		'autodie' => 0,
 		'strict' => 0,
 		'warnings' => 0,

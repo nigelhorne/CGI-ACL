@@ -18,7 +18,6 @@ on 'test' => sub {
 	requires 'Test::CleanNamespaces';
 	requires 'Test::DescribeMe';
 	requires 'Test::Distribution';
-	requires 'Test::Kwalitee';
 	requires 'Test::MockModule';
 	requires 'Test::MockObject';
 	requires 'Test::Most';
@@ -29,6 +28,7 @@ on 'test' => sub {
 	requires 'strict';
 	requires 'warnings';
 };
+
 on 'develop' => sub {
 	requires 'Devel::Cover';
 	requires 'Perl::Critic';

@@ -12,7 +12,7 @@ BEGIN { use_ok('CGI::ACL') }
 
 my $mock = Test::MockModule->new('CGI::ACL');
 
-$mock->mock('verified_rdns', sub {
+$mock->mock('_verified_rdns', sub {
 	my $ip = $_[0];
 
 	return 'ec2-1-2-3-4.compute-1.amazonaws.com' if $ip eq '1.2.3.4';   # AWS

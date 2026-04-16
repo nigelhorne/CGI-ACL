@@ -308,7 +308,7 @@ sub all_denied {
 sub _is_cloud_host {
 	my $ip = $_[0];
 
-	my $hostname = verified_rdns($ip) or return 0;
+	my $hostname = _verified_rdns($ip) or return 0;
 
 	# AWS
 	return 1 if $hostname =~ /\.compute(-\d+)?\.amazonaws\.com$/;

@@ -349,10 +349,10 @@ sub _verified_rdns {
 	my $packed = inet_aton($ip) or return;
 
 	# Step 1: reverse lookup
-	my ($hostname) = gethostbyaddr($packed, AF_INET) or return;
+	my $hostname = gethostbyaddr($packed, AF_INET) or return;
 
 	# Step 2: forward lookup
-		my @forward_ips = map { inet_ntoa($_) }
+	my @forward_ips = map { inet_ntoa($_) }
 		grep { defined }
 		map { inet_aton($_) }
 		($hostname);

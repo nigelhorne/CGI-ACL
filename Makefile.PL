@@ -46,6 +46,8 @@ WriteMakefile(
 		'File::Spec' => 3.4,
 		'namespace::clean' => 0,
 		'Net::CIDR' => 0,
+		'Object::Configure' => 0,
+		'Params::Get' => 0,
 		'Regexp::Common' => 0
 	},
 	dist => $dist,

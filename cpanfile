@@ -5,6 +5,8 @@ requires 'perl', '5.6.2';
 requires 'Carp';
 requires 'File::Spec', '3.4';
 requires 'Net::CIDR';
+requires 'Object::Configure';
+requires 'Params::Get';
 requires 'Regexp::Common';
 requires 'namespace::clean';
 

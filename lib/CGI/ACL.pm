@@ -24,6 +24,8 @@ use namespace::clean;
 use Carp;
 use Net::CIDR;
 use Regexp::Common qw/net/;
+use Object::Configure;
+use Params::Get;
 use Scalar::Util;
 use Socket;
 
@@ -63,6 +65,12 @@ Includes basic error handling for invalid arguments.
 
     my $acl = CGI::ACL->new(allowed_ips => { '127.0.0.1' => 1 });
 
+The class can be configured at runtime using environments and configuration files,
+for example,
+setting C<$ENV{'CGI__ACL__allowed_ips'}>.
+For more information about configuring object constructors at runtime,
+see L<Object::Configure>.
+
 =cut
 
 sub new
@@ -70,18 +78,10 @@ sub new
 	my $class = shift;
 
 	# Handle hash or hashref arguments
-	my %args;
-	if((@_ == 1) && (ref $_[0] eq 'HASH')) {
-		%args = %{$_[0]};
-	} elsif((@_ % 2) == 0) {
-		%args = @_;
-	} else {
-		carp(__PACKAGE__, ': Invalid arguments passed to new()');
-		return;
-	}
+	my $params = Params::Get::get_params(undef, @_);
 
 	if(!defined($class)) {
-		if((scalar keys %args) > 0) {
+		if(defined($params)) {
 			carp(__PACKAGE__, ' use ->new() not ::new() to instantiate');
 			return;
 		}
@@ -89,10 +89,14 @@ sub new
 		$class = __PACKAGE__;
 	} elsif(Scalar::Util::blessed($class)) {
 		# clone the given object
-		return bless { %{$class}, %args }, ref($class);
+		$params ||= {};
+		return bless { %{$class}, %{$params} }, ref($class);
 	}
 
-	return bless { %args }, $class;
+	# Load the configuration from a config file, if provided
+	$params = Object::Configure::configure($class, $params);
+
+	return bless $params, $class;
 }
 
 =head2 allow_ip
@@ -410,7 +414,13 @@ A VPN or proxy would most likely bypass the IP-based access control.
 
 =head1 SEE ALSO
 
-L<CGI::Lingua>
+=over 4
+
+=item * L<CGI::Lingua>
+
+=item * L<Object::Configure>
+
+=back
 
 =head1 SUPPORT
 

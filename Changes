@@ -1,6 +1,6 @@
 Revision history for CGI-ACL
 
-0.07
+0.07	Thu Apr 16 19:38:57 EDT 2026
 	Fixed call to _verified_rdns
 	Allow an object to be configured at runtime via Object::Configure
 

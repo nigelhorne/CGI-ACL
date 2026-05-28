@@ -1,5 +1,19 @@
 Revision history for CGI-ACL
 
+0.08
+	[ Bug Fixes ]
+	- Fixed deny_cloud() being bypassed when used without allow_ip or deny_country
+	- Fixed deny_country('*') with no allow_country incorrectly allowing all traffic
+	- Fixed allow_ip() emitting duplicate warnings when passed a reference
+	- Fixed new() reverting to hard croak on bad arguments instead of soft carp
+
+	[ Enhancements ]
+	- Cache CIDR list in all_denied() to avoid rebuilding it on every call
+	- Add 10-second timeout on DNS lookups in _verified_rdns() on non-Windows platforms
+
+	[ Documentation ]
+	- Document that deny_cloud() takes precedence over allow_ip()
+
 0.07	Thu Apr 16 19:38:57 EDT 2026
 	Fixed call to _verified_rdns
 	Allow an object to be configured at runtime via Object::Configure

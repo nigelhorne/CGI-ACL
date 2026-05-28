@@ -119,6 +119,10 @@ This feature is useful for preventing automated bots, scrapers, and abusive
 traffic commonly launched from cloud environments, while still allowing access
 from residential and business networks.
 
+Note that `deny_cloud` takes precedence over `allow_ip`: an IP address that
+is explicitly allowed via `allow_ip` will still be denied if its reverse DNS
+resolves to a cloud provider hostname.
+
     use CGI::ACL;
 
     my $acl = CGI::ACL->new()->deny_cloud();

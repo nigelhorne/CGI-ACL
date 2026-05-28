@@ -57,4 +57,13 @@ subtest 'IP with no verified PTR should be allowed' => sub {
 	ok !denied_for('198.51.100.99'), 'Unknown PTR allowed';
 };
 
+subtest 'deny_cloud alone (no allow_ip) blocks cloud IPs' => sub {
+	my $cloud_only = CGI::ACL->new()->deny_cloud();
+	local $ENV{REMOTE_ADDR} = '1.2.3.4';
+	ok $cloud_only->all_denied(), 'AWS IP denied when only deny_cloud is set';
+
+	local $ENV{REMOTE_ADDR} = '5.6.7.8';
+	ok !$cloud_only->all_denied(), 'Residential IP allowed when only deny_cloud is set';
+};
+
 done_testing();

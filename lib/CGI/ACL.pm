@@ -77,8 +77,12 @@ sub new
 {
 	my $class = shift;
 
-	# Handle hash or hashref arguments
-	my $params = Params::Get::get_params(undef, @_);
+	# Handle hash or hashref arguments; preserve soft carp+undef on bad input
+	my $params = eval { Params::Get::get_params(undef, @_) };
+	if($@) {
+		carp(__PACKAGE__, ': Invalid arguments passed to new()');
+		return;
+	}
 
 	if(!defined($class)) {
 		if(defined($params)) {
@@ -118,6 +122,7 @@ sub allow_ip {
 		%params = %{$_[0]};
 	} elsif(ref($_[0])) {
 		Carp::carp('Usage: allow_ip($ip_address)');
+		return $self;
 	} elsif(@_ % 2 == 0) {
 		%params = @_;
 	} else {
@@ -126,6 +131,7 @@ sub allow_ip {
 
 	if(defined($params{'ip'})) {
 		$self->{allowed_ips}->{$params{'ip'}} = 1;
+		delete $self->{_cidrlist};
 	} else {
 		Carp::carp('Usage: allow_ip($ip_address)');
 	}
@@ -250,7 +256,7 @@ Note, therefore, that by default localhost isn't allowed access, call allow_ip('
 sub all_denied {
 	my $self = shift;
 
-	if((!defined($self->{allowed_ips})) && !defined($self->{deny_countries})) {
+	if((!defined($self->{allowed_ips})) && !defined($self->{deny_countries}) && !$self->{deny_cloud}) {
 		return 0;
 	}
 
@@ -260,6 +266,7 @@ sub all_denied {
 
 	if ($self->{deny_cloud}) {
 		return 1 if _is_cloud_host($addr);
+		return 0 unless $self->{allowed_ips} || $self->{deny_countries} || $self->{allow_countries};
 	}
 
 	if($self->{allowed_ips}) {
@@ -267,11 +274,14 @@ sub all_denied {
 			return 0;
 		}
 
-		my @cidrlist;
-		foreach my $block(keys(%{$self->{allowed_ips}})) {
-			@cidrlist = Net::CIDR::cidradd($block, @cidrlist);
+		if(!$self->{_cidrlist}) {
+			my @cidrlist;
+			foreach my $block(keys(%{$self->{allowed_ips}})) {
+				@cidrlist = Net::CIDR::cidradd($block, @cidrlist);
+			}
+			$self->{_cidrlist} = \@cidrlist;
 		}
-		if(Net::CIDR::cidrlookup($addr, @cidrlist)) {
+		if(Net::CIDR::cidrlookup($addr, @{$self->{_cidrlist}})) {
 			return 0;
 		}
 	}
@@ -288,14 +298,11 @@ sub all_denied {
 		}
 
 		if(my $lingua = $params{'lingua'}) {
-			if($self->{deny_countries}->{'*'} && !defined($self->{allow_countries})) {
-				return 0;
-			}
 			if(my $country = $lingua->country()) {
 				$country = lc($country);
 				if($self->{deny_countries}->{'*'}) {
 					# Default deny
-					return $self->{allow_countries}->{$country} ? 0 : 1;
+					return ($self->{allow_countries} && $self->{allow_countries}->{$country}) ? 0 : 1;
 				}
 				# Default allow
 				return $self->{deny_countries}->{$country} ? 1 : 0;
@@ -348,14 +355,35 @@ sub _verified_rdns {
 	# Convert dotted quad to packed format
 	my $packed = inet_aton($ip) or return;
 
-	# Step 1: reverse lookup
-	my $hostname = gethostbyaddr($packed, AF_INET) or return;
+	my ($hostname, @forward_ips);
 
-	# Step 2: forward lookup
-	my @forward_ips = map { inet_ntoa($_) }
-		grep { defined }
-		map { inet_aton($_) }
-		($hostname);
+	if($^O ne 'MSWin32') {
+		# Prevent DNS from blocking the CGI process indefinitely
+		local $SIG{ALRM} = sub { die "DNS timeout\n" };
+		alarm(10);
+		eval {
+			# Step 1: reverse lookup
+			$hostname = gethostbyaddr($packed, AF_INET);
+			if($hostname) {
+				# Step 2: forward lookup
+				@forward_ips = map { inet_ntoa($_) }
+					grep { defined }
+					map { inet_aton($_) }
+					($hostname);
+			}
+		};
+		alarm(0);
+		return if $@ || !$hostname;
+	} else {
+		# Step 1: reverse lookup
+		$hostname = gethostbyaddr($packed, AF_INET) or return;
+
+		# Step 2: forward lookup
+		@forward_ips = map { inet_ntoa($_) }
+			grep { defined }
+			map { inet_aton($_) }
+			($hostname);
+	}
 
 	# Step 3: confirm match
 	return ($hostname && grep { $_ eq $ip } @forward_ips) ? $hostname : undef;
@@ -377,6 +405,10 @@ access is denied.
 This feature is useful for preventing automated bots, scrapers, and abusive
 traffic commonly launched from cloud environments, while still allowing access
 from residential and business networks.
+
+Note that C<deny_cloud> takes precedence over C<allow_ip>: an IP address that
+is explicitly allowed via C<allow_ip> will still be denied if its reverse DNS
+resolves to a cloud provider hostname.
 
     use CGI::ACL;
 

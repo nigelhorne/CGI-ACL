@@ -1,6 +1,6 @@
 package CGI::ACL;
 
-# Author Nigel Horne: njh@bandsman.co.uk
+# Author Nigel Horne: njh@nigelhorne.com
 # Copyright (C) 2017-2026, Nigel Horne
 
 # Usage is subject to licence terms.
@@ -77,12 +77,8 @@ sub new
 {
 	my $class = shift;
 
-	# Handle hash or hashref arguments; preserve soft carp+undef on bad input
-	my $params = eval { Params::Get::get_params(undef, @_) };
-	if($@) {
-		carp(__PACKAGE__, ': Invalid arguments passed to new()');
-		return;
-	}
+	# Handle hash or hashref arguments
+	my $params = Params::Get::get_params(undef, @_);
 
 	if(!defined($class)) {
 		if(defined($params)) {
@@ -256,7 +252,7 @@ Note, therefore, that by default localhost isn't allowed access, call allow_ip('
 sub all_denied {
 	my $self = shift;
 
-	if((!defined($self->{allowed_ips})) && !defined($self->{deny_countries}) && !$self->{deny_cloud}) {
+	if((!defined($self->{allowed_ips})) && !defined($self->{deny_countries}) && !$self->{deny_cloud} && !defined($self->{allow_countries})) {
 		return 0;
 	}
 
@@ -300,12 +296,12 @@ sub all_denied {
 		if(my $lingua = $params{'lingua'}) {
 			if(my $country = $lingua->country()) {
 				$country = lc($country);
-				if($self->{deny_countries}->{'*'}) {
+				if($self->{deny_countries} && $self->{deny_countries}->{'*'}) {
 					# Default deny
 					return ($self->{allow_countries} && $self->{allow_countries}->{$country}) ? 0 : 1;
 				}
 				# Default allow
-				return $self->{deny_countries}->{$country} ? 1 : 0;
+				return ($self->{deny_countries} && $self->{deny_countries}->{$country}) ? 1 : 0;
 			}
 			# Unknown country - disallow access
 		} else {
@@ -323,7 +319,6 @@ sub _is_cloud_host {
 
 	# AWS
 	return 1 if $hostname =~ /\.compute(-\d+)?\.amazonaws\.com$/;
-	return 1 if $hostname =~ /\.compute\.amazonaws\.com$/;
 
 	# Google Cloud
 	return 1 if $hostname =~ /\.bc\.googleusercontent\.com$/;
@@ -371,8 +366,9 @@ sub _verified_rdns {
 					map { inet_aton($_) }
 					($hostname);
 			}
+			alarm(0);
 		};
-		alarm(0);
+		alarm(0);	# clear alarm even if eval died
 		return if $@ || !$hostname;
 	} else {
 		# Step 1: reverse lookup

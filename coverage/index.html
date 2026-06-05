@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<title>CGI::ACL Coverage Report</title>
+	<style>
+		body { font-family: sans-serif; }
+		table { border-collapse: collapse; width: 100%; }
+		th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+		th { background-color: #f2f2f2; }
+		.low { background-color: #fdd; }
+		.med { background-color: #ffd; }
+		.high { background-color: #dfd; }
+		.badges img { margin-right: 10px; }
+		.disabled-icon {
+			opacity: 0.4;
+			cursor: default;
+		}
+		.icon-link {
+			text-decoration: none;
+		}
+		.icon-link:hover {
+			opacity: 0.7;
+			cursor: pointer;
+		}
+		.coverage-badge {
+			padding: 2px 6px;
+			border-radius: 4px;
+			font-weight: bold;
+			color: white;
+			font-size: 0.9em;
+		}
+		.badge-good { background-color: #4CAF50; }
+		.badge-warn { background-color: #FFC107; }
+		.badge-bad { background-color: #F44336; }
+		.summary-row {
+			font-weight: bold;
+			background-color: #f0f0f0;
+		}
+		td.positive { color: green; font-weight: bold; }
+		td.negative { color: red; font-weight: bold; }
+		td.neutral { color: gray; }
+		/* Show cursor points on the headers to show that they are clickable */
+		th { background-color: #f2f2f2; cursor: pointer; }
+		th.sortable {
+			cursor: pointer;
+			user-select: none;
+			white-space: nowrap;
+		}
+		th .arrow {
+			color: #aaa;	/* dimmed for inactive */
+			font-weight: normal;
+		}
+		th .arrow.active {
+			color: #000;	/* dark for active */
+			font-weight: bold;
+		}
+		.sparkline {
+			display: inline-block;
+			vertical-align: middle;
+		}
+		tr.cpan-fail td {
+			background-color: #fdd;
+		}
+		tr.cpan-unknown td {
+			background-color: #eee;
+			color: #666;
+		}
+		tr.cpan-na td {
+			background-color: #ffffde;
+			color: #666;
+		}
+		.new-failure {
+			background: #c00;
+			color: #fff;
+			font-weight: bold;
+			padding: 2px 6px;
+			border-radius: 4px;
+			font-size: 0.85em;
+		}
+		.notice {
+			padding: 8px 12px;
+			margin: 10px 0;
+			border-radius: 4px;
+			font-size: 0.95em;
+		}
+		.notice strong {
+			font-weight: bold;
+		}
+		.notice.perl-version-cliff {
+			background-color: #fff3cd; /* soft amber */
+			border: 1px solid #ffeeba;
+			color: #856404;
+		}
+		.notice.perl-version-cliff a {
+			color: #533f03;
+			text-decoration: underline;
+		}
+		.notice.perl-version-cliff a:hover {
+			text-decoration: none;
+		}
+		.notice.locale-cliff {
+			border-left: 4px solid #d97706;
+			background: #fffbeb;
+			padding: 0.5em 1em;
+		}
+		.notice.rt-issues {
+			background: #fff6e5;
+			border-left: 4px solid #d9822b;
+		}
+		table.root-causes {
+			border-collapse: collapse;
+			width: 100%;
+			margin-bottom: 1.5em;
+		}
+		table.root-causes th,
+		table.root-causes td {
+			border: 1px solid #ccc;
+			padding: 8px;
+			vertical-align: top;
+		}
+		table.root-causes tr.high {
+			background-color: #dfd;
+		}
+		table.root-causes tr.med {
+			background-color: #ffd;
+		}
+		table.root-causes tr.low {
+			background-color: #fdd;
+		}
+	</style>
+</head>
+<body>
+<div class="badges">
+	<a href="https://github.com/nigelhorne/CGI-ACL">
+		<img src="https://img.shields.io/github/stars/nigelhorne/CGI-ACL?style=social" alt="GitHub stars">
+	</a>
+	<img src="https://img.shields.io/badge/coverage-72%25-yellow" alt="Coverage badge">
+</div>
+<h1>CGI::ACL</h1><h2>Coverage Report</h2>
+<table data-sort-col="0" data-sort-order="asc">
+<!-- Make the column headers clickable -->
+<thead>
+<tr>
+	<th class="sortable" onclick="sortTable(this, 0)"><span class="label">File</span> <span class="arrow active">&#x25B2;</span></th>
+	<th class="sortable" onclick="sortTable(this, 1)"><span class="label">Stmt</span> <span class="arrow">&#x25B2;</span></th>
+	<th class="sortable" onclick="sortTable(this, 2)"><span class="label">Branch</span> <span class="arrow">&#x25B2;</span></th>
+	<th class="sortable" onclick="sortTable(this, 3)"><span class="label">Cond</span> <span class="arrow">&#x25B2;</span></th>
+	<th class="sortable" onclick="sortTable(this, 4)"><span class="label">Sub</span> <span class="arrow">&#x25B2;</span></th>
+	<th class="sortable" onclick="sortTable(this, 5)"><span class="label">Total</span> <span class="arrow">&#x25B2;</span></th>
+	<th class="sortable" onclick="sortTable(this, 6)"><span class="label">&Delta;</span> <span class="arrow">&#x25B2;</span></th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr class="med"><td><a href="blib-lib-CGI-ACL-pm.html" title="View coverage line by line" target="_blank">lib/CGI/ACL.pm</a> <a href="https://github.com/nigelhorne/CGI-ACL/blob/a5aa8be1079db68ed19818c41c7c60561f3f244f/lib/CGI/ACL.pm" class="icon-link" title="View source on GitHub">&#128269;</a><canvas class="sparkline" width="80" height="20" data-points=""></canvas></td><td>75.1</td><td>67.0</td><td>66.7</td><td>87.5</td><td><span class="coverage-badge badge-warn" title="Moderate coverage">72.9%</span></td><td class="neutral" title="No previous data">&#9679;</td></tr>
+<tr class="summary-row nosort"><td colspan="2"><strong>Summary</strong></td><td colspan="2">1 files</td><td colspan="3">Avg: 72%, Low: 0</td></tr>
+<tr class="med nosort"><td><strong>Total</strong></td><td>75.1</td><td>67.0</td><td>66.7</td><td>87.5</td><td colspan="2"><strong>72.9</strong></td></tr>
+</tbody></table>
+<p><i>No history to show coverage trend</i></p>
+<p>No issues active on <a href="https://rt.cpan.org/Public/Dist/Display.html?Name=CGI-ACL">RT</a></p>
+<p>No <A HREF="https://fast2-matrix.cpantesters.org/?dist=CGI-ACL+0.07">CPAN Testers</A> failures reported for CGI-ACL 0.07</p>
+<h2>Mutation Report</h2>
+<h3>Mutation Summary</h3>
+<ul>
+<li><b>Score</b>: 83.08%</li>
+<li><b>Total</b>: 65</li>
+<li><b>Killed</b>: 
+54
+</li>
+<li><b>Survived</b>: 
+11
+</li>
+</ul>
+<h3>Mutation Files</h3>
+
+<table border='1' cellpadding='5'>
+
+<tr><th>File</th><th>Total</th><th>Killed</th><th>Survivors</th><th>Skipped</th><th>Score%</th><th>Complexity</th><th title="TER1=Statement, TER2=Branch, TER3=LCSAJ Path">TER1 / TER2 / TER3</th></tr>
+
+<tr class="med"><td><a href="mutation_html/lib/CGI/ACL.pm.html" title="View mutation line by line" target="_blank">lib/CGI/ACL.pm</a> <a href="https://github.com/nigelhorne/CGI-ACL/blob/a5aa8be1079db68ed19818c41c7c60561f3f244f/lib/CGI/ACL.pm" class="icon-link" title="View source on GitHub">&#128269;</a></td><td>65</td><td>54</td><td>11</td><td>0</td><td><span class="coverage-badge badge-warn" title="Moderate">83.1%</span></td><td><span class="coverage-badge badge-good" title="Good">66</span></td><td><span class="coverage-badge badge-warn" title="Moderate">75.1%</span> / <span class="coverage-badge badge-bad" title="Needs improvement">67.0%</span> / <span class="coverage-badge badge-warn" title="Moderate">79.6%</span></td></tr>
+</table>
+
+<h2>Structural Coverage (Approximate)</h2>
+<div class='summary'>
+Statement Coverage: 75.14% (133 / 177)<br>
+Branch Coverage: 67.02% (63 / 94)<br>
+<em>Approximate LCSAJ derived from branch and statement coverage.</em>
+</div>
+<h2>Executive Summary</h2>
+<div class='summary'>
+Tests execute 75.14% of the code but detect only 83.08% of injected faults.
+</div>
+<footer>
+	<p>Project: <a href="https://github.com/nigelhorne/CGI-ACL">CGI-ACL</a></p>
+	<p><em>Last updated: 2026-06-05 21:05:28 - <a href="https://github.com/nigelhorne/CGI-ACL/commit/a5aa8be1079db68ed19818c41c7c60561f3f244f">commit <code>a5aa8be</code></a></em></p>
+	<p style="float: right; font-size: 0.85em; color: #999;">Powered by <a href="https://metacpan.org/dist/App-Test-Generator">App::Test::Generator 0.38</a></p>
+</footer>
+</body>
+</html>

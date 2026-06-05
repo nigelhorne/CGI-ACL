@@ -7,7 +7,7 @@
 
 # NAME
 
-CGI::ACL - Decide whether to allow a client to run this CGI script
+CGI::ACL - Decide whether to allow a client to run a CGI script
 
 # VERSION
 
@@ -450,8 +450,9 @@ A VPN or proxy will most likely bypass IP-based access control.
 # SEE ALSO
 
 - [CGI::Lingua](https://metacpan.org/pod/CGI%3A%3ALingua)
-- [Object::Configure](https://metacpan.org/pod/Object%3A%3AConfigure)
+- [Configure an Object at Runtime](https://metacpan.org/pod/Object%3A%3AConfigure)
 - [Net::CIDR](https://metacpan.org/pod/Net%3A%3ACIDR)
+- [Test Dashboard](https://nigelhorne.github.io/CGI-ACL/coverage/)
 
 # SUPPORT
 

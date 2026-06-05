@@ -60,7 +60,7 @@ Readonly my @CLOUD_PATTERNS => (
 
 =head1 NAME
 
-CGI::ACL - Decide whether to allow a client to run this CGI script
+CGI::ACL - Decide whether to allow a client to run a CGI script
 
 =head1 VERSION
 
@@ -980,9 +980,11 @@ A VPN or proxy will most likely bypass IP-based access control.
 
 =item * L<CGI::Lingua>
 
-=item * L<Object::Configure>
+=item * L<Configure an Object at Runtime|Object::Configure>
 
 =item * L<Net::CIDR>
+
+=item * L<Test Dashboard|https://nigelhorne.github.io/CGI-ACL/coverage/>
 
 =back
 

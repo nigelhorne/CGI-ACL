@@ -20,6 +20,7 @@ Revision history for CGI-ACL
 	[ Enhancements ]
 	- Cache CIDR list in all_denied() to avoid rebuilding it on every call
 	- Add 10-second timeout on DNS lookups in _verified_rdns() on non-Windows platforms
+	- Added Test Dashboard at https://nigelhorne.github.io/CGI-ACL/coverage/
 
 	[ Documentation ]
 	- Document that deny_cloud() takes precedence over allow_ip()

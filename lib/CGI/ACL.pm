@@ -347,8 +347,20 @@ sub _is_cloud_host {
 sub _verified_rdns {
 	my $ip = $_[0];
 
-	# Convert dotted quad to packed format
-	my $packed = inet_aton($ip) or return;
+	# Determine address family and pack the address
+	my ($family, $packed);
+	if($ip =~ /:/) {
+		$family = Socket::AF_INET6;
+		$packed = Socket::inet_pton(Socket::AF_INET6, $ip) or return;
+	} else {
+		$family = AF_INET;
+		$packed = inet_aton($ip) or return;
+	}
+
+	# Canonical string form for reliable comparison (normalises IPv6 abbreviations)
+	my $canonical = ($family == AF_INET)
+		? inet_ntoa($packed)
+		: Socket::inet_ntop(Socket::AF_INET6, $packed);
 
 	my ($hostname, @forward_ips);
 
@@ -358,13 +370,10 @@ sub _verified_rdns {
 		alarm(10);
 		eval {
 			# Step 1: reverse lookup
-			$hostname = gethostbyaddr($packed, AF_INET);
+			$hostname = gethostbyaddr($packed, $family);
 			if($hostname) {
 				# Step 2: forward lookup
-				@forward_ips = map { inet_ntoa($_) }
-					grep { defined }
-					map { inet_aton($_) }
-					($hostname);
+				@forward_ips = _rdns_forward($hostname, $family);
 			}
 			alarm(0);
 		};
@@ -372,17 +381,37 @@ sub _verified_rdns {
 		return if $@ || !$hostname;
 	} else {
 		# Step 1: reverse lookup
-		$hostname = gethostbyaddr($packed, AF_INET) or return;
+		$hostname = gethostbyaddr($packed, $family) or return;
 
 		# Step 2: forward lookup
-		@forward_ips = map { inet_ntoa($_) }
+		@forward_ips = _rdns_forward($hostname, $family);
+	}
+
+	# Step 3: confirm match
+	return ($hostname && grep { $_ eq $canonical } @forward_ips) ? $hostname : undef;
+}
+
+sub _rdns_forward {
+	my ($hostname, $family) = @_;
+
+	if($family == AF_INET) {
+		return map { inet_ntoa($_) }
 			grep { defined }
 			map { inet_aton($_) }
 			($hostname);
 	}
 
-	# Step 3: confirm match
-	return ($hostname && grep { $_ eq $ip } @forward_ips) ? $hostname : undef;
+	# IPv6: resolve AAAA records and return normalised address strings
+	my ($err, @addrs) = Socket::getaddrinfo($hostname, undef,
+		{ family => $family, socktype => SOCK_STREAM });
+	return () if $err;
+
+	my @ips;
+	for my $addr_info (@addrs) {
+		my ($e, $host) = Socket::getnameinfo($addr_info->{addr}, Socket::NI_NUMERICHOST);
+		push @ips, $host unless $e;
+	}
+	return @ips;
 }
 
 =head2 deny_cloud

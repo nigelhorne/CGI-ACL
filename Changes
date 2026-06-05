@@ -14,6 +14,8 @@ Revision history for CGI-ACL
 	- Fixed new() to restore croak on bad arguments; soft-carp+undef caused opaque
 	  method-chain crashes for all callers
 	- Removed unreachable duplicate AWS hostname pattern in _is_cloud_host()
+	- Fixed _verified_rdns() ignoring IPv6 addresses due to inet_aton being IPv4-only;
+	  IPv6 clients were bypassing deny_cloud entirely
 
 	[ Enhancements ]
 	- Cache CIDR list in all_denied() to avoid rebuilding it on every call
@@ -24,6 +26,7 @@ Revision history for CGI-ACL
 
 	[ Tests ]
 	- Migrated t/deny_cloud.t from Test::MockModule to Test::Mockingbird
+	- Added IPv6 deny_cloud tests to t/deny_cloud.t
 
 0.07	Thu Apr 16 19:38:57 EDT 2026
 	Fixed call to _verified_rdns

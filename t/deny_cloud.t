@@ -2,27 +2,22 @@ use strict;
 use warnings;
 
 use Test::Most;
-use Test::MockModule;
+use Test::Mockingbird;
 
 BEGIN { use_ok('CGI::ACL') }
 
 # ------------------------------------------------------------
-# Mock verified_rdns() so tests do not depend on real DNS
+# Mock _verified_rdns so tests do not depend on real DNS
 # ------------------------------------------------------------
 
-my $mock = Test::MockModule->new('CGI::ACL');
-
-$mock->mock('_verified_rdns', sub {
+my $guard = mock_scoped 'CGI::ACL::_verified_rdns' => sub {
 	my $ip = $_[0];
 
 	return 'ec2-1-2-3-4.compute-1.amazonaws.com' if $ip eq '1.2.3.4';   # AWS
-
 	return '203-0-113-10.bc.googleusercontent.com' if $ip eq '203.0.113.10';  # GCP
-
 	return 'customer-5-6-7-8.example.com' if $ip eq '5.6.7.8';   # Residential / non-cloud
-
 	return undef;	# No PTR or unverified
-});
+};
 
 # ------------------------------------------------------------
 # Create ACL with cloud blocking enabled

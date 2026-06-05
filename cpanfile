@@ -20,7 +20,7 @@ on 'test' => sub {
 	requires 'Test::CleanNamespaces';
 	requires 'Test::DescribeMe';
 	requires 'Test::Distribution';
-	requires 'Test::MockModule';
+	requires 'Test::Mockingbird';
 	requires 'Test::MockObject';
 	requires 'Test::Most';
 	requires 'Test::Needs';

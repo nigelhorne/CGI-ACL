@@ -24,9 +24,21 @@ Revision history for CGI-ACL
 	[ Documentation ]
 	- Document that deny_cloud() takes precedence over allow_ip()
 
+	[ Critique refactoring ]
+	- Fixed deny_country() returning undef instead of $self on bad-ref argument (broke method chaining)
+	- Fixed deny_country() carp message incorrectly referencing $ip_address instead of $country
+	- Fixed allow_ip() and allow_country() returning undef instead of $self on bad-ref argument
+	- Replaced magic number 10 (DNS timeout), '*' wildcard, and '127.0.0.1' with Readonly named constants
+	- Replaced ten individual cloud-pattern return statements in _is_cloud_host() with a Readonly @CLOUD_PATTERNS list
+	- Extracted _set_countries() private helper to eliminate duplicated code between deny_country/allow_country
+	- Added use autodie qw(:all) for safer built-in error handling
+	- Added comprehensive POD for all public methods: FORMAL SPECIFICATION (Z calculus), API SPECIFICATION, MESSAGES table
+	- Added purpose/entry/exit/side-effects comments for all private routines
+
 	[ Tests ]
 	- Migrated t/deny_cloud.t from Test::MockModule to Test::Mockingbird
 	- Added IPv6 deny_cloud tests to t/deny_cloud.t
+	- Added chaining tests: verify deny_country/allow_country/allow_ip return $self on bad-ref args
 
 0.07	Thu Apr 16 19:38:57 EDT 2026
 	Fixed call to _verified_rdns

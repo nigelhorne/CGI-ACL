@@ -153,26 +153,6 @@ B<Action:> Change the call to C<< CGI::ACL->new(...) >>.
 
 =back
 
-=head3 FORMAL SPECIFICATION
-
-    ──────────────── ACLState ────────────────────────────────────────
-      allowed_ips    : IP_Str ⇸ Bool
-      deny_countries : Country ⇸ Bool
-      allow_countries: Country ⇸ Bool
-      deny_cloud     : Bool
-      _cidrlist      : [CIDR_Str]?        -- memoised; cleared on allow_ip
-    ──────────────────────────────────────────────────────────────────
-
-    ─────────────── New ──────────────────────────────────────────────
-      class  : ClassName ∪ ACLState
-      params : ACLState?
-      ─────────────────────────────────────────────────────────────────
-      blessed(class) ⟹
-        result! = bless( class ∪ params, ref(class) )   -- clone
-      ¬blessed(class) ⟹
-        result! = bless( configure(class, params), class )
-    ──────────────────────────────────────────────────────────────────
-
 =cut
 
 sub new {
@@ -275,19 +255,6 @@ B<Action:> Pass a scalar IP/CIDR string: C<allow_ip('192.0.2.1')> or
 C<allow_ip(ip =E<gt> '192.0.2.1')>.
 
 =back
-
-=head3 FORMAL SPECIFICATION
-
-    ─────────────── AllowIP ──────────────────────────────────────────
-      ΔACL
-      ip? : IP_Str
-      ─────────────────────────────────────────────────────────────────
-      allowed_ips' = allowed_ips ∪ { ip? ↦ 1 }
-      _cidrlist'   = ∅          -- cache invalidated
-      deny_countries' = deny_countries
-      allow_countries' = allow_countries
-      deny_cloud'     = deny_cloud
-    ──────────────────────────────────────────────────────────────────
 
 =cut
 
@@ -399,22 +366,6 @@ C<deny_country('BR')> or C<deny_country(country =E<gt> ['BR','CN'])>.
 
 =back
 
-=head3 FORMAL SPECIFICATION
-
-    ─────────────── DenyCountry ─────────────────────────────────────
-      ΔACL
-      country? : ISO_Code ∪ {'*'} ∪ seq ISO_Code
-      ─────────────────────────────────────────────────────────────────
-      country? ∈ seq ISO_Code ⟹
-        deny_countries' = deny_countries ∪
-                          { lc(c) ↦ 1 | c ∈ country? }
-      country? ∉ seq ISO_Code ⟹
-        deny_countries' = deny_countries ∪ { lc(country?) ↦ 1 }
-      allow_countries' = allow_countries
-      allowed_ips'     = allowed_ips
-      deny_cloud'      = deny_cloud
-    ──────────────────────────────────────────────────────────────────
-
 =cut
 
 sub deny_country {
@@ -520,22 +471,6 @@ C<allow_country('US')> or C<allow_country(country =E<gt> ['GB','US'])>.
 
 =back
 
-=head3 FORMAL SPECIFICATION
-
-    ─────────────── AllowCountry ────────────────────────────────────
-      ΔACL
-      country? : ISO_Code ∪ seq ISO_Code
-      ─────────────────────────────────────────────────────────────────
-      country? ∈ seq ISO_Code ⟹
-        allow_countries' = allow_countries ∪
-                           { lc(c) ↦ 1 | c ∈ country? }
-      country? ∉ seq ISO_Code ⟹
-        allow_countries' = allow_countries ∪ { lc(country?) ↦ 1 }
-      deny_countries' = deny_countries
-      allowed_ips'    = allowed_ips
-      deny_cloud'     = deny_cloud
-    ──────────────────────────────────────────────────────────────────
-
 =cut
 
 sub allow_country {
@@ -631,18 +566,6 @@ C<$DNS_TIMEOUT>-second alarm is used to prevent indefinite blocking.
 =head3 MESSAGES
 
 This method emits no messages.
-
-=head3 FORMAL SPECIFICATION
-
-    ─────────────── DenyCloud ───────────────────────────────────────
-      ΔACL
-      ─────────────────────────────────────────────────────────────────
-      deny_cloud'     = 1
-      allowed_ips'    = allowed_ips
-      deny_countries' = deny_countries
-      allow_countries'= allow_countries
-      _cidrlist'      = _cidrlist
-    ──────────────────────────────────────────────────────────────────
 
 =cut
 
@@ -767,41 +690,6 @@ B<Action:> Pass a C<CGI::Lingua> object:
 C<all_denied(lingua =E<gt> $lingua)>.
 
 =back
-
-=head3 FORMAL SPECIFICATION
-
-    ──────────────────────── AllDenied ──────────────────────────────
-      ΞACL                          -- state unchanged (modulo cache)
-      addr    : IPv4 ∪ IPv6         -- REMOTE_ADDR or DEFAULT_ADDR
-      lingua? : Lingua              -- country resolver (optional)
-      result! : {0, 1}              -- 0 = allow, 1 = deny
-      ─────────────────────────────────────────────────────────────────
-      no_restrictions(self) ⟹ result! = 0
-
-      ¬valid_ip(addr) ⟹ result! = 1
-
-      deny_cloud = 1 ∧ is_cloud(addr) ⟹ result! = 1
-      deny_cloud = 1 ∧ ¬is_cloud(addr)
-        ∧ allowed_ips = ∅ ∧ deny_countries = ∅
-        ∧ allow_countries = ∅            ⟹ result! = 0
-
-      addr ∈ dom(allowed_ips) ⟹ result! = 0
-      cidr_match(addr, allowed_ips) ⟹ result! = 0
-
-      (deny_countries ≠ ∅ ∨ allow_countries ≠ ∅)
-        ∧ lingua? = ∅ ⟹ result! = 1      -- no lingua supplied
-      lingua?.country() = undef ⟹ result! = 1   -- unknown country
-
-      deny_countries($WILDCARD) = 1
-        ∧ allow_countries(lc(lingua?.country())) = 1 ⟹ result! = 0
-      deny_countries($WILDCARD) = 1
-        ∧ allow_countries(lc(lingua?.country())) ≠ 1 ⟹ result! = 1
-
-      deny_countries($WILDCARD) ≠ 1
-        ∧ deny_countries(lc(lingua?.country())) = 1 ⟹ result! = 1
-      deny_countries($WILDCARD) ≠ 1
-        ∧ deny_countries(lc(lingua?.country())) ≠ 1 ⟹ result! = 0
-    ──────────────────────────────────────────────────────────────────
 
 =cut
 
@@ -1072,7 +960,7 @@ sub _rdns_forward {
 	return @ips;
 }
 
-# ── Module metadata ────────────────────────────────────────────────────────────
+=encoding utf-8
 
 =head1 AUTHOR
 
@@ -1113,6 +1001,120 @@ A VPN or proxy will most likely bypass IP-based access control.
 =item * CPAN Testers: L<http://matrix.cpantesters.org/?dist=CGI-ACL>
 
 =back
+
+=head2 FORMAL SPECIFICATION
+
+=head3 new
+
+    ──────────────── ACLState ────────────────────────────────────────
+      allowed_ips    : IP_Str ⇸ Bool
+      deny_countries : Country ⇸ Bool
+      allow_countries: Country ⇸ Bool
+      deny_cloud     : Bool
+      _cidrlist      : [CIDR_Str]?        -- memoised; cleared on allow_ip
+    ──────────────────────────────────────────────────────────────────
+
+    ─────────────── New ──────────────────────────────────────────────
+      class  : ClassName ∪ ACLState
+      params : ACLState?
+      ─────────────────────────────────────────────────────────────────
+      blessed(class) ⟹
+        result! = bless( class ∪ params, ref(class) )   -- clone
+      ¬blessed(class) ⟹
+        result! = bless( configure(class, params), class )
+    ──────────────────────────────────────────────────────────────────
+
+=head3 allow_ip
+
+    ─────────────── AllowIP ──────────────────────────────────────────
+      ΔACL
+      ip? : IP_Str
+      ─────────────────────────────────────────────────────────────────
+      allowed_ips' = allowed_ips ∪ { ip? ↦ 1 }
+      _cidrlist'   = ∅          -- cache invalidated
+      deny_countries' = deny_countries
+      allow_countries' = allow_countries
+      deny_cloud'     = deny_cloud
+    ──────────────────────────────────────────────────────────────────
+
+=head3 deny_country
+
+    ─────────────── DenyCountry ─────────────────────────────────────
+      ΔACL
+      country? : ISO_Code ∪ {'*'} ∪ seq ISO_Code
+      ─────────────────────────────────────────────────────────────────
+      country? ∈ seq ISO_Code ⟹
+        deny_countries' = deny_countries ∪
+                          { lc(c) ↦ 1 | c ∈ country? }
+      country? ∉ seq ISO_Code ⟹
+        deny_countries' = deny_countries ∪ { lc(country?) ↦ 1 }
+      allow_countries' = allow_countries
+      allowed_ips'     = allowed_ips
+      deny_cloud'      = deny_cloud
+    ──────────────────────────────────────────────────────────────────
+
+=head3 allow_country
+
+    ─────────────── AllowCountry ────────────────────────────────────
+      ΔACL
+      country? : ISO_Code ∪ seq ISO_Code
+      ─────────────────────────────────────────────────────────────────
+      country? ∈ seq ISO_Code ⟹
+        allow_countries' = allow_countries ∪
+                           { lc(c) ↦ 1 | c ∈ country? }
+      country? ∉ seq ISO_Code ⟹
+        allow_countries' = allow_countries ∪ { lc(country?) ↦ 1 }
+      deny_countries' = deny_countries
+      allowed_ips'    = allowed_ips
+      deny_cloud'     = deny_cloud
+    ──────────────────────────────────────────────────────────────────
+
+=head3 deny_cloud
+
+    ─────────────── DenyCloud ───────────────────────────────────────
+      ΔACL
+      ─────────────────────────────────────────────────────────────────
+      deny_cloud'     = 1
+      allowed_ips'    = allowed_ips
+      deny_countries' = deny_countries
+      allow_countries'= allow_countries
+      _cidrlist'      = _cidrlist
+    ──────────────────────────────────────────────────────────────────
+
+=head3 all_denied
+
+    ──────────────────────── AllDenied ──────────────────────────────
+      ΞACL                          -- state unchanged (modulo cache)
+      addr    : IPv4 ∪ IPv6         -- REMOTE_ADDR or DEFAULT_ADDR
+      lingua? : Lingua              -- country resolver (optional)
+      result! : {0, 1}              -- 0 = allow, 1 = deny
+      ─────────────────────────────────────────────────────────────────
+      no_restrictions(self) ⟹ result! = 0
+
+      ¬valid_ip(addr) ⟹ result! = 1
+
+      deny_cloud = 1 ∧ is_cloud(addr) ⟹ result! = 1
+      deny_cloud = 1 ∧ ¬is_cloud(addr)
+        ∧ allowed_ips = ∅ ∧ deny_countries = ∅
+        ∧ allow_countries = ∅            ⟹ result! = 0
+
+      addr ∈ dom(allowed_ips) ⟹ result! = 0
+      cidr_match(addr, allowed_ips) ⟹ result! = 0
+
+      (deny_countries ≠ ∅ ∨ allow_countries ≠ ∅)
+        ∧ lingua? = ∅ ⟹ result! = 1      -- no lingua supplied
+      lingua?.country() = undef ⟹ result! = 1   -- unknown country
+
+      deny_countries($WILDCARD) = 1
+        ∧ allow_countries(lc(lingua?.country())) = 1 ⟹ result! = 0
+      deny_countries($WILDCARD) = 1
+        ∧ allow_countries(lc(lingua?.country())) ≠ 1 ⟹ result! = 1
+
+      deny_countries($WILDCARD) ≠ 1
+        ∧ deny_countries(lc(lingua?.country())) = 1 ⟹ result! = 1
+      deny_countries($WILDCARD) ≠ 1
+        ∧ deny_countries(lc(lingua?.country())) ≠ 1 ⟹ result! = 0
+    ──────────────────────────────────────────────────────────────────
 
 =head1 LICENSE AND COPYRIGHT
 

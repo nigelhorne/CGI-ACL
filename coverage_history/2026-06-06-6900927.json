@@ -1,0 +1,506 @@
+{
+   "runs" : [
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746898.79022,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "-e",
+         "start" : 1780746847.77181,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746847.92584,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "-e",
+         "start" : 1780746847.92571,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746848.26717,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/00-load.t",
+         "start" : 1780746848.26588,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746848.73959,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/30-basics.t",
+         "start" : 1780746848.7014,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746849.09875,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/boiler.t",
+         "start" : 1780746849.07996,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746849.35023,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/changes.t",
+         "start" : 1780746849.34993,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746849.61506,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/comment_spelling.t",
+         "start" : 1780746849.61434,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746865.72329,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/country.t",
+         "start" : 1780746850.02496,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746866.23125,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/coverage.t",
+         "start" : 1780746866.15138,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746866.55092,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/critic.t",
+         "start" : 1780746866.55065,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746866.79575,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/cv.t",
+         "start" : 1780746866.79548,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746867.18488,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/deny_cloud.t",
+         "start" : 1780746867.15073,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746867.5133,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/dist.t",
+         "start" : 1780746867.51301,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746867.75464,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/eof.t",
+         "start" : 1780746867.75437,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746867.99545,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/eol.t",
+         "start" : 1780746867.99515,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746868.67478,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/function.t",
+         "start" : 1780746868.35749,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746869.11401,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/gv.t",
+         "start" : 1780746869.11372,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746890.42115,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/integration.t",
+         "start" : 1780746869.53162,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746891.00383,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/ip.t",
+         "start" : 1780746890.97654,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746891.33455,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/kwalitee.t",
+         "start" : 1780746891.33429,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746891.57689,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/manifest.t",
+         "start" : 1780746891.57662,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746891.81924,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/metrics.t",
+         "start" : 1780746891.81896,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746892.06053,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/no404s.t",
+         "start" : 1780746892.06027,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746892.48626,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/noop.t",
+         "start" : 1780746892.45986,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746892.86738,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/noopentickets.t",
+         "start" : 1780746892.86708,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746893.10952,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/noplan.t",
+         "start" : 1780746893.10925,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746893.37343,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/pod-cm.t",
+         "start" : 1780746893.37253,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746893.62155,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/pod-links.t",
+         "start" : 1780746893.62126,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746893.88914,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/pod-synopsis.t",
+         "start" : 1780746893.88837,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746894.13704,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/pod.t",
+         "start" : 1780746894.13676,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746894.40152,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/pod_spelling.t",
+         "start" : 1780746894.40076,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746894.67437,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/port.t",
+         "start" : 1780746894.67407,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746894.92235,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/prereq.t",
+         "start" : 1780746894.92207,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746895.1728,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/snippets.t",
+         "start" : 1780746895.17204,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746895.42783,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/strict.t",
+         "start" : 1780746895.42756,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746898.10675,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/undef.t",
+         "start" : 1780746895.83281,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746898.50867,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/unused.t",
+         "start" : 1780746898.50839,
+         "version" : "0.07"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "Decide whether to allow a client to run a CGI script",
+         "dir" : "/home/runner/work/CGI-ACL/CGI-ACL",
+         "finish" : 1780746898.7497,
+         "name" : "CGI-ACL",
+         "perl" : "5.40.4",
+         "run" : "t/vars.t",
+         "start" : 1780746898.74943,
+         "version" : "0.07"
+      }
+   ],
+   "summary" : {
+      "Total" : {
+         "branch" : {
+            "covered" : 91,
+            "error" : 3,
+            "percentage" : 96.8085106382979,
+            "total" : 94,
+            "uncoverable" : 0
+         },
+         "condition" : {
+            "covered" : 52,
+            "error" : 8,
+            "percentage" : 86.6666666666667,
+            "total" : 60,
+            "uncoverable" : 0
+         },
+         "pod" : {
+            "covered" : 6,
+            "error" : 0,
+            "percentage" : 100,
+            "total" : 6
+         },
+         "statement" : {
+            "covered" : 177,
+            "error" : 3,
+            "percentage" : 98.3333333333333,
+            "total" : 180
+         },
+         "subroutine" : {
+            "covered" : 23,
+            "error" : 1,
+            "percentage" : 95.8333333333333,
+            "total" : 24
+         },
+         "total" : {
+            "covered" : 349,
+            "error" : 15,
+            "percentage" : 95.8791208791209,
+            "total" : 364,
+            "uncoverable" : 0
+         }
+      },
+      "blib/lib/CGI/ACL.pm" : {
+         "branch" : {
+            "covered" : 91,
+            "error" : 3,
+            "percentage" : 96.8085106382979,
+            "total" : 94,
+            "uncoverable" : 0
+         },
+         "condition" : {
+            "covered" : 52,
+            "error" : 8,
+            "percentage" : 86.6666666666667,
+            "total" : 60,
+            "uncoverable" : 0
+         },
+         "pod" : {
+            "covered" : 6,
+            "error" : 0,
+            "percentage" : 100,
+            "total" : 6
+         },
+         "statement" : {
+            "covered" : 177,
+            "error" : 3,
+            "percentage" : 98.3333333333333,
+            "total" : 180
+         },
+         "subroutine" : {
+            "covered" : 23,
+            "error" : 1,
+            "percentage" : 95.8333333333333,
+            "total" : 24
+         },
+         "total" : {
+            "covered" : 349,
+            "error" : 15,
+            "percentage" : 95.8791208791209,
+            "total" : 364,
+            "uncoverable" : 0
+         }
+      }
+   }
+}

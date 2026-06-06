@@ -72,10 +72,10 @@ https://pjcj.net
 <tr><td class="h"><a id="L913">913</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($hostname)</td></tr>
 <tr><td class="h"><a id="L922">922</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if $@ or not $hostname</td></tr>
 <tr><td class="h"><a id="L925">925</a></td><td class="c0">0</td><td class="c0">T</td><td class="c0">F</td><td class="s">unless $hostname = gethostbyaddr($packed, $family)</td></tr>
-<tr><td class="h"><a id="L932">932</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">$hostname &amp;&amp; grep({$_ eq $canonical;} @forward_ips) ? :</td></tr>
-<tr><td class="h"><a id="L956">956</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($family == 2)</td></tr>
-<tr><td class="h"><a id="L968">968</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if $err</td></tr>
-<tr><td class="h"><a id="L976">976</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless $e</td></tr>
+<tr><td class="h"><a id="L932">932</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">grep({$_ eq $canonical;} @forward_ips) ? :</td></tr>
+<tr><td class="h"><a id="L954">954</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($family == 2)</td></tr>
+<tr><td class="h"><a id="L966">966</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if $err</td></tr>
+<tr><td class="h"><a id="L974">974</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless $e</td></tr>
 </table>
 </body>
 </html>

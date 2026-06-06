@@ -20,8 +20,9 @@ on 'test' => sub {
 	requires 'Test::CleanNamespaces';
 	requires 'Test::DescribeMe';
 	requires 'Test::Distribution';
-	requires 'Test::Mockingbird';
+	requires 'Test::Memory::Cycle';
 	requires 'Test::MockObject';
+	requires 'Test::Mockingbird';
 	requires 'Test::Most';
 	requires 'Test::Needs';
 	requires 'Test::NoWarnings';

@@ -96,10 +96,6 @@ Runtime configuration is supported via L<Object::Configure>.
 
 =head1 SUBROUTINES/METHODS
 
-=cut
-
-# ── Constructor ────────────────────────────────────────────────────────────────
-
 =head2 new
 
 Creates and returns a new CGI::ACL object.
@@ -237,7 +233,7 @@ C<all_denied()> will rebuild it with the new entry included.
 
     # Compatible with Params::Validate::Strict:
     {
-        ip => { type => SCALAR, regex => qr/\S+/, required => 1 },
+        ip => { type => 'string', regex => qr/\S+/, required => 1 },
     }
 
 =head4 Output
@@ -345,7 +341,7 @@ not restrict access.
     # Compatible with Params::Validate::Strict:
     {
         country => {
-            type     => SCALAR | ARRAYREF,
+            type     => 'string' | 'arrayref',
             required => 1,
         },
     }
@@ -390,8 +386,10 @@ sub deny_country {
 		$params{country} = shift;
 	}
 
-	# Add the country or list of countries to the deny set
+	# Add the country or list of countries to the deny set.
+	# An empty arrayref is a no-op — do not create deny_countries = {}.
 	if(defined(my $c = $params{country})) {
+		return $self if ref($c) eq 'ARRAY' && !@{$c};
 		_set_countries($self->{deny_countries} ||= {}, $c);
 	} else {
 		Carp::carp('Usage: deny_country($country)');
@@ -450,7 +448,7 @@ consulted.
     # Compatible with Params::Validate::Strict:
     {
         country => {
-            type     => SCALAR | ARRAYREF,
+            type     => 'string' | 'arrayref',
             required => 1,
         },
     }
@@ -495,8 +493,10 @@ sub allow_country {
 		$params{country} = shift;
 	}
 
-	# Add the country or list of countries to the permit set
+	# Add the country or list of countries to the permit set.
+	# An empty arrayref is a no-op — do not create allow_countries = {}.
 	if(defined(my $c = $params{country})) {
+		return $self if ref($c) eq 'ARRAY' && !@{$c};
 		_set_countries($self->{allow_countries} ||= {}, $c);
 	} else {
 		Carp::carp('Usage: allow_country($country)');
@@ -678,7 +678,7 @@ structure) as a performance optimisation.
 =head4 Output
 
     # Compatible with Return::Set:
-    { type => SCALAR, regex => qr/^[01]$/ }
+    { type => 'string', regex => qr/^[01]$/ }
 
 =head3 MESSAGES
 
@@ -711,8 +711,9 @@ sub all_denied {
 		return 0;
 	}
 
-	# Determine the client address, falling back to localhost when absent
-	my $addr = $ENV{REMOTE_ADDR} || $DEFAULT_ADDR;
+	# Determine the client address, falling back to localhost when absent.
+	# Use // (defined-or) not || to avoid treating "0" or "" as absent.
+	my $addr = $ENV{REMOTE_ADDR} // $DEFAULT_ADDR;
 
 	# Reject addresses that are not syntactically valid IPv4 or IPv6
 	return 1 unless $addr =~ /^$RE{net}{IPv4}$/o
@@ -720,8 +721,10 @@ sub all_denied {
 
 	# ── Cloud check (highest precedence; overrides allow_ip) ────────────────
 	if($self->{deny_cloud}) {
-		# Deny immediately if the IP resolves to a cloud provider hostname
-		return 1 if _is_cloud_host($addr);
+		# Deny if the IP resolves to a cloud provider hostname.
+		# Wrap in eval: DNS failures must not kill the CGI process; fail safe.
+		my $is_cloud = eval { _is_cloud_host($addr) };
+		return 1 if !$@ && $is_cloud;
 
 		# Non-cloud and no other restrictions: allow
 		return 0 unless $self->{allowed_ips}
@@ -734,17 +737,20 @@ sub all_denied {
 		# Check for an exact-match entry first (fast path)
 		return 0 if $self->{allowed_ips}->{$addr};
 
-		# Build and memoise the CIDR lookup structure on first use
+		# Build and memoise the CIDR lookup structure on first use.
+		# Wrap in eval: Net::CIDR dies on non-IP strings (injection attempts).
 		if(!$self->{_cidrlist}) {
 			my @cidrlist;
 			for my $block (keys %{$self->{allowed_ips}}) {
-				@cidrlist = Net::CIDR::cidradd($block, @cidrlist);
+				eval { @cidrlist = Net::CIDR::cidradd($block, @cidrlist) };
 			}
 			$self->{_cidrlist} = \@cidrlist;
 		}
 
-		# Check whether the address falls inside any allowed CIDR range
-		return 0 if Net::CIDR::cidrlookup($addr, @{$self->{_cidrlist}});
+		# Check whether the address falls inside any allowed CIDR range.
+		# Wrap in eval in case the list was built from partly-invalid entries.
+		my $in_cidr = eval { Net::CIDR::cidrlookup($addr, @{$self->{_cidrlist}}) };
+		return 0 if $in_cidr;
 	}
 
 	# ── Country check ───────────────────────────────────────────────────────
@@ -760,8 +766,16 @@ sub all_denied {
 		}
 
 		if(my $lingua = $params{lingua}) {
-			# Resolve and normalise the client's country code
-			if(my $country = $lingua->country()) {
+			# Reject non-objects to avoid "can't call method on non-ref" crashes
+			unless(blessed($lingua)) {
+				Carp::carp('all_denied: lingua must be a blessed object');
+				return 1;
+			}
+			# Resolve and normalise the client's country code.
+			# Wrap in eval: the object may not implement country().
+			my $country_val = eval { $lingua->country() };
+			return 1 if $@;    # method missing or threw — treat as unknown
+			if(my $country = $country_val) {
 				$country = lc $country;
 
 				# Default-deny mode: deny_countries contains the wildcard
@@ -805,9 +819,10 @@ sub all_denied {
 sub _set_countries {
 	my ($hashref, $value) = @_;
 
-	# Handle both a single country code and a list reference
+	# Handle both a single country code and a list reference.
+	# Skip undef elements to avoid "uninitialised value" warnings.
 	if(ref($value) eq 'ARRAY') {
-		$hashref->{lc $_} = 1 for @{$value};
+		$hashref->{lc $_} = 1 for grep { defined } @{$value};
 	} else {
 		$hashref->{lc $value} = 1;
 	}
@@ -1125,7 +1140,9 @@ A VPN or proxy will most likely bypass IP-based access control.
 
 Copyright 2017-2026 Nigel Horne.
 
-This program is released under the following licence: GPL2
+Usage is subject to the GPL2 licence terms.
+If you use it,
+please let me know.
 
 =cut
 

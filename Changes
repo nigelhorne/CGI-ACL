@@ -2,6 +2,24 @@ Revision history for CGI-ACL
 
 0.08
 	[ Bug Fixes ]
+	- Fixed REMOTE_ADDR || DEFAULT_ADDR using || instead of //, which silently
+	  substituted 127.0.0.1 for falsy values "0" and "" — a security bypass if
+	  loopback was in the allow-list
+	- Fixed deny_country(country => []) and allow_country(country => []) creating
+	  an empty hashref instead of being a no-op, which tripped the early-return
+	  guard and caused all traffic to require a lingua argument
+	- Fixed _set_countries() storing "" as a country key when an arrayref contained
+	  undef elements; undef elements are now silently skipped
+	- Fixed Net::CIDR::cidradd/cidrlookup dying on non-IP strings in the allow-list
+	  (e.g. injection attempts); CIDR operations are now wrapped in eval
+	- Fixed all_denied() crashing with "Can't call method on non-ref" when a
+	  plain string was passed as the lingua argument; now carps and denies
+	- Fixed all_denied() dying when the lingua object lacks a country() method;
+	  the country() call is now wrapped in eval and missing-method is treated as
+	  unknown country (deny)
+	- Fixed all_denied() propagating exceptions from _is_cloud_host() / DNS
+	  failures to the caller; cloud check now wraps _is_cloud_host in eval and
+	  fails safe (treat as non-cloud) when DNS throws
 	- Fixed deny_cloud() being bypassed when used without allow_ip or deny_country
 	- Fixed deny_country('*') with no allow_country incorrectly allowing all traffic
 	- Fixed allow_ip() emitting duplicate warnings when passed a reference

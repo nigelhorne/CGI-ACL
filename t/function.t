@@ -202,7 +202,7 @@ subtest 'allow_ip() - missing ip key carps and chains' => sub {
 	my $ret;
 
 	does_carp_that_matches(
-		sub { $ret = $acl->allow_ip(notip => 'x') },
+		sub { $ret = $acl->allow_ip(not_ip => 'x') },
 		qr/\QUsage: allow_ip\E/,
 	);
 	is($ret, $acl, 'returns $self on missing-key error path');

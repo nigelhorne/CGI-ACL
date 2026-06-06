@@ -905,7 +905,7 @@ sub _verified_rdns {
 
 	if($^O ne 'MSWin32') {
 		# Non-Windows: guard against indefinitely-blocking DNS calls
-		local $SIG{ALRM} = sub { die "DNS timeout\n" };
+		local $SIG{ALRM} = sub { die "DNS timeout: $ip" };
 		alarm($DNS_TIMEOUT);
 		eval {
 			# Step 1: reverse lookup (IP -> hostname)
@@ -929,9 +929,7 @@ sub _verified_rdns {
 	}
 
 	# Step 3: the hostname is only trusted if a forward record confirms the IP
-	return ($hostname && grep { $_ eq $canonical } @forward_ips)
-		? $hostname
-		: undef;
+	return (grep { $_ eq $canonical } @forward_ips) ? $hostname : undef;
 }
 
 # _rdns_forward

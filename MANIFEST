@@ -26,6 +26,7 @@ t/gv.t
 t/integration.t
 t/ip.t
 t/kwalitee.t
+t/locales.t
 t/manifest.t
 t/metrics.t
 t/no404s.t

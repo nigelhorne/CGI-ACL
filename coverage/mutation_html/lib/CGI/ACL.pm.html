@@ -1010,7 +1010,7 @@ Approximate LCSAJ segments: 103<br>
 </span><span class="">  712: 	}
 </span><span class="">  713: 
 </span><span class="">  714: 	# Determine the client address, falling back to localhost when absent.
-</span><span class="survived-2 tooltip" data-tooltip="Boolean logic mutation survived. Add tests covering both true and false paths. Return value mutation survived. Add tests asserting exact return values.">  715: 	# Use // (defined-or) not || to avoid treating &quot;0&quot; or &quot;&quot; as absent.
+</span><span class="survived-2 tooltip" data-tooltip="Return value mutation survived. Add tests asserting exact return values. Boolean logic mutation survived. Add tests covering both true and false paths.">  715: 	# Use // (defined-or) not || to avoid treating &quot;0&quot; or &quot;&quot; as absent.
 </span>
 					<details class="mutant-details">
 					<summary>Mutants (Total: 2, Killed: 0, Survived: 2)</summary>
@@ -1285,7 +1285,7 @@ is( func(VALUE_AT_BOUNDARY), EXPECTED, &#39;Test boundary behaviour&#39; );
 </span><span class="">  935: }
 </span><span class="">  936: 
 </span><span class="">  937: # _rdns_forward
-</span><span class="survived-2 tooltip" data-tooltip="Boundary mutation survived. Add tests around edge values (e.g. min, max, off-by-one). Mutation survived. Add targeted tests to validate this branch.">  938: #
+</span><span class="survived-2 tooltip" data-tooltip="Mutation survived. Add targeted tests to validate this branch. Boundary mutation survived. Add tests around edge values (e.g. min, max, off-by-one).">  938: #
 </span>
 					<details class="mutant-details">
 					<summary>Mutants (Total: 2, Killed: 0, Survived: 2)</summary>
@@ -1321,7 +1321,7 @@ is( func(VALUE_AT_BOUNDARY), EXPECTED, &#39;Test boundary behaviour&#39; );
 </span><span class="">  957: 		return map  { inet_ntoa($_)  }
 </span><span class="">  958: 		       grep { defined        }
 </span><span class="">  959: 		       map  { inet_aton($_)  }
-</span><span class="survived-2 tooltip" data-tooltip="Boolean logic mutation survived. Add tests covering both true and false paths. Return value mutation survived. Add tests asserting exact return values.">  960: 		       ($hostname);
+</span><span class="survived-2 tooltip" data-tooltip="Return value mutation survived. Add tests asserting exact return values. Boolean logic mutation survived. Add tests covering both true and false paths.">  960: 		       ($hostname);
 </span>
 					<details class="mutant-details">
 					<summary>Mutants (Total: 2, Killed: 0, Survived: 2)</summary>

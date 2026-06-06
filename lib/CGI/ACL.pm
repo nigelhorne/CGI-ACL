@@ -163,12 +163,8 @@ sub new {
 
 	# Handle the rare case of being called as a plain function: CGI::ACL::new()
 	if(!defined($class)) {
-		if(defined($params)) {
-			Carp::carp(__PACKAGE__ . ': use ->new() not ::new() to instantiate');
-			return;
-		}
-		# FIXME: only works when no arguments are given
-		$class = __PACKAGE__;
+		Carp::carp(__PACKAGE__ . ': use ->new() not ::new() to instantiate');
+		return;
 	} elsif(blessed($class)) {
 		# Called on an existing object: return a shallow clone
 		$params ||= {};

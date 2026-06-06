@@ -13,6 +13,8 @@ Revision history for CGI-ACL
 	  let a late-firing alarm kill the CGI process; alarm(0) now also called inside eval
 	- Fixed new() to restore croak on bad arguments; soft-carp+undef caused opaque
 	  method-chain crashes for all callers
+	- Fixed new() plain-function call (CGI::ACL::new()) to always carp and return undef;
+	  previously the no-argument case silently constructed an object instead of warning
 	- Removed unreachable duplicate AWS hostname pattern in _is_cloud_host()
 	- Fixed _verified_rdns() ignoring IPv6 addresses due to inet_aton being IPv4-only;
 	  IPv6 clients were bypassing deny_cloud entirely
@@ -40,6 +42,10 @@ Revision history for CGI-ACL
 	- Migrated t/deny_cloud.t from Test::MockModule to Test::Mockingbird
 	- Added IPv6 deny_cloud tests to t/deny_cloud.t
 	- Added chaining tests: verify deny_country/allow_country/allow_ip return $self on bad-ref args
+	- Added t/function.t: white-box function-level tests for all public and private functions,
+	  including mocked DNS helpers, $_ clobber checks, and memory cycle checks
+	- Fixed new() to carp and return undef for all plain-function calls (CGI::ACL::new()),
+	  including the no-argument case that previously fell through to create an object silently
 
 0.07	Thu Apr 16 19:38:57 EDT 2026
 	Fixed call to _verified_rdns

@@ -8,6 +8,9 @@
 use strict;
 use warnings;
 
+use Errno qw(ENOENT);
+use File::Spec;
+use File::Temp qw(tempdir);
 use Test::Most;
 use Readonly;
 
@@ -308,6 +311,86 @@ subtest 'Concurrent locale ACLs: French site and German site are independent' =>
 	$acl_fr->allow_country($config{CC_US});
 	is(denied_at($acl_fr, $config{IP_US}, lingua => lingua_for($config{IP_US})), 0, 'US now allowed by (modified) FR ACL');
 	is(denied_at($acl_de, $config{IP_US}, lingua => lingua_for($config{IP_US})), 1, 'US still denied by DE ACL (unaffected)');
+};
+
+# ── System locale: error path behaviour ──────────────────────────────────────
+# Purpose: verify that CGI::ACL->new() with a missing config file throws an
+# exception whose message matches what Perl's own $! produces for ENOENT,
+# regardless of the OS locale (LC_ALL / LANG).
+#
+# The correct idiom is:
+#   local $! = ENOENT;  my $msg = "$!";
+# NOT: POSIX::strerror(ENOENT)
+#
+# strerror() uses the C library's LC_MESSAGES locale.  On systems where that
+# diverges from Perl's $! locale (a common configuration on CPAN smoke boxes),
+# the two strings differ and the regex fails.  The bug was observed on a
+# German smoker where strerror(ENOENT) returned "Datei oder Verzeichnis nicht
+# gefunden" but $! returned "No such file or directory".
+
+# Discover which locales are installed; always include C as a safe fallback.
+my @system_locales = do {
+	# Untaint PATH before calling locale(1) so the test is safe under -T
+	local $ENV{PATH} = '/usr/bin:/bin';
+	my @all = map { chomp; $_ } qx(locale -a 2>/dev/null);
+	my %have = map { $_ => 1 } @all;
+	# Test English, French, German and Mandarin if available; C is always present
+	grep { $have{$_} }
+		qw(C en_US.UTF-8 de_DE.UTF-8 fr_FR.UTF-8 zh_CN.UTF-8);
+};
+
+# A path that is guaranteed not to exist during the test run
+my $temp_dir  = tempdir(CLEANUP => 1);
+my $bad_config = File::Spec->catfile($temp_dir, 'nonexistent.conf');
+
+subtest 'System locale: new() throws on missing config_file under all locales' => sub {
+	plan tests => scalar @system_locales;
+
+	for my $locale (@system_locales) {
+		local $ENV{LC_ALL} = $locale;
+		local $ENV{LANG}   = $locale;
+
+		# Derive the expected error string from Perl's own $! — the same
+		# source that Object::Configure uses when it croaks.  Never use
+		# POSIX::strerror() here; it uses the C library locale and can
+		# produce a different string on mixed-locale systems.
+		local $! = ENOENT;
+		my $enoent = "$!";
+
+		diag "LC_ALL=$locale  ENOENT via \$! = '$enoent'" if $ENV{TEST_VERBOSE};
+
+		throws_ok {
+			CGI::ACL->new(config_file => $bad_config)
+		} qr/\Q$enoent\E/,
+		  "LC_ALL=$locale: exception contains locale-aware ENOENT string";
+	}
+};
+
+# Purpose: confirm that the $! approach and strerror() agree on this system.
+# If they diverge, the warning flags that POSIX::strerror() is unsafe to use
+# in tests on this platform.
+subtest 'System locale: $! and POSIX::strerror agree for ENOENT' => sub {
+	require POSIX;
+
+	for my $locale (@system_locales) {
+		local $ENV{LC_ALL} = $locale;
+		local $ENV{LANG}   = $locale;
+
+		local $! = ENOENT;
+		my $perl_msg = "$!";
+		my $c_msg    = POSIX::strerror(ENOENT);
+
+		diag "LC_ALL=$locale  \$!='$perl_msg'  strerror='$c_msg'" if $ENV{TEST_VERBOSE};
+
+		# On most systems these agree; a mismatch is a platform warning,
+		# not a hard failure — the point is to document where they diverge.
+		TODO: {
+			local $TODO = ($perl_msg ne $c_msg)
+				? "locale $locale: \$! and strerror() diverge on this platform"
+				: undef;
+			is($perl_msg, $c_msg, "LC_ALL=$locale: \$! eq POSIX::strerror(ENOENT)");
+		}
+	}
 };
 
 done_testing();

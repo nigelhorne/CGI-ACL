@@ -128,16 +128,16 @@ for details.
 
     # Compatible with Params::Validate::Strict:
     {
-        allowed_ips     => { type => HASHREF,  optional => 1 },
-        deny_countries  => { type => HASHREF,  optional => 1 },
-        allow_countries => { type => HASHREF,  optional => 1 },
-        deny_cloud      => { type => BOOLEAN,  optional => 1 },
+        allowed_ips     => { type => 'hashref',  optional => 1 },
+        deny_countries  => { type => 'hashref',  optional => 1 },
+        allow_countries => { type => 'hashref',  optional => 1 },
+        deny_cloud      => { type => 'boolean',  optional => 1 },
     }
 
 =head4 Output
 
     # Compatible with Return::Set:
-    { type => OBJECT, isa => 'CGI::ACL' }
+    { type => 'object', isa => 'CGI::ACL' }
     # or undef when called as CGI::ACL::new() instead of CGI::ACL->new()
 
 =head3 MESSAGES
@@ -166,9 +166,16 @@ sub new {
 		Carp::carp(__PACKAGE__ . ': use ->new() not ::new() to instantiate');
 		return;
 	} elsif(blessed($class)) {
-		# Called on an existing object: return a shallow clone
+		# Called on an existing object: return a clone with deep-copied sub-hashes
+		# so that mutations to the clone do not affect the original.
 		$params ||= {};
-		return bless { %{$class}, %{$params} }, ref($class);
+		my %copy = %{$class};
+		for my $key (qw(allowed_ips deny_countries allow_countries)) {
+			$copy{$key} = { %{$copy{$key}} } if ref($copy{$key}) eq 'HASH';
+		}
+		# The CIDR cache depends on allowed_ips; invalidate so it is rebuilt fresh.
+		delete $copy{_cidrlist};
+		return bless { %copy, %{$params} }, ref($class);
 	}
 
 	# Merge any config-file or environment-variable overrides
@@ -236,7 +243,7 @@ C<all_denied()> will rebuild it with the new entry included.
 =head4 Output
 
     # Compatible with Return::Set:
-    { type => OBJECT, isa => 'CGI::ACL' }
+    { type => 'object', isa => 'CGI::ACL' }
 
 =head3 MESSAGES
 
@@ -346,7 +353,7 @@ not restrict access.
 =head4 Output
 
     # Compatible with Return::Set:
-    { type => OBJECT, isa => 'CGI::ACL' }
+    { type => 'object', isa => 'CGI::ACL' }
 
 =head3 MESSAGES
 
@@ -451,7 +458,7 @@ consulted.
 =head4 Output
 
     # Compatible with Return::Set:
-    { type => OBJECT, isa => 'CGI::ACL' }
+    { type => 'object', isa => 'CGI::ACL' }
 
 =head3 MESSAGES
 
@@ -557,7 +564,7 @@ C<$DNS_TIMEOUT>-second alarm is used to prevent indefinite blocking.
 =head4 Output
 
     # Compatible with Return::Set:
-    { type => OBJECT, isa => 'CGI::ACL' }
+    { type => 'object', isa => 'CGI::ACL' }
 
 =head3 MESSAGES
 
@@ -665,7 +672,7 @@ structure) as a performance optimisation.
 
     # Compatible with Params::Validate::Strict:
     {
-        lingua => { type => OBJECT, optional => 1 },
+        lingua => { type => 'object', optional => 1 },
     }
 
 =head4 Output

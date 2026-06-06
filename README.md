@@ -65,16 +65,16 @@ for details.
 
     # Compatible with Params::Validate::Strict:
     {
-        allowed_ips     => { type => HASHREF,  optional => 1 },
-        deny_countries  => { type => HASHREF,  optional => 1 },
-        allow_countries => { type => HASHREF,  optional => 1 },
-        deny_cloud      => { type => BOOLEAN,  optional => 1 },
+        allowed_ips     => { type => 'hashref',  optional => 1 },
+        deny_countries  => { type => 'hashref',  optional => 1 },
+        allow_countries => { type => 'hashref',  optional => 1 },
+        deny_cloud      => { type => 'boolean',  optional => 1 },
     }
 
 #### Output
 
     # Compatible with Return::Set:
-    { type => OBJECT, isa => 'CGI::ACL' }
+    { type => 'object', isa => 'CGI::ACL' }
     # or undef when called as CGI::ACL::new() instead of CGI::ACL->new()
 
 ### MESSAGES
@@ -139,7 +139,7 @@ Invalidates the internal CIDR lookup cache so the next call to
 #### Output
 
     # Compatible with Return::Set:
-    { type => OBJECT, isa => 'CGI::ACL' }
+    { type => 'object', isa => 'CGI::ACL' }
 
 ### MESSAGES
 
@@ -208,7 +208,7 @@ not restrict access.
 #### Output
 
     # Compatible with Return::Set:
-    { type => OBJECT, isa => 'CGI::ACL' }
+    { type => 'object', isa => 'CGI::ACL' }
 
 ### MESSAGES
 
@@ -273,7 +273,7 @@ consulted.
 #### Output
 
     # Compatible with Return::Set:
-    { type => OBJECT, isa => 'CGI::ACL' }
+    { type => 'object', isa => 'CGI::ACL' }
 
 ### MESSAGES
 
@@ -343,7 +343,7 @@ DNS lookups are performed synchronously.  On non-Windows platforms a
 #### Output
 
     # Compatible with Return::Set:
-    { type => OBJECT, isa => 'CGI::ACL' }
+    { type => 'object', isa => 'CGI::ACL' }
 
 ### MESSAGES
 
@@ -417,7 +417,7 @@ structure) as a performance optimisation.
 
     # Compatible with Params::Validate::Strict:
     {
-        lingua => { type => OBJECT, optional => 1 },
+        lingua => { type => 'object', optional => 1 },
     }
 
 #### Output

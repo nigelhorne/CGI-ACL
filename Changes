@@ -18,6 +18,9 @@ Revision history for CGI-ACL
 	- Removed unreachable duplicate AWS hostname pattern in _is_cloud_host()
 	- Fixed _verified_rdns() ignoring IPv6 addresses due to inet_aton being IPv4-only;
 	  IPv6 clients were bypassing deny_cloud entirely
+	- Fixed new() on an existing object (clone mode) using a shallow copy of nested
+	  hashrefs, causing mutations to deny_countries/allow_countries/allowed_ips on
+	  a clone to also modify the original object
 
 	[ Enhancements ]
 	- Cache CIDR list in all_denied() to avoid rebuilding it on every call

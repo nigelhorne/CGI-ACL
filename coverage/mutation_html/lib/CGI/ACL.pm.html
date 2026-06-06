@@ -244,10 +244,10 @@ pre details.mutant-details ul {
 <div class="nav"><a href="../../../index.html">Index</a>
 </div><div class='summary'>
 <strong>Structural Coverage (Approximate)</strong><p>
-TER1 (Statement): 98.33%<br>
-TER2 (Branch): 96.81%<br>
+TER1 (Statement): 98.47%<br>
+TER2 (Branch): 97.06%<br>
 TER3 (LCSAJ): 100.0% (49/49)<br>
-Approximate LCSAJ segments: 95<br>
+Approximate LCSAJ segments: 103<br>
 </div>
 
     <div class="legend">
@@ -388,413 +388,413 @@ Approximate LCSAJ segments: 95<br>
 </span><span class="">   96: 
 </span><span class="">   97: =head1 SUBROUTINES/METHODS
 </span><span class="">   98: 
-</span><span class="">   99: =cut
+</span><span class="">   99: =head2 new
 </span><span class="">  100: 
-</span><span class="">  101: # &acirc;&#148;&#128;&acirc;&#148;&#128; Constructor &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class="">  101: Creates and returns a new CGI::ACL object.
 </span><span class="">  102: 
-</span><span class="">  103: =head2 new
-</span><span class="">  104: 
-</span><span class="">  105: Creates and returns a new CGI::ACL object.
-</span><span class="">  106: 
-</span><span class="">  107: When called on an existing object it returns a shallow clone of that object,
-</span><span class="">  108: optionally overriding fields with the supplied arguments.
+</span><span class="">  103: When called on an existing object it returns a shallow clone of that object,
+</span><span class="">  104: optionally overriding fields with the supplied arguments.
+</span><span class="">  105: 
+</span><span class="">  106: Constructor arguments may also be supplied via environment variables of the
+</span><span class="">  107: form C&lt;CGI__ACL__E&lt;lt&gt;fieldE&lt;gt&gt;&gt; or via a config file; see L&lt;Object::Configure&gt;
+</span><span class="">  108: for details.
 </span><span class="">  109: 
-</span><span class="">  110: Constructor arguments may also be supplied via environment variables of the
-</span><span class="">  111: form C&lt;CGI__ACL__E&lt;lt&gt;fieldE&lt;gt&gt;&gt; or via a config file; see L&lt;Object::Configure&gt;
-</span><span class="">  112: for details.
-</span><span class="">  113: 
-</span><span class="">  114: =head3 USAGE
-</span><span class="">  115: 
-</span><span class="">  116:     # No restrictions (allow all by default)
-</span><span class="">  117:     my $acl = CGI::ACL-&gt;new();
-</span><span class="">  118: 
-</span><span class="">  119:     # Pre-seeded allow list
-</span><span class="">  120:     my $acl = CGI::ACL-&gt;new(allowed_ips =&gt; { &#39;127.0.0.1&#39; =&gt; 1 });
-</span><span class="">  121: 
-</span><span class="">  122:     # Clone an existing ACL and add a restriction
-</span><span class="">  123:     my $acl2 = $acl-&gt;new(deny_cloud =&gt; 1);
+</span><span class="">  110: =head3 USAGE
+</span><span class="">  111: 
+</span><span class="">  112:     # No restrictions (allow all by default)
+</span><span class="">  113:     my $acl = CGI::ACL-&gt;new();
+</span><span class="">  114: 
+</span><span class="">  115:     # Pre-seeded allow list
+</span><span class="">  116:     my $acl = CGI::ACL-&gt;new(allowed_ips =&gt; { &#39;127.0.0.1&#39; =&gt; 1 });
+</span><span class="">  117: 
+</span><span class="">  118:     # Clone an existing ACL and add a restriction
+</span><span class="">  119:     my $acl2 = $acl-&gt;new(deny_cloud =&gt; 1);
+</span><span class="">  120: 
+</span><span class="">  121: =head3 API SPECIFICATION
+</span><span class="">  122: 
+</span><span class="">  123: =head4 Input
 </span><span class="">  124: 
-</span><span class="">  125: =head3 API SPECIFICATION
-</span><span class="">  126: 
-</span><span class="">  127: =head4 Input
-</span><span class="">  128: 
-</span><span class="">  129:     # Compatible with Params::Validate::Strict:
-</span><span class="">  130:     {
-</span><span class="">  131:         allowed_ips     =&gt; { type =&gt; &#39;hashref&#39;,  optional =&gt; 1 },
-</span><span class="">  132:         deny_countries  =&gt; { type =&gt; &#39;hashref&#39;,  optional =&gt; 1 },
-</span><span class="">  133:         allow_countries =&gt; { type =&gt; &#39;hashref&#39;,  optional =&gt; 1 },
-</span><span class="">  134:         deny_cloud      =&gt; { type =&gt; &#39;boolean&#39;,  optional =&gt; 1 },
-</span><span class="">  135:     }
-</span><span class="">  136: 
-</span><span class="">  137: =head4 Output
+</span><span class="">  125:     # Compatible with Params::Validate::Strict:
+</span><span class="">  126:     {
+</span><span class="">  127:         allowed_ips     =&gt; { type =&gt; &#39;hashref&#39;,  optional =&gt; 1 },
+</span><span class="">  128:         deny_countries  =&gt; { type =&gt; &#39;hashref&#39;,  optional =&gt; 1 },
+</span><span class="">  129:         allow_countries =&gt; { type =&gt; &#39;hashref&#39;,  optional =&gt; 1 },
+</span><span class="">  130:         deny_cloud      =&gt; { type =&gt; &#39;boolean&#39;,  optional =&gt; 1 },
+</span><span class="">  131:     }
+</span><span class="">  132: 
+</span><span class="">  133: =head4 Output
+</span><span class="">  134: 
+</span><span class="">  135:     # Compatible with Return::Set:
+</span><span class="">  136:     { type =&gt; &#39;object&#39;, isa =&gt; &#39;CGI::ACL&#39; }
+</span><span class="">  137:     # or undef when called as CGI::ACL::new() instead of CGI::ACL-&gt;new()
 </span><span class="">  138: 
-</span><span class="">  139:     # Compatible with Return::Set:
-</span><span class="">  140:     { type =&gt; &#39;object&#39;, isa =&gt; &#39;CGI::ACL&#39; }
-</span><span class="">  141:     # or undef when called as CGI::ACL::new() instead of CGI::ACL-&gt;new()
+</span><span class="">  139: =head3 MESSAGES
+</span><span class="">  140: 
+</span><span class="">  141: =over 4
 </span><span class="">  142: 
-</span><span class="">  143: =head3 MESSAGES
+</span><span class="">  143: =item C&lt;&lt; CGI::ACL use -&gt;new() not ::new() to instantiate &gt;&gt;
 </span><span class="">  144: 
-</span><span class="">  145: =over 4
-</span><span class="">  146: 
-</span><span class="">  147: =item C&lt;&lt; CGI::ACL use -&gt;new() not ::new() to instantiate &gt;&gt;
-</span><span class="">  148: 
-</span><span class="">  149: B&lt;Severity:&gt; carp (warning).
-</span><span class="">  150: B&lt;Cause:&gt; C&lt;CGI::ACL::new(...)&gt; was called as a plain function instead of
-</span><span class="">  151: as a class method.
-</span><span class="">  152: B&lt;Action:&gt; Change the call to C&lt;&lt; CGI::ACL-&gt;new(...) &gt;&gt;.
+</span><span class="">  145: B&lt;Severity:&gt; carp (warning).
+</span><span class="">  146: B&lt;Cause:&gt; C&lt;CGI::ACL::new(...)&gt; was called as a plain function instead of
+</span><span class="">  147: as a class method.
+</span><span class="">  148: B&lt;Action:&gt; Change the call to C&lt;&lt; CGI::ACL-&gt;new(...) &gt;&gt;.
+</span><span class="">  149: 
+</span><span class="">  150: =back
+</span><span class="">  151: 
+</span><span class="">  152: =cut
 </span><span class="">  153: 
-</span><span class="">  154: =back
-</span><span class="">  155: 
-</span><span class="">  156: =cut
-</span><span class="">  157: 
-</span><span class="">  158: sub new {
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">159 → 165 → 182</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">159 → 165 → 0</span></span>  159: 	my $class = shift;
-</span><span class="">  160: 
-</span><span class="">  161: 	# Parse arguments uniformly (hashref, named pairs, or no args)
-</span><span class="">  162: 	my $params = Params::Get::get_params(undef, @_);
-</span><span class="">  163: 
-</span><span class="">  164: 	# Handle the rare case of being called as a plain function: CGI::ACL::new()
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  165: 	if(!defined($class)) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="survived-1 tooltip" data-tooltip="Mutation survived. Add targeted tests to validate this branch.">  166: 		Carp::carp(__PACKAGE__ . &#39;: use -&gt;new() not ::new() to instantiate&#39;);
+</span><span class="">  154: sub new {
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">155 → 161 → 178</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">155 → 161 → 0</span></span>  155: 	my $class = shift;
+</span><span class="">  156: 
+</span><span class="">  157: 	# Parse arguments uniformly (hashref, named pairs, or no args)
+</span><span class="">  158: 	my $params = Params::Get::get_params(undef, @_);
+</span><span class="">  159: 
+</span><span class="">  160: 	# Handle the rare case of being called as a plain function: CGI::ACL::new()
+</span><span class="">  161: 	if(!defined($class)) {
+</span><span class="">  162: 		Carp::carp(__PACKAGE__ . &#39;: use -&gt;new() not ::new() to instantiate&#39;);
+</span><span class="">  163: 		return;
+</span><span class="">  164: 	} elsif(blessed($class)) {
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  165: 		# Called on an existing object: return a clone with deep-copied sub-hashes
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="survived-1 tooltip" data-tooltip="Mutation survived. Add targeted tests to validate this branch.">  166: 		# so that mutations to the clone do not affect the original.
 </span>
 					<details class="mutant-details">
 					<summary>Mutants (Total: 1, Killed: 0, Survived: 1)</summary>
 					<ul>
 				<li><b>COND_INV_166_3: Invert condition if to unless</b><br>MEDIUM: Add tests asserting both true and false outcomes
 </li></ul></details>
-<span class="">  167: 		return;
-</span><span class="">  168: 	} elsif(blessed($class)) {
-</span><span class="">  169: 		# Called on an existing object: return a clone with deep-copied sub-hashes
-</span><span class="">  170: 		# so that mutations to the clone do not affect the original.
-</span><span class="">  171: 		$params ||= {};
-</span><span class="">  172: 		my %copy = %{$class};
-</span><span class="">  173: 		for my $key (qw(allowed_ips deny_countries allow_countries)) {
-</span><span class="">  174: 			$copy{$key} = { %{$copy{$key}} } if ref($copy{$key}) eq &#39;HASH&#39;;
-</span><span class="">  175: 		}
-</span><span class="">  176: 		# The CIDR cache depends on allowed_ips; invalidate so it is rebuilt fresh.
-</span><span class="">  177: 		delete $copy{_cidrlist};
-</span><span class="">  178: 		return bless { %copy, %{$params} }, ref($class);
-</span><span class="">  179: 	}
-</span><span class="">  180: 
-</span><span class="">  181: 	# Merge any config-file or environment-variable overrides
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">182 → 184 → 0</span></span>  182: 	$params = Object::Configure::configure($class, $params);
-</span><span class="">  183: 
-</span><span class="">  184: 	return bless $params, $class;
-</span><span class="">  185: }
+<span class="">  167: 		$params ||= {};
+</span><span class="">  168: 		my %copy = %{$class};
+</span><span class="">  169: 		for my $key (qw(allowed_ips deny_countries allow_countries)) {
+</span><span class="">  170: 			$copy{$key} = { %{$copy{$key}} } if ref($copy{$key}) eq &#39;HASH&#39;;
+</span><span class="">  171: 		}
+</span><span class="">  172: 		# The CIDR cache depends on allowed_ips; invalidate so it is rebuilt fresh.
+</span><span class="">  173: 		delete $copy{_cidrlist};
+</span><span class="">  174: 		return bless { %copy, %{$params} }, ref($class);
+</span><span class="">  175: 	}
+</span><span class="">  176: 
+</span><span class="">  177: 	# Merge any config-file or environment-variable overrides
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">178 → 180 → 0</span></span>  178: 	$params = Object::Configure::configure($class, $params);
+</span><span class="">  179: 
+</span><span class="">  180: 	return bless $params, $class;
+</span><span class="">  181: }
+</span><span class="">  182: 
+</span><span class="">  183: # &acirc;&#148;&#128;&acirc;&#148;&#128; allow_ip &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class="">  184: 
+</span><span class="">  185: =head2 allow_ip
 </span><span class="">  186: 
-</span><span class="">  187: # &acirc;&#148;&#128;&acirc;&#148;&#128; allow_ip &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
-</span><span class="">  188: 
-</span><span class="">  189: =head2 allow_ip
+</span><span class="">  187: Adds an IPv4/IPv6 address or CIDR block to the set of explicitly permitted
+</span><span class="">  188: clients.  When C&lt;allowed_ips&gt; is non-empty, any client address not matched
+</span><span class="">  189: by an entry in the set is denied (subject to C&lt;deny_cloud&gt; taking precedence).
 </span><span class="">  190: 
-</span><span class="">  191: Adds an IPv4/IPv6 address or CIDR block to the set of explicitly permitted
-</span><span class="">  192: clients.  When C&lt;allowed_ips&gt; is non-empty, any client address not matched
-</span><span class="">  193: by an entry in the set is denied (subject to C&lt;deny_cloud&gt; taking precedence).
+</span><span class="">  191: =head3 USAGE
+</span><span class="">  192: 
+</span><span class="">  193:     use CGI::ACL;
 </span><span class="">  194: 
-</span><span class="">  195: =head3 USAGE
-</span><span class="">  196: 
-</span><span class="">  197:     use CGI::ACL;
-</span><span class="">  198: 
-</span><span class="">  199:     # Single address
-</span><span class="">  200:     my $acl = CGI::ACL-&gt;new()-&gt;allow_ip(&#39;203.0.113.5&#39;);
-</span><span class="">  201: 
-</span><span class="">  202:     # Named parameter
-</span><span class="">  203:     my $acl = CGI::ACL-&gt;new()-&gt;allow_ip(ip =&gt; &#39;203.0.113.5&#39;);
-</span><span class="">  204: 
-</span><span class="">  205:     # CIDR block
-</span><span class="">  206:     my $acl = CGI::ACL-&gt;new()-&gt;allow_ip(ip =&gt; &#39;192.0.2.0/24&#39;);
-</span><span class="">  207: 
-</span><span class="">  208:     # Method chaining
-</span><span class="">  209:     my $acl = CGI::ACL-&gt;new()
-</span><span class="">  210:         -&gt;allow_ip(&#39;192.0.2.1&#39;)
-</span><span class="">  211:         -&gt;allow_ip(&#39;10.0.0.0/8&#39;);
+</span><span class="">  195:     # Single address
+</span><span class="">  196:     my $acl = CGI::ACL-&gt;new()-&gt;allow_ip(&#39;203.0.113.5&#39;);
+</span><span class="">  197: 
+</span><span class="">  198:     # Named parameter
+</span><span class="">  199:     my $acl = CGI::ACL-&gt;new()-&gt;allow_ip(ip =&gt; &#39;203.0.113.5&#39;);
+</span><span class="">  200: 
+</span><span class="">  201:     # CIDR block
+</span><span class="">  202:     my $acl = CGI::ACL-&gt;new()-&gt;allow_ip(ip =&gt; &#39;192.0.2.0/24&#39;);
+</span><span class="">  203: 
+</span><span class="">  204:     # Method chaining
+</span><span class="">  205:     my $acl = CGI::ACL-&gt;new()
+</span><span class="">  206:         -&gt;allow_ip(&#39;192.0.2.1&#39;)
+</span><span class="">  207:         -&gt;allow_ip(&#39;10.0.0.0/8&#39;);
+</span><span class="">  208: 
+</span><span class="">  209: =head3 ARGUMENTS
+</span><span class="">  210: 
+</span><span class="">  211: =over 4
 </span><span class="">  212: 
-</span><span class="">  213: =head3 ARGUMENTS
+</span><span class="">  213: =item ip (required)
 </span><span class="">  214: 
-</span><span class="">  215: =over 4
-</span><span class="">  216: 
-</span><span class="">  217: =item ip (required)
+</span><span class="">  215: A string containing an IPv4 address, an IPv6 address, or a CIDR block
+</span><span class="">  216: (e.g. C&lt;10.0.0.0/8&gt;).  The value is stored verbatim; invalid addresses
+</span><span class="">  217: will be silently ignored during lookup.
 </span><span class="">  218: 
-</span><span class="">  219: A string containing an IPv4 address, an IPv6 address, or a CIDR block
-</span><span class="">  220: (e.g. C&lt;10.0.0.0/8&gt;).  The value is stored verbatim; invalid addresses
-</span><span class="">  221: will be silently ignored during lookup.
+</span><span class="">  219: =back
+</span><span class="">  220: 
+</span><span class="">  221: =head3 RETURNS
 </span><span class="">  222: 
-</span><span class="">  223: =back
+</span><span class="">  223: The object itself, to allow method chaining.
 </span><span class="">  224: 
-</span><span class="">  225: =head3 RETURNS
+</span><span class="">  225: =head3 SIDE EFFECTS
 </span><span class="">  226: 
-</span><span class="">  227: The object itself, to allow method chaining.
-</span><span class="">  228: 
-</span><span class="">  229: =head3 SIDE EFFECTS
-</span><span class="">  230: 
-</span><span class="">  231: Invalidates the internal CIDR lookup cache so the next call to
-</span><span class="">  232: C&lt;all_denied()&gt; will rebuild it with the new entry included.
+</span><span class="">  227: Invalidates the internal CIDR lookup cache so the next call to
+</span><span class="">  228: C&lt;all_denied()&gt; will rebuild it with the new entry included.
+</span><span class="">  229: 
+</span><span class="">  230: =head3 API SPECIFICATION
+</span><span class="">  231: 
+</span><span class="">  232: =head4 Input
 </span><span class="">  233: 
-</span><span class="">  234: =head3 API SPECIFICATION
-</span><span class="">  235: 
-</span><span class="">  236: =head4 Input
-</span><span class="">  237: 
-</span><span class="">  238:     # Compatible with Params::Validate::Strict:
-</span><span class="">  239:     {
-</span><span class="">  240:         ip =&gt; { type =&gt; SCALAR, regex =&gt; qr/\S+/, required =&gt; 1 },
-</span><span class="">  241:     }
-</span><span class="">  242: 
-</span><span class="">  243: =head4 Output
-</span><span class="">  244: 
-</span><span class="">  245:     # Compatible with Return::Set:
-</span><span class="">  246:     { type =&gt; &#39;object&#39;, isa =&gt; &#39;CGI::ACL&#39; }
+</span><span class="">  234:     # Compatible with Params::Validate::Strict:
+</span><span class="">  235:     {
+</span><span class="">  236:         ip =&gt; { type =&gt; &#39;string&#39;, regex =&gt; qr/\S+/, required =&gt; 1 },
+</span><span class="">  237:     }
+</span><span class="">  238: 
+</span><span class="">  239: =head4 Output
+</span><span class="">  240: 
+</span><span class="">  241:     # Compatible with Return::Set:
+</span><span class="">  242:     { type =&gt; &#39;object&#39;, isa =&gt; &#39;CGI::ACL&#39; }
+</span><span class="">  243: 
+</span><span class="">  244: =head3 MESSAGES
+</span><span class="">  245: 
+</span><span class="">  246: =over 4
 </span><span class="">  247: 
-</span><span class="">  248: =head3 MESSAGES
+</span><span class="">  248: =item C&lt;Usage: allow_ip($ip_address)&gt;
 </span><span class="">  249: 
-</span><span class="">  250: =over 4
-</span><span class="">  251: 
-</span><span class="">  252: =item C&lt;Usage: allow_ip($ip_address)&gt;
-</span><span class="">  253: 
-</span><span class="">  254: B&lt;Severity:&gt; carp (warning).
-</span><span class="">  255: B&lt;Cause:&gt; Called with no argument, with a non-hash reference, or without
-</span><span class="">  256: supplying the C&lt;ip&gt; key.
-</span><span class="">  257: B&lt;Action:&gt; Pass a scalar IP/CIDR string: C&lt;allow_ip(&#39;192.0.2.1&#39;)&gt; or
-</span><span class="">  258: C&lt;allow_ip(ip =E&lt;gt&gt; &#39;192.0.2.1&#39;)&gt;.
+</span><span class="">  250: B&lt;Severity:&gt; carp (warning).
+</span><span class="">  251: B&lt;Cause:&gt; Called with no argument, with a non-hash reference, or without
+</span><span class="">  252: supplying the C&lt;ip&gt; key.
+</span><span class="">  253: B&lt;Action:&gt; Pass a scalar IP/CIDR string: C&lt;allow_ip(&#39;192.0.2.1&#39;)&gt; or
+</span><span class="">  254: C&lt;allow_ip(ip =E&lt;gt&gt; &#39;192.0.2.1&#39;)&gt;.
+</span><span class="">  255: 
+</span><span class="">  256: =back
+</span><span class="">  257: 
+</span><span class="">  258: =cut
 </span><span class="">  259: 
-</span><span class="">  260: =back
-</span><span class="">  261: 
-</span><span class="">  262: =cut
-</span><span class="">  263: 
-</span><span class="">  264: sub allow_ip {
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">265 → 268 → 274</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">265 → 268 → 0</span></span>  265: 	my $self = shift;
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  266: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  267: 	# Reject non-hash, non-scalar references (e.g. a scalar ref passed by mistake)
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  268: 	if(ref($_[0]) &amp;&amp; ref($_[0]) ne &#39;HASH&#39;) {
-</span><span class="">  269: 		Carp::carp(&#39;Usage: allow_ip($ip_address)&#39;);
-</span><span class="">  270: 		return $self;
-</span><span class="">  271: 	}
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  272: 
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  273: 	# Normalise positional, named, and hashref calling conventions
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">274 → 275 → 284</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">274 → 275 → 0</span></span>  274: 	my %params;
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  275: 	if(ref($_[0]) eq &#39;HASH&#39;) {
-</span><span class="">  276: 		%params = %{$_[0]};
-</span><span class="">  277: 	} elsif(@_ % 2 == 0) {
-</span><span class="">  278: 		%params = @_;
-</span><span class="">  279: 	} else {
-</span><span class="">  280: 		$params{ip} = shift;
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  281: 	}
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  282: 
-</span><span class="">  283: 	# Store the address and invalidate the memoised CIDR list
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">284 → 284 → 290</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">284 → 284 → 0</span></span>  284: 	if(defined(my $ip = $params{ip})) {
-</span><span class="">  285: 		$self-&gt;{allowed_ips}-&gt;{$ip} = 1;
-</span><span class="">  286: 		delete $self-&gt;{_cidrlist};
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  287: 	} else {
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  288: 		Carp::carp(&#39;Usage: allow_ip($ip_address)&#39;);
-</span><span class="">  289: 	}
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">290 → 290 → 0</span></span>  290: 	return $self;
-</span><span class="">  291: }
+</span><span class="">  260: sub allow_ip {
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">261 → 264 → 270</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">261 → 264 → 0</span></span>  261: 	my $self = shift;
+</span><span class="">  262: 
+</span><span class="">  263: 	# Reject non-hash, non-scalar references (e.g. a scalar ref passed by mistake)
+</span><span class="">  264: 	if(ref($_[0]) &amp;&amp; ref($_[0]) ne &#39;HASH&#39;) {
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  265: 		Carp::carp(&#39;Usage: allow_ip($ip_address)&#39;);
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  266: 		return $self;
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  267: 	}
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  268: 
+</span><span class="">  269: 	# Normalise positional, named, and hashref calling conventions
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">270 → 271 → 280</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">270 → 271 → 0</span></span>  270: 	my %params;
+</span><span class="">  271: 	if(ref($_[0]) eq &#39;HASH&#39;) {
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  272: 		%params = %{$_[0]};
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  273: 	} elsif(@_ % 2 == 0) {
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  274: 		%params = @_;
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  275: 	} else {
+</span><span class="">  276: 		$params{ip} = shift;
+</span><span class="">  277: 	}
+</span><span class="">  278: 
+</span><span class="">  279: 	# Store the address and invalidate the memoised CIDR list
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">280 → 280 → 286</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">280 → 280 → 0</span></span>  280: 	if(defined(my $ip = $params{ip})) {
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  281: 		$self-&gt;{allowed_ips}-&gt;{$ip} = 1;
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  282: 		delete $self-&gt;{_cidrlist};
+</span><span class="">  283: 	} else {
+</span><span class="">  284: 		Carp::carp(&#39;Usage: allow_ip($ip_address)&#39;);
+</span><span class="">  285: 	}
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">286 → 286 → 0</span></span>  286: 	return $self;
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  287: }
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  288: 
+</span><span class="">  289: # &acirc;&#148;&#128;&acirc;&#148;&#128; deny_country &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class="">  290: 
+</span><span class="">  291: =head2 deny_country
 </span><span class="">  292: 
-</span><span class="">  293: # &acirc;&#148;&#128;&acirc;&#148;&#128; deny_country &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
-</span><span class="">  294: 
-</span><span class="">  295: =head2 deny_country
-</span><span class="">  296: 
-</span><span class="">  297: Adds one or more countries to the deny list.  Countries are identified by
-</span><span class="">  298: their ISO 3166-1 alpha-2 codes (case-insensitive).
+</span><span class="">  293: Adds one or more countries to the deny list.  Countries are identified by
+</span><span class="">  294: their ISO 3166-1 alpha-2 codes (case-insensitive).
+</span><span class="">  295: 
+</span><span class="">  296: Passing the special value C&lt;&#39;*&#39;&gt; (wildcard) switches to default-deny mode:
+</span><span class="">  297: all countries are denied unless they also appear in the allow list set by
+</span><span class="">  298: C&lt;allow_country()&gt;.
 </span><span class="">  299: 
-</span><span class="">  300: Passing the special value C&lt;&#39;*&#39;&gt; (wildcard) switches to default-deny mode:
-</span><span class="">  301: all countries are denied unless they also appear in the allow list set by
-</span><span class="">  302: C&lt;allow_country()&gt;.
+</span><span class="">  300: =head3 USAGE
+</span><span class="">  301: 
+</span><span class="">  302:     use CGI::ACL;
 </span><span class="">  303: 
-</span><span class="">  304: =head3 USAGE
-</span><span class="">  305: 
-</span><span class="">  306:     use CGI::ACL;
-</span><span class="">  307: 
-</span><span class="">  308:     # Deny a single country
-</span><span class="">  309:     my $acl = CGI::ACL-&gt;new()-&gt;deny_country(&#39;BR&#39;);
-</span><span class="">  310: 
-</span><span class="">  311:     # Deny a list of countries
-</span><span class="">  312:     my $acl = CGI::ACL-&gt;new()-&gt;deny_country(country =&gt; [&#39;BR&#39;, &#39;CN&#39;, &#39;RU&#39;]);
-</span><span class="">  313: 
-</span><span class="">  314:     # Default-deny all countries (use with allow_country to whitelist)
-</span><span class="">  315:     my $acl = CGI::ACL-&gt;new()-&gt;deny_country(&#39;*&#39;)-&gt;allow_country(&#39;US&#39;);
+</span><span class="">  304:     # Deny a single country
+</span><span class="">  305:     my $acl = CGI::ACL-&gt;new()-&gt;deny_country(&#39;BR&#39;);
+</span><span class="">  306: 
+</span><span class="">  307:     # Deny a list of countries
+</span><span class="">  308:     my $acl = CGI::ACL-&gt;new()-&gt;deny_country(country =&gt; [&#39;BR&#39;, &#39;CN&#39;, &#39;RU&#39;]);
+</span><span class="">  309: 
+</span><span class="">  310:     # Default-deny all countries (use with allow_country to whitelist)
+</span><span class="">  311:     my $acl = CGI::ACL-&gt;new()-&gt;deny_country(&#39;*&#39;)-&gt;allow_country(&#39;US&#39;);
+</span><span class="">  312: 
+</span><span class="">  313: =head3 ARGUMENTS
+</span><span class="">  314: 
+</span><span class="">  315: =over 4
 </span><span class="">  316: 
-</span><span class="">  317: =head3 ARGUMENTS
+</span><span class="">  317: =item country (required)
 </span><span class="">  318: 
-</span><span class="">  319: =over 4
+</span><span class="">  319: A scalar ISO code, the wildcard C&lt;&#39;*&#39;&gt;, or an array reference of ISO codes.
 </span><span class="">  320: 
-</span><span class="">  321: =item country (required)
+</span><span class="">  321: =back
 </span><span class="">  322: 
-</span><span class="">  323: A scalar ISO code, the wildcard C&lt;&#39;*&#39;&gt;, or an array reference of ISO codes.
+</span><span class="">  323: =head3 RETURNS
 </span><span class="">  324: 
-</span><span class="">  325: =back
+</span><span class="">  325: The object itself, to allow method chaining.
 </span><span class="">  326: 
-</span><span class="">  327: =head3 RETURNS
+</span><span class="">  327: =head3 SIDE EFFECTS
 </span><span class="">  328: 
-</span><span class="">  329: The object itself, to allow method chaining.
+</span><span class="">  329: Updates C&lt;&lt; $self-&gt;{deny_countries} &gt;&gt;.
 </span><span class="">  330: 
-</span><span class="">  331: =head3 SIDE EFFECTS
+</span><span class="">  331: =head3 NOTES
 </span><span class="">  332: 
-</span><span class="">  333: Updates C&lt;&lt; $self-&gt;{deny_countries} &gt;&gt;.
-</span><span class="">  334: 
-</span><span class="">  335: =head3 NOTES
+</span><span class="">  333: C&lt;allow_country()&gt; has no effect unless C&lt;deny_country(&#39;*&#39;)&gt; has been called
+</span><span class="">  334: first.  Calling C&lt;allow_country()&gt; alone (without the wildcard deny) does
+</span><span class="">  335: not restrict access.
 </span><span class="">  336: 
-</span><span class="">  337: C&lt;allow_country()&gt; has no effect unless C&lt;deny_country(&#39;*&#39;)&gt; has been called
-</span><span class="">  338: first.  Calling C&lt;allow_country()&gt; alone (without the wildcard deny) does
-</span><span class="">  339: not restrict access.
+</span><span class="">  337: =head3 API SPECIFICATION
+</span><span class="">  338: 
+</span><span class="">  339: =head4 Input
 </span><span class="">  340: 
-</span><span class="">  341: =head3 API SPECIFICATION
-</span><span class="">  342: 
-</span><span class="">  343: =head4 Input
-</span><span class="">  344: 
-</span><span class="">  345:     # Compatible with Params::Validate::Strict:
-</span><span class="">  346:     {
-</span><span class="">  347:         country =&gt; {
-</span><span class="">  348:             type     =&gt; SCALAR | ARRAYREF,
-</span><span class="">  349:             required =&gt; 1,
-</span><span class="">  350:         },
-</span><span class="">  351:     }
-</span><span class="">  352: 
-</span><span class="">  353: =head4 Output
-</span><span class="">  354: 
-</span><span class="">  355:     # Compatible with Return::Set:
-</span><span class="">  356:     { type =&gt; &#39;object&#39;, isa =&gt; &#39;CGI::ACL&#39; }
+</span><span class="">  341:     # Compatible with Params::Validate::Strict:
+</span><span class="">  342:     {
+</span><span class="">  343:         country =&gt; {
+</span><span class="">  344:             type     =&gt; &#39;string&#39; | &#39;arrayref&#39;,
+</span><span class="">  345:             required =&gt; 1,
+</span><span class="">  346:         },
+</span><span class="">  347:     }
+</span><span class="">  348: 
+</span><span class="">  349: =head4 Output
+</span><span class="">  350: 
+</span><span class="">  351:     # Compatible with Return::Set:
+</span><span class="">  352:     { type =&gt; &#39;object&#39;, isa =&gt; &#39;CGI::ACL&#39; }
+</span><span class="">  353: 
+</span><span class="">  354: =head3 MESSAGES
+</span><span class="">  355: 
+</span><span class="">  356: =over 4
 </span><span class="">  357: 
-</span><span class="">  358: =head3 MESSAGES
+</span><span class="">  358: =item C&lt;Usage: deny_country($country)&gt;
 </span><span class="">  359: 
-</span><span class="">  360: =over 4
-</span><span class="">  361: 
-</span><span class="">  362: =item C&lt;Usage: deny_country($country)&gt;
-</span><span class="">  363: 
-</span><span class="">  364: B&lt;Severity:&gt; carp (warning).
-</span><span class="">  365: B&lt;Cause:&gt; Called with no argument, with a non-hash/non-array reference, or
-</span><span class="">  366: without supplying the C&lt;country&gt; key.
-</span><span class="">  367: B&lt;Action:&gt; Pass a scalar ISO code or arrayref:
-</span><span class="">  368: C&lt;deny_country(&#39;BR&#39;)&gt; or C&lt;deny_country(country =E&lt;gt&gt; [&#39;BR&#39;,&#39;CN&#39;])&gt;.
+</span><span class="">  360: B&lt;Severity:&gt; carp (warning).
+</span><span class="">  361: B&lt;Cause:&gt; Called with no argument, with a non-hash/non-array reference, or
+</span><span class="">  362: without supplying the C&lt;country&gt; key.
+</span><span class="">  363: B&lt;Action:&gt; Pass a scalar ISO code or arrayref:
+</span><span class="">  364: C&lt;deny_country(&#39;BR&#39;)&gt; or C&lt;deny_country(country =E&lt;gt&gt; [&#39;BR&#39;,&#39;CN&#39;])&gt;.
+</span><span class="">  365: 
+</span><span class="">  366: =back
+</span><span class="">  367: 
+</span><span class="">  368: =cut
 </span><span class="">  369: 
-</span><span class="">  370: =back
-</span><span class="">  371: 
-</span><span class="">  372: =cut
-</span><span class="">  373: 
-</span><span class="">  374: sub deny_country {
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">375 → 378 → 384</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">375 → 378 → 0</span></span>  375: 	my $self = shift;
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  376: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  377: 	# Reject references that are neither hashes nor arrays
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  378: 	if(ref($_[0]) &amp;&amp; ref($_[0]) ne &#39;HASH&#39; &amp;&amp; ref($_[0]) ne &#39;ARRAY&#39;) {
-</span><span class="">  379: 		Carp::carp(&#39;Usage: deny_country($country)&#39;);
-</span><span class="">  380: 		return $self;
-</span><span class="">  381: 	}
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  382: 
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  383: 	# Normalise positional, named, and hashref calling conventions
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">384 → 385 → 394</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">384 → 385 → 0</span></span>  384: 	my %params;
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  385: 	if(ref($_[0]) eq &#39;HASH&#39;) {
-</span><span class="">  386: 		%params = %{$_[0]};
-</span><span class="">  387: 	} elsif(@_ % 2 == 0) {
-</span><span class="">  388: 		%params = @_;
-</span><span class="">  389: 	} else {
-</span><span class="">  390: 		$params{country} = shift;
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  391: 	}
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  392: 
-</span><span class="">  393: 	# Add the country or list of countries to the deny set
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">394 → 394 → 399</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">394 → 394 → 0</span></span>  394: 	if(defined(my $c = $params{country})) {
-</span><span class="">  395: 		_set_countries($self-&gt;{deny_countries} ||= {}, $c);
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  396: 	} else {
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  397: 		Carp::carp(&#39;Usage: deny_country($country)&#39;);
-</span><span class="">  398: 	}
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">399 → 399 → 0</span></span>  399: 	return $self;
-</span><span class="">  400: }
+</span><span class="">  370: sub deny_country {
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">371 → 374 → 380</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">371 → 374 → 0</span></span>  371: 	my $self = shift;
+</span><span class="">  372: 
+</span><span class="">  373: 	# Reject references that are neither hashes nor arrays
+</span><span class="">  374: 	if(ref($_[0]) &amp;&amp; ref($_[0]) ne &#39;HASH&#39; &amp;&amp; ref($_[0]) ne &#39;ARRAY&#39;) {
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  375: 		Carp::carp(&#39;Usage: deny_country($country)&#39;);
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  376: 		return $self;
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  377: 	}
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  378: 
+</span><span class="">  379: 	# Normalise positional, named, and hashref calling conventions
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">380 → 381 → 391</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">380 → 381 → 0</span></span>  380: 	my %params;
+</span><span class="">  381: 	if(ref($_[0]) eq &#39;HASH&#39;) {
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  382: 		%params = %{$_[0]};
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  383: 	} elsif(@_ % 2 == 0) {
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  384: 		%params = @_;
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  385: 	} else {
+</span><span class="">  386: 		$params{country} = shift;
+</span><span class="">  387: 	}
+</span><span class="">  388: 
+</span><span class="">  389: 	# Add the country or list of countries to the deny set.
+</span><span class="">  390: 	# An empty arrayref is a no-op &acirc;&#128;&#148; do not create deny_countries = {}.
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">391 → 391 → 397</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">391 → 391 → 0</span></span>  391: 	if(defined(my $c = $params{country})) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  392: 		return $self if ref($c) eq &#39;ARRAY&#39; &amp;&amp; !@{$c};
+</span><span class="">  393: 		_set_countries($self-&gt;{deny_countries} ||= {}, $c);
+</span><span class="">  394: 	} else {
+</span><span class="">  395: 		Carp::carp(&#39;Usage: deny_country($country)&#39;);
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  396: 	}
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">397 → 397 → 0</span></span>  397: 	return $self;
+</span><span class="">  398: }
+</span><span class="">  399: 
+</span><span class="">  400: # &acirc;&#148;&#128;&acirc;&#148;&#128; allow_country &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
 </span><span class="">  401: 
-</span><span class="">  402: # &acirc;&#148;&#128;&acirc;&#148;&#128; allow_country &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class="">  402: =head2 allow_country
 </span><span class="">  403: 
-</span><span class="">  404: =head2 allow_country
-</span><span class="">  405: 
-</span><span class="">  406: Adds one or more countries to the explicit permit list.  This is meaningful
-</span><span class="">  407: only when C&lt;deny_country(&#39;*&#39;)&gt; has been called first; without the wildcard
-</span><span class="">  408: deny, this method has no observable effect on access decisions.
+</span><span class="">  404: Adds one or more countries to the explicit permit list.  This is meaningful
+</span><span class="">  405: only when C&lt;deny_country(&#39;*&#39;)&gt; has been called first; without the wildcard
+</span><span class="">  406: deny, this method has no observable effect on access decisions.
+</span><span class="">  407: 
+</span><span class="">  408: =head3 USAGE
 </span><span class="">  409: 
-</span><span class="">  410: =head3 USAGE
+</span><span class="">  410:     use CGI::ACL;
 </span><span class="">  411: 
-</span><span class="">  412:     use CGI::ACL;
-</span><span class="">  413: 
-</span><span class="">  414:     # Allow only the UK and US
-</span><span class="">  415:     my $acl = CGI::ACL-&gt;new()
-</span><span class="">  416:         -&gt;deny_country(&#39;*&#39;)
-</span><span class="">  417:         -&gt;allow_country(country =&gt; [&#39;GB&#39;, &#39;US&#39;]);
-</span><span class="">  418: 
-</span><span class="">  419:     # Single country as positional argument
-</span><span class="">  420:     my $acl = CGI::ACL-&gt;new()-&gt;deny_country(&#39;*&#39;)-&gt;allow_country(&#39;US&#39;);
+</span><span class="">  412:     # Allow only the UK and US
+</span><span class="">  413:     my $acl = CGI::ACL-&gt;new()
+</span><span class="">  414:         -&gt;deny_country(&#39;*&#39;)
+</span><span class="">  415:         -&gt;allow_country(country =&gt; [&#39;GB&#39;, &#39;US&#39;]);
+</span><span class="">  416: 
+</span><span class="">  417:     # Single country as positional argument
+</span><span class="">  418:     my $acl = CGI::ACL-&gt;new()-&gt;deny_country(&#39;*&#39;)-&gt;allow_country(&#39;US&#39;);
+</span><span class="">  419: 
+</span><span class="">  420: =head3 ARGUMENTS
 </span><span class="">  421: 
-</span><span class="">  422: =head3 ARGUMENTS
+</span><span class="">  422: =over 4
 </span><span class="">  423: 
-</span><span class="">  424: =over 4
+</span><span class="">  424: =item country (required)
 </span><span class="">  425: 
-</span><span class="">  426: =item country (required)
+</span><span class="">  426: A scalar ISO code or an array reference of ISO codes.
 </span><span class="">  427: 
-</span><span class="">  428: A scalar ISO code or an array reference of ISO codes.
+</span><span class="">  428: =back
 </span><span class="">  429: 
-</span><span class="">  430: =back
+</span><span class="">  430: =head3 RETURNS
 </span><span class="">  431: 
-</span><span class="">  432: =head3 RETURNS
+</span><span class="">  432: The object itself, to allow method chaining.
 </span><span class="">  433: 
-</span><span class="">  434: The object itself, to allow method chaining.
+</span><span class="">  434: =head3 SIDE EFFECTS
 </span><span class="">  435: 
-</span><span class="">  436: =head3 SIDE EFFECTS
+</span><span class="">  436: Updates C&lt;&lt; $self-&gt;{allow_countries} &gt;&gt;.
 </span><span class="">  437: 
-</span><span class="">  438: Updates C&lt;&lt; $self-&gt;{allow_countries} &gt;&gt;.
+</span><span class="">  438: =head3 NOTES
 </span><span class="">  439: 
-</span><span class="">  440: =head3 NOTES
-</span><span class="">  441: 
-</span><span class="">  442: Call C&lt;deny_country(&#39;*&#39;)&gt; before this method; otherwise all traffic is
-</span><span class="">  443: already allowed by the default-allow rule and the permit list is never
-</span><span class="">  444: consulted.
+</span><span class="">  440: Call C&lt;deny_country(&#39;*&#39;)&gt; before this method; otherwise all traffic is
+</span><span class="">  441: already allowed by the default-allow rule and the permit list is never
+</span><span class="">  442: consulted.
+</span><span class="">  443: 
+</span><span class="">  444: =head3 API SPECIFICATION
 </span><span class="">  445: 
-</span><span class="">  446: =head3 API SPECIFICATION
+</span><span class="">  446: =head4 Input
 </span><span class="">  447: 
-</span><span class="">  448: =head4 Input
-</span><span class="">  449: 
-</span><span class="">  450:     # Compatible with Params::Validate::Strict:
-</span><span class="">  451:     {
-</span><span class="">  452:         country =&gt; {
-</span><span class="">  453:             type     =&gt; SCALAR | ARRAYREF,
-</span><span class="">  454:             required =&gt; 1,
-</span><span class="">  455:         },
-</span><span class="">  456:     }
+</span><span class="">  448:     # Compatible with Params::Validate::Strict:
+</span><span class="">  449:     {
+</span><span class="">  450:         country =&gt; {
+</span><span class="">  451:             type     =&gt; &#39;string&#39; | &#39;arrayref&#39;,
+</span><span class="">  452:             required =&gt; 1,
+</span><span class="">  453:         },
+</span><span class="">  454:     }
+</span><span class="">  455: 
+</span><span class="">  456: =head4 Output
 </span><span class="">  457: 
-</span><span class="">  458: =head4 Output
-</span><span class="">  459: 
-</span><span class="">  460:     # Compatible with Return::Set:
-</span><span class="">  461:     { type =&gt; &#39;object&#39;, isa =&gt; &#39;CGI::ACL&#39; }
+</span><span class="">  458:     # Compatible with Return::Set:
+</span><span class="">  459:     { type =&gt; &#39;object&#39;, isa =&gt; &#39;CGI::ACL&#39; }
+</span><span class="">  460: 
+</span><span class="">  461: =head3 MESSAGES
 </span><span class="">  462: 
-</span><span class="">  463: =head3 MESSAGES
+</span><span class="">  463: =over 4
 </span><span class="">  464: 
-</span><span class="">  465: =over 4
+</span><span class="">  465: =item C&lt;Usage: allow_country($country)&gt;
 </span><span class="">  466: 
-</span><span class="">  467: =item C&lt;Usage: allow_country($country)&gt;
-</span><span class="">  468: 
-</span><span class="">  469: B&lt;Severity:&gt; carp (warning).
-</span><span class="">  470: B&lt;Cause:&gt; Called with no argument, with a non-hash/non-array reference, or
-</span><span class="">  471: without supplying the C&lt;country&gt; key.
-</span><span class="">  472: B&lt;Action:&gt; Pass a scalar ISO code or arrayref:
-</span><span class="">  473: C&lt;allow_country(&#39;US&#39;)&gt; or C&lt;allow_country(country =E&lt;gt&gt; [&#39;GB&#39;,&#39;US&#39;])&gt;.
+</span><span class="">  467: B&lt;Severity:&gt; carp (warning).
+</span><span class="">  468: B&lt;Cause:&gt; Called with no argument, with a non-hash/non-array reference, or
+</span><span class="">  469: without supplying the C&lt;country&gt; key.
+</span><span class="">  470: B&lt;Action:&gt; Pass a scalar ISO code or arrayref:
+</span><span class="">  471: C&lt;allow_country(&#39;US&#39;)&gt; or C&lt;allow_country(country =E&lt;gt&gt; [&#39;GB&#39;,&#39;US&#39;])&gt;.
+</span><span class="">  472: 
+</span><span class="">  473: =back
 </span><span class="">  474: 
-</span><span class="">  475: =back
+</span><span class="">  475: =cut
 </span><span class="">  476: 
-</span><span class="">  477: =cut
-</span><span class="">  478: 
-</span><span class="">  479: sub allow_country {
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">480 → 483 → 489</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">480 → 483 → 0</span></span>  480: 	my $self = shift;
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  481: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  482: 	# Reject references that are neither hashes nor arrays
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  483: 	if(ref($_[0]) &amp;&amp; ref($_[0]) ne &#39;HASH&#39; &amp;&amp; ref($_[0]) ne &#39;ARRAY&#39;) {
-</span><span class="">  484: 		Carp::carp(&#39;Usage: allow_country($country)&#39;);
-</span><span class="">  485: 		return $self;
-</span><span class="">  486: 	}
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  487: 
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  488: 	# Normalise positional, named, and hashref calling conventions
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">489 → 490 → 499</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">489 → 490 → 0</span></span>  489: 	my %params;
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  490: 	if(ref($_[0]) eq &#39;HASH&#39;) {
-</span><span class="">  491: 		%params = %{$_[0]};
-</span><span class="">  492: 	} elsif(@_ % 2 == 0) {
-</span><span class="">  493: 		%params = @_;
-</span><span class="">  494: 	} else {
-</span><span class="">  495: 		$params{country} = shift;
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  496: 	}
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  497: 
-</span><span class="">  498: 	# Add the country or list of countries to the permit set
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">499 → 499 → 504</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">499 → 499 → 0</span></span>  499: 	if(defined(my $c = $params{country})) {
+</span><span class="">  477: sub allow_country {
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">478 → 481 → 487</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">478 → 481 → 0</span></span>  478: 	my $self = shift;
+</span><span class="">  479: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  480: 	# Reject references that are neither hashes nor arrays
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  481: 	if(ref($_[0]) &amp;&amp; ref($_[0]) ne &#39;HASH&#39; &amp;&amp; ref($_[0]) ne &#39;ARRAY&#39;) {
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  482: 		Carp::carp(&#39;Usage: allow_country($country)&#39;);
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  483: 		return $self;
+</span><span class="">  484: 	}
+</span><span class="">  485: 
+</span><span class="">  486: 	# Normalise positional, named, and hashref calling conventions
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">487 → 488 → 498</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">487 → 488 → 0</span></span>  487: 	my %params;
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  488: 	if(ref($_[0]) eq &#39;HASH&#39;) {
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  489: 		%params = %{$_[0]};
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  490: 	} elsif(@_ % 2 == 0) {
+</span><span class="">  491: 		%params = @_;
+</span><span class="">  492: 	} else {
+</span><span class="">  493: 		$params{country} = shift;
+</span><span class="">  494: 	}
+</span><span class="">  495: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  496: 	# Add the country or list of countries to the permit set.
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  497: 	# An empty arrayref is a no-op &acirc;&#128;&#148; do not create allow_countries = {}.
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">498 → 498 → 504</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">498 → 498 → 0</span></span>  498: 	if(defined(my $c = $params{country})) {
+</span><span class="">  499: 		return $self if ref($c) eq &#39;ARRAY&#39; &amp;&amp; !@{$c};
 </span><span class="">  500: 		_set_countries($self-&gt;{allow_countries} ||= {}, $c);
 </span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  501: 	} else {
 </span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  502: 		Carp::carp(&#39;Usage: allow_country($country)&#39;);
@@ -976,7 +976,7 @@ Approximate LCSAJ segments: 95<br>
 </span><span class="">  678: =head4 Output
 </span><span class="">  679: 
 </span><span class="">  680:     # Compatible with Return::Set:
-</span><span class="">  681:     { type =&gt; SCALAR, regex =&gt; qr/^[01]$/ }
+</span><span class="">  681:     { type =&gt; &#39;string&#39;, regex =&gt; qr/^[01]$/ }
 </span><span class="">  682: 
 </span><span class="">  683: =head3 MESSAGES
 </span><span class="">  684: 
@@ -995,7 +995,7 @@ Approximate LCSAJ segments: 95<br>
 </span><span class="">  697: =cut
 </span><span class="">  698: 
 </span><span class="">  699: sub all_denied {
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">700 → 705 → 715</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">700 → 705 → 0</span></span>  700: 	my $self = shift;
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">700 → 705 → 716</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">700 → 705 → 0</span></span>  700: 	my $self = shift;
 </span><span class="">  701: 
 </span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  702: 	# Fast-path: if no restrictions are configured at all, allow immediately.
 </span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  703: 	# This guard must list every restriction type; missing one means that
@@ -1009,8 +1009,8 @@ Approximate LCSAJ segments: 95<br>
 </span><span class="">  711: 		return 0;
 </span><span class="">  712: 	}
 </span><span class="">  713: 
-</span><span class="">  714: 	# Determine the client address, falling back to localhost when absent
-</span><span class="survived-2 tooltip" data-tooltip="Return value mutation survived. Add tests asserting exact return values. Boolean logic mutation survived. Add tests covering both true and false paths."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">715 → 722 → 733</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">715 → 722 → 0</span></span>  715: 	my $addr = $ENV{REMOTE_ADDR} || $DEFAULT_ADDR;
+</span><span class="">  714: 	# Determine the client address, falling back to localhost when absent.
+</span><span class="survived-2 tooltip" data-tooltip="Boolean logic mutation survived. Add tests covering both true and false paths. Return value mutation survived. Add tests asserting exact return values.">  715: 	# Use // (defined-or) not || to avoid treating &quot;0&quot; or &quot;&quot; as absent.
 </span>
 					<details class="mutant-details">
 					<summary>Mutants (Total: 2, Killed: 0, Survived: 2)</summary>
@@ -1032,179 +1032,179 @@ is( func(INPUT), EXPECTED, &#39;Verify correct return value&#39; );
 </pre>
 								</div>
 							</li></ul></details>
-<span class="">  716: 
-</span><span class="">  717: 	# Reject addresses that are not syntactically valid IPv4 or IPv6
-</span><span class="">  718: 	return 1 unless $addr =~ /^$RE{net}{IPv4}$/o
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  719: 	             || $addr =~ /^$RE{net}{IPv6}$/o;
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  720: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  721: 	# &acirc;&#148;&#128;&acirc;&#148;&#128; Cloud check (highest precedence; overrides allow_ip) &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  722: 	if($self-&gt;{deny_cloud}) {
-</span><span class="">  723: 		# Deny immediately if the IP resolves to a cloud provider hostname
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  724: 		return 1 if _is_cloud_host($addr);
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  725: 
-</span><span class="">  726: 		# Non-cloud and no other restrictions: allow
-</span><span class="">  727: 		return 0 unless $self-&gt;{allowed_ips}
-</span><span class="">  728: 		             || $self-&gt;{deny_countries}
-</span><span class="">  729: 		             || $self-&gt;{allow_countries};
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  730: 	}
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  731: 
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  732: 	# &acirc;&#148;&#128;&acirc;&#148;&#128; IP / CIDR allow-list check &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">733 → 733 → 751</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">733 → 733 → 0</span></span>  733: 	if($self-&gt;{allowed_ips}) {
-</span><span class="">  734: 		# Check for an exact-match entry first (fast path)
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  735: 		return 0 if $self-&gt;{allowed_ips}-&gt;{$addr};
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  736: 
-</span><span class="">  737: 		# Build and memoise the CIDR lookup structure on first use
-</span><span class="">  738: 		if(!$self-&gt;{_cidrlist}) {
-</span><span class="">  739: 			my @cidrlist;
-</span><span class="">  740: 			for my $block (keys %{$self-&gt;{allowed_ips}}) {
-</span><span class="">  741: 				@cidrlist = Net::CIDR::cidradd($block, @cidrlist);
-</span><span class="">  742: 			}
-</span><span class="">  743: 			$self-&gt;{_cidrlist} = \@cidrlist;
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  744: 		}
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  745: 
-</span><span class="">  746: 		# Check whether the address falls inside any allowed CIDR range
-</span><span class="">  747: 		return 0 if Net::CIDR::cidrlookup($addr, @{$self-&gt;{_cidrlist}});
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  748: 	}
+<span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">716 → 723 → 736</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">716 → 723 → 0</span></span>  716: 	my $addr = $ENV{REMOTE_ADDR} // $DEFAULT_ADDR;
+</span><span class="">  717: 
+</span><span class="">  718: 	# Reject addresses that are not syntactically valid IPv4 or IPv6
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  719: 	return 1 unless $addr =~ /^$RE{net}{IPv4}$/o
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  720: 	             || $addr =~ /^$RE{net}{IPv6}$/o;
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  721: 
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  722: 	# &acirc;&#148;&#128;&acirc;&#148;&#128; Cloud check (highest precedence; overrides allow_ip) &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class="">  723: 	if($self-&gt;{deny_cloud}) {
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  724: 		# Deny if the IP resolves to a cloud provider hostname.
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  725: 		# Wrap in eval: DNS failures must not kill the CGI process; fail safe.
+</span><span class="">  726: 		my $is_cloud = eval { _is_cloud_host($addr) };
+</span><span class="">  727: 		return 1 if !$@ &amp;&amp; $is_cloud;
+</span><span class="">  728: 
+</span><span class="">  729: 		# Non-cloud and no other restrictions: allow
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  730: 		return 0 unless $self-&gt;{allowed_ips}
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  731: 		             || $self-&gt;{deny_countries}
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  732: 		             || $self-&gt;{allow_countries};
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  733: 	}
+</span><span class="">  734: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  735: 	# &acirc;&#148;&#128;&acirc;&#148;&#128; IP / CIDR allow-list check &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">736 → 736 → 757</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">736 → 736 → 0</span></span>  736: 	if($self-&gt;{allowed_ips}) {
+</span><span class="">  737: 		# Check for an exact-match entry first (fast path)
+</span><span class="">  738: 		return 0 if $self-&gt;{allowed_ips}-&gt;{$addr};
+</span><span class="">  739: 
+</span><span class="">  740: 		# Build and memoise the CIDR lookup structure on first use.
+</span><span class="">  741: 		# Wrap in eval: Net::CIDR dies on non-IP strings (injection attempts).
+</span><span class="">  742: 		if(!$self-&gt;{_cidrlist}) {
+</span><span class="">  743: 			my @cidrlist;
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  744: 			for my $block (keys %{$self-&gt;{allowed_ips}}) {
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  745: 				eval { @cidrlist = Net::CIDR::cidradd($block, @cidrlist) };
+</span><span class="">  746: 			}
+</span><span class="">  747: 			$self-&gt;{_cidrlist} = \@cidrlist;
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  748: 		}
 </span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  749: 
-</span><span class="">  750: 	# &acirc;&#148;&#128;&acirc;&#148;&#128; Country check &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">751 → 751 → 787</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">751 → 751 → 0</span></span>  751: 	if($self-&gt;{deny_countries} || $self-&gt;{allow_countries}) {
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  752: 		# Parse the lingua argument (positional, named, or hashref)
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  753: 		my %params;
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  754: 		if(ref($_[0]) eq &#39;HASH&#39;) {
-</span><span class="">  755: 			%params = %{$_[0]};
-</span><span class="">  756: 		} elsif(@_ % 2 == 0) {
-</span><span class="">  757: 			%params = @_;
-</span><span class="">  758: 		} else {
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  759: 			$params{lingua} = shift;
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  760: 		}
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  761: 
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  762: 		if(my $lingua = $params{lingua}) {
-</span><span class="">  763: 			# Resolve and normalise the client&#39;s country code
-</span><span class="">  764: 			if(my $country = $lingua-&gt;country()) {
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  765: 				$country = lc $country;
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  766: 
-</span><span class="">  767: 				# Default-deny mode: deny_countries contains the wildcard
-</span><span class="">  768: 				if($self-&gt;{deny_countries} &amp;&amp; $self-&gt;{deny_countries}-&gt;{$WILDCARD}) {
-</span><span class="">  769: 					return ($self-&gt;{allow_countries} &amp;&amp; $self-&gt;{allow_countries}-&gt;{$country})
-</span><span class="">  770: 						? 0   # country is explicitly permitted
-</span><span class="">  771: 						: 1;  # not in the permit list; deny
-</span><span class="">  772: 				}
-</span><span class="">  773: 
-</span><span class="">  774: 				# Default-allow mode: deny only explicitly listed countries
-</span><span class="">  775: 				return ($self-&gt;{deny_countries} &amp;&amp; $self-&gt;{deny_countries}-&gt;{$country})
-</span><span class="">  776: 					? 1   # country is explicitly denied
-</span><span class="">  777: 					: 0;  # not in the deny list; allow
-</span><span class="">  778: 			}
-</span><span class="">  779: 			# country() returned undef: country is unknown; deny access
-</span><span class="">  780: 		} else {
-</span><span class="">  781: 			# Country restrictions active but no lingua was provided
-</span><span class="">  782: 			Carp::carp(&#39;Usage: all_denied($lingua)&#39;);
-</span><span class="">  783: 		}
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  784: 	}
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  785: 
-</span><span class="">  786: 	# Fall-through: no rule allowed the request; deny
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">787 → 787 → 0</span></span>  787: 	return 1;
-</span><span class="">  788: }
-</span><span class="">  789: 
-</span><span class="">  790: # &acirc;&#148;&#128;&acirc;&#148;&#128; Internal helpers &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
-</span><span class="">  791: 
-</span><span class="">  792: # _set_countries
-</span><span class="">  793: #
-</span><span class="">  794: # Purpose:    Shared logic for deny_country() and allow_country().  Inserts one
-</span><span class="">  795: #             or more lowercased country codes into the supplied hashref.
-</span><span class="">  796: #
-</span><span class="">  797: # Entry:      $hashref  - the target hash (already initialised by caller)
-</span><span class="">  798: #             $value    - a scalar country code OR an arrayref of codes
-</span><span class="">  799: #
-</span><span class="">  800: # Exit:       Returns nothing (modifies $hashref in place).
-</span><span class="">  801: #
-</span><span class="">  802: # Side effects: Modifies the caller-supplied hashref.
-</span><span class="">  803: #
-</span><span class="">  804: # Notes:      Keys are forced to lower case for case-insensitive comparison.
-</span><span class="">  805: sub _set_countries {
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">806 → 809 → 814</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">806 → 809 → 0</span></span>  806: 	my ($hashref, $value) = @_;
-</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  807: 
-</span><span class="">  808: 	# Handle both a single country code and a list reference
-</span><span class="">  809: 	if(ref($value) eq &#39;ARRAY&#39;) {
-</span><span class="">  810: 		$hashref-&gt;{lc $_} = 1 for @{$value};
-</span><span class="">  811: 	} else {
-</span><span class="">  812: 		$hashref-&gt;{lc $value} = 1;
-</span><span class="">  813: 	}
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">814 → 814 → 0</span></span>  814: 	return;
-</span><span class="">  815: }
-</span><span class="">  816: 
-</span><span class="">  817: # _is_cloud_host
-</span><span class="">  818: #
-</span><span class="">  819: # Purpose:    Determines whether a given IP address belongs to a major cloud
-</span><span class="">  820: #             provider by performing a verified reverse-DNS lookup and then
-</span><span class="">  821: #             matching the confirmed hostname against @CLOUD_PATTERNS.
-</span><span class="">  822: #
-</span><span class="">  823: # Entry:      $ip - a validated IPv4 or IPv6 address string.
-</span><span class="">  824: #
-</span><span class="">  825: # Exit:       Returns 1 (cloud host) or 0 (not a cloud host / no PTR record).
-</span><span class="">  826: #
-</span><span class="">  827: # Side effects: Performs DNS lookups; may block for up to $DNS_TIMEOUT seconds
-</span><span class="">  828: #               on non-Windows platforms.
-</span><span class="">  829: #
-</span><span class="">  830: # Notes:      An IP with no PTR record, or whose forward confirmation fails,
-</span><span class="">  831: #             returns 0 (not cloud).  This is the safe default because
-</span><span class="">  832: #             legitimate cloud providers consistently set rDNS records.
-</span><span class="">  833: sub _is_cloud_host {
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">834 → 840 → 843</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">834 → 840 → 0</span></span>  834: 	my $ip = $_[0];
-</span><span class="">  835: 
-</span><span class="">  836: 	# Attempt a verified reverse DNS lookup; returns undef on failure
-</span><span class="">  837: 	my $hostname = _verified_rdns($ip) or return 0;
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  838: 
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  839: 	# Compare the confirmed hostname against every known cloud pattern
-</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  840: 	for my $pattern (@CLOUD_PATTERNS) {
-</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  841: 		return 1 if $hostname =~ $pattern;
-</span><span class="">  842: 	}
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">843 → 843 → 0</span></span>  843: 	return 0;
-</span><span class="">  844: }
-</span><span class="">  845: 
-</span><span class="">  846: # _verified_rdns
-</span><span class="">  847: #
-</span><span class="">  848: # Purpose:    Performs a two-step DNS verification to prevent rDNS spoofing:
-</span><span class="">  849: #               1. Reverse lookup: IP -&gt; hostname
-</span><span class="">  850: #               2. Forward confirmation: hostname -&gt; [IPs]; IP must appear
-</span><span class="">  851: #
-</span><span class="">  852: # Entry:      $ip - a syntactically valid IPv4 or IPv6 address string.
-</span><span class="">  853: #
-</span><span class="">  854: # Exit:       Returns the confirmed hostname string on success, undef otherwise.
-</span><span class="">  855: #             undef is returned when:
-</span><span class="">  856: #               - $ip cannot be packed (invalid address)
-</span><span class="">  857: #               - no PTR record exists
-</span><span class="">  858: #               - forward lookup does not include the original IP
-</span><span class="">  859: #               - DNS lookup times out (non-Windows only)
-</span><span class="">  860: #
-</span><span class="">  861: # Side effects: Performs two DNS round-trips; installs and restores a temporary
-</span><span class="">  862: #               SIGALRM handler on non-Windows platforms.
-</span><span class="">  863: #
-</span><span class="">  864: # Notes:      On non-Windows platforms a $DNS_TIMEOUT-second alarm is set to
-</span><span class="">  865: #             prevent CGI workers from blocking indefinitely on slow resolvers.
-</span><span class="">  866: #             alarm(0) is called inside the eval to close the race window
-</span><span class="">  867: #             between eval exit and the outer alarm(0) call.
-</span><span class="">  868: sub _verified_rdns {
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">869 → 873 → 885</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">869 → 873 → 0</span></span>  869: 	my $ip = $_[0];
-</span><span class="survived-1 tooltip" data-tooltip="Mutation survived. Add targeted tests to validate this branch.">  870: 
+</span><span class="">  750: 		# Check whether the address falls inside any allowed CIDR range.
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  751: 		# Wrap in eval in case the list was built from partly-invalid entries.
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  752: 		my $in_cidr = eval { Net::CIDR::cidrlookup($addr, @{$self-&gt;{_cidrlist}}) };
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  753: 		return 0 if $in_cidr;
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  754: 	}
+</span><span class="">  755: 
+</span><span class="">  756: 	# &acirc;&#148;&#128;&acirc;&#148;&#128; Country check &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">757 → 757 → 801</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">757 → 757 → 0</span></span>  757: 	if($self-&gt;{deny_countries} || $self-&gt;{allow_countries}) {
+</span><span class="">  758: 		# Parse the lingua argument (positional, named, or hashref)
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  759: 		my %params;
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  760: 		if(ref($_[0]) eq &#39;HASH&#39;) {
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  761: 			%params = %{$_[0]};
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  762: 		} elsif(@_ % 2 == 0) {
+</span><span class="">  763: 			%params = @_;
+</span><span class="">  764: 		} else {
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  765: 			$params{lingua} = shift;
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  766: 		}
+</span><span class="">  767: 
+</span><span class="">  768: 		if(my $lingua = $params{lingua}) {
+</span><span class="">  769: 			# Reject non-objects to avoid &quot;can&#39;t call method on non-ref&quot; crashes
+</span><span class="">  770: 			unless(blessed($lingua)) {
+</span><span class="">  771: 				Carp::carp(&#39;all_denied: lingua must be a blessed object&#39;);
+</span><span class="">  772: 				return 1;
+</span><span class="">  773: 			}
+</span><span class="">  774: 			# Resolve and normalise the client&#39;s country code.
+</span><span class="">  775: 			# Wrap in eval: the object may not implement country().
+</span><span class="">  776: 			my $country_val = eval { $lingua-&gt;country() };
+</span><span class="">  777: 			return 1 if $@;    # method missing or threw &acirc;&#128;&#148; treat as unknown
+</span><span class="">  778: 			if(my $country = $country_val) {
+</span><span class="">  779: 				$country = lc $country;
+</span><span class="">  780: 
+</span><span class="">  781: 				# Default-deny mode: deny_countries contains the wildcard
+</span><span class="">  782: 				if($self-&gt;{deny_countries} &amp;&amp; $self-&gt;{deny_countries}-&gt;{$WILDCARD}) {
+</span><span class="">  783: 					return ($self-&gt;{allow_countries} &amp;&amp; $self-&gt;{allow_countries}-&gt;{$country})
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  784: 						? 0   # country is explicitly permitted
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  785: 						: 1;  # not in the permit list; deny
+</span><span class="">  786: 				}
+</span><span class="">  787: 
+</span><span class="">  788: 				# Default-allow mode: deny only explicitly listed countries
+</span><span class="">  789: 				return ($self-&gt;{deny_countries} &amp;&amp; $self-&gt;{deny_countries}-&gt;{$country})
+</span><span class="">  790: 					? 1   # country is explicitly denied
+</span><span class="">  791: 					: 0;  # not in the deny list; allow
+</span><span class="">  792: 			}
+</span><span class="">  793: 			# country() returned undef: country is unknown; deny access
+</span><span class="">  794: 		} else {
+</span><span class="">  795: 			# Country restrictions active but no lingua was provided
+</span><span class="">  796: 			Carp::carp(&#39;Usage: all_denied($lingua)&#39;);
+</span><span class="">  797: 		}
+</span><span class="">  798: 	}
+</span><span class="">  799: 
+</span><span class="">  800: 	# Fall-through: no rule allowed the request; deny
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">801 → 801 → 0</span></span>  801: 	return 1;
+</span><span class="">  802: }
+</span><span class="">  803: 
+</span><span class="">  804: # &acirc;&#148;&#128;&acirc;&#148;&#128; Internal helpers &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class="">  805: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  806: # _set_countries
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  807: #
+</span><span class="">  808: # Purpose:    Shared logic for deny_country() and allow_country().  Inserts one
+</span><span class="">  809: #             or more lowercased country codes into the supplied hashref.
+</span><span class="">  810: #
+</span><span class="">  811: # Entry:      $hashref  - the target hash (already initialised by caller)
+</span><span class="">  812: #             $value    - a scalar country code OR an arrayref of codes
+</span><span class="">  813: #
+</span><span class="">  814: # Exit:       Returns nothing (modifies $hashref in place).
+</span><span class="">  815: #
+</span><span class="">  816: # Side effects: Modifies the caller-supplied hashref.
+</span><span class="">  817: #
+</span><span class="">  818: # Notes:      Keys are forced to lower case for case-insensitive comparison.
+</span><span class="">  819: sub _set_countries {
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">820 → 824 → 829</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">820 → 824 → 0</span></span>  820: 	my ($hashref, $value) = @_;
+</span><span class="">  821: 
+</span><span class="">  822: 	# Handle both a single country code and a list reference.
+</span><span class="">  823: 	# Skip undef elements to avoid &quot;uninitialised value&quot; warnings.
+</span><span class="">  824: 	if(ref($value) eq &#39;ARRAY&#39;) {
+</span><span class="">  825: 		$hashref-&gt;{lc $_} = 1 for grep { defined } @{$value};
+</span><span class="">  826: 	} else {
+</span><span class="">  827: 		$hashref-&gt;{lc $value} = 1;
+</span><span class="">  828: 	}
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">829 → 829 → 0</span></span>  829: 	return;
+</span><span class="">  830: }
+</span><span class="">  831: 
+</span><span class="">  832: # _is_cloud_host
+</span><span class="">  833: #
+</span><span class="">  834: # Purpose:    Determines whether a given IP address belongs to a major cloud
+</span><span class="">  835: #             provider by performing a verified reverse-DNS lookup and then
+</span><span class="">  836: #             matching the confirmed hostname against @CLOUD_PATTERNS.
+</span><span class="">  837: #
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  838: # Entry:      $ip - a validated IPv4 or IPv6 address string.
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  839: #
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  840: # Exit:       Returns 1 (cloud host) or 0 (not a cloud host / no PTR record).
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  841: #
+</span><span class="">  842: # Side effects: Performs DNS lookups; may block for up to $DNS_TIMEOUT seconds
+</span><span class="">  843: #               on non-Windows platforms.
+</span><span class="">  844: #
+</span><span class="">  845: # Notes:      An IP with no PTR record, or whose forward confirmation fails,
+</span><span class="">  846: #             returns 0 (not cloud).  This is the safe default because
+</span><span class="">  847: #             legitimate cloud providers consistently set rDNS records.
+</span><span class="">  848: sub _is_cloud_host {
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">849 → 855 → 858</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">849 → 855 → 0</span></span>  849: 	my $ip = $_[0];
+</span><span class="">  850: 
+</span><span class="">  851: 	# Attempt a verified reverse DNS lookup; returns undef on failure
+</span><span class="">  852: 	my $hostname = _verified_rdns($ip) or return 0;
+</span><span class="">  853: 
+</span><span class="">  854: 	# Compare the confirmed hostname against every known cloud pattern
+</span><span class="">  855: 	for my $pattern (@CLOUD_PATTERNS) {
+</span><span class="">  856: 		return 1 if $hostname =~ $pattern;
+</span><span class="">  857: 	}
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">858 → 858 → 0</span></span>  858: 	return 0;
+</span><span class="">  859: }
+</span><span class="">  860: 
+</span><span class="">  861: # _verified_rdns
+</span><span class="">  862: #
+</span><span class="">  863: # Purpose:    Performs a two-step DNS verification to prevent rDNS spoofing:
+</span><span class="">  864: #               1. Reverse lookup: IP -&gt; hostname
+</span><span class="">  865: #               2. Forward confirmation: hostname -&gt; [IPs]; IP must appear
+</span><span class="">  866: #
+</span><span class="">  867: # Entry:      $ip - a syntactically valid IPv4 or IPv6 address string.
+</span><span class="">  868: #
+</span><span class="">  869: # Exit:       Returns the confirmed hostname string on success, undef otherwise.
+</span><span class="survived-1 tooltip" data-tooltip="Mutation survived. Add targeted tests to validate this branch.">  870: #             undef is returned when:
 </span>
 					<details class="mutant-details">
 					<summary>Mutants (Total: 1, Killed: 0, Survived: 1)</summary>
 					<ul>
 				<li><b>COND_INV_870_2: Invert condition if to unless</b><br>MEDIUM: Add tests asserting both true and false outcomes
 </li></ul></details>
-<span class="">  871: 	# Determine address family and produce the packed binary address
-</span><span class="">  872: 	my ($family, $packed);
-</span><span class="">  873: 	if($ip =~ /:/o) {
-</span><span class="">  874: 		# IPv6: use inet_pton which handles all valid IPv6 formats
-</span><span class="">  875: 		$family = Socket::AF_INET6;
-</span><span class="">  876: 		$packed = Socket::inet_pton(Socket::AF_INET6, $ip) or return;
-</span><span class="">  877: 	} else {
-</span><span class="">  878: 		# IPv4: inet_aton handles dotted-quad addresses
-</span><span class="">  879: 		$family = AF_INET;
-</span><span class="">  880: 		$packed = inet_aton($ip) or return;
-</span><span class="">  881: 	}
-</span><span class="survived-1 tooltip" data-tooltip="Boundary mutation survived. Add tests around edge values (e.g. min, max, off-by-one).">  882: 
+<span class="">  871: #               - $ip cannot be packed (invalid address)
+</span><span class="">  872: #               - no PTR record exists
+</span><span class="">  873: #               - forward lookup does not include the original IP
+</span><span class="">  874: #               - DNS lookup times out (non-Windows only)
+</span><span class="">  875: #
+</span><span class="">  876: # Side effects: Performs two DNS round-trips; installs and restores a temporary
+</span><span class="">  877: #               SIGALRM handler on non-Windows platforms.
+</span><span class="">  878: #
+</span><span class="">  879: # Notes:      On non-Windows platforms a $DNS_TIMEOUT-second alarm is set to
+</span><span class="">  880: #             prevent CGI workers from blocking indefinitely on slow resolvers.
+</span><span class="">  881: #             alarm(0) is called inside the eval to close the race window
+</span><span class="survived-1 tooltip" data-tooltip="Boundary mutation survived. Add tests around edge values (e.g. min, max, off-by-one).">  882: #             between eval exit and the outer alarm(0) call.
 </span>
 					<details class="mutant-details">
 					<summary>Mutants (Total: 1, Killed: 0, Survived: 1)</summary>
@@ -1218,74 +1218,74 @@ is( func(VALUE_AT_BOUNDARY), EXPECTED, &#39;Test boundary behaviour&#39; );
 </pre>
 								</div>
 							</li></ul></details>
-<span class="">  883: 	# Normalise the IP to canonical form for reliable string comparison.
-</span><span class="">  884: 	# This handles abbreviated IPv6 forms such as &#39;::1&#39; vs &#39;0:0:...:1&#39;.
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">885 → 891 → 917</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">885 → 891 → 0</span></span>  885: 	my $canonical = ($family == AF_INET)
-</span><span class="">  886: 		? inet_ntoa($packed)
-</span><span class="">  887: 		: Socket::inet_ntop(Socket::AF_INET6, $packed);
-</span><span class="survived-1 tooltip" data-tooltip="Mutation survived. Add targeted tests to validate this branch.">  888: 
+<span class="">  883: sub _verified_rdns {
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">884 → 888 → 900</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">884 → 888 → 0</span></span>  884: 	my $ip = $_[0];
+</span><span class="">  885: 
+</span><span class="">  886: 	# Determine address family and produce the packed binary address
+</span><span class="">  887: 	my ($family, $packed);
+</span><span class="survived-1 tooltip" data-tooltip="Mutation survived. Add targeted tests to validate this branch.">  888: 	if($ip =~ /:/o) {
 </span>
 					<details class="mutant-details">
 					<summary>Mutants (Total: 1, Killed: 0, Survived: 1)</summary>
 					<ul>
 				<li><b>COND_INV_888_2: Invert condition if to unless</b><br>MEDIUM: Add tests asserting both true and false outcomes
 </li></ul></details>
-<span class="">  889: 	my ($hostname, @forward_ips);
-</span><span class="">  890: 
-</span><span class="">  891: 	if($^O ne &#39;MSWin32&#39;) {
-</span><span class="">  892: 		# Non-Windows: guard against indefinitely-blocking DNS calls
-</span><span class="">  893: 		local $SIG{ALRM} = sub { die &quot;DNS timeout\n&quot; };
-</span><span class="">  894: 		alarm($DNS_TIMEOUT);
-</span><span class="survived-1 tooltip" data-tooltip="Mutation survived. Add targeted tests to validate this branch.">  895: 		eval {
+<span class="">  889: 		# IPv6: use inet_pton which handles all valid IPv6 formats
+</span><span class="">  890: 		$family = Socket::AF_INET6;
+</span><span class="">  891: 		$packed = Socket::inet_pton(Socket::AF_INET6, $ip) or return;
+</span><span class="">  892: 	} else {
+</span><span class="">  893: 		# IPv4: inet_aton handles dotted-quad addresses
+</span><span class="">  894: 		$family = AF_INET;
+</span><span class="survived-1 tooltip" data-tooltip="Mutation survived. Add targeted tests to validate this branch.">  895: 		$packed = inet_aton($ip) or return;
 </span>
 					<details class="mutant-details">
 					<summary>Mutants (Total: 1, Killed: 0, Survived: 1)</summary>
 					<ul>
 				<li><b>COND_INV_895_4: Invert condition if to unless</b><br>MEDIUM: Add tests asserting both true and false outcomes
 </li></ul></details>
-<span class="">  896: 			# Step 1: reverse lookup (IP -&gt; hostname)
-</span><span class="">  897: 			$hostname = gethostbyaddr($packed, $family);
-</span><span class="">  898: 			if($hostname) {
-</span><span class="">  899: 				# Step 2: forward lookup (hostname -&gt; IP list)
-</span><span class="">  900: 				@forward_ips = _rdns_forward($hostname, $family);
-</span><span class="">  901: 			}
-</span><span class="">  902: 			# Cancel the alarm inside the eval to avoid a post-eval race
-</span><span class="">  903: 			alarm(0);
-</span><span class="">  904: 		};
-</span><span class="">  905: 		# Belt-and-suspenders: ensure the alarm is always cancelled
-</span><span class="">  906: 		alarm(0);
-</span><span class="">  907: 		return if $@ || !$hostname;
-</span><span class="">  908: 	} else {
-</span><span class="">  909: 		# Windows: no alarm support; perform lookups synchronously
-</span><span class="">  910: 		$hostname = gethostbyaddr($packed, $family) or return;
-</span><span class="">  911: 
-</span><span class="">  912: 		# Forward lookup to confirm the hostname maps back to the original IP
-</span><span class="">  913: 		@forward_ips = _rdns_forward($hostname, $family);
-</span><span class="">  914: 	}
-</span><span class="">  915: 
-</span><span class="">  916: 	# Step 3: the hostname is only trusted if a forward record confirms the IP
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">917 → 917 → 0</span></span>  917: 	return ($hostname &amp;&amp; grep { $_ eq $canonical } @forward_ips)
-</span><span class="">  918: 		? $hostname
-</span><span class="">  919: 		: undef;
-</span><span class="">  920: }
-</span><span class="">  921: 
-</span><span class="">  922: # _rdns_forward
-</span><span class="">  923: #
-</span><span class="">  924: # Purpose:    Resolves a hostname to a list of IP address strings for use in
-</span><span class="">  925: #             the forward-confirmation step of _verified_rdns().
-</span><span class="">  926: #
-</span><span class="">  927: # Entry:      $hostname - the fully-qualified domain name to resolve.
-</span><span class="">  928: #             $family   - address family: AF_INET or Socket::AF_INET6.
-</span><span class="">  929: #
-</span><span class="">  930: # Exit:       Returns a list of IP address strings (may be empty on failure).
-</span><span class="">  931: #
-</span><span class="">  932: # Side effects: Performs a DNS A or AAAA lookup.
-</span><span class="">  933: #
-</span><span class="">  934: # Notes:      For IPv4 uses the classic inet_aton/inet_ntoa chain.
-</span><span class="">  935: #             For IPv6 uses Socket::getaddrinfo and Socket::getnameinfo
-</span><span class="">  936: #             (available since Perl 5.14 / Socket 1.99).
-</span><span class="">  937: sub _rdns_forward {
-</span><span class="survived-2 tooltip" data-tooltip="Boundary mutation survived. Add tests around edge values (e.g. min, max, off-by-one). Mutation survived. Add targeted tests to validate this branch."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">938 → 941 → 949</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">938 → 941 → 0</span></span>  938: 	my ($hostname, $family) = @_;
+<span class="">  896: 	}
+</span><span class="">  897: 
+</span><span class="">  898: 	# Normalise the IP to canonical form for reliable string comparison.
+</span><span class="">  899: 	# This handles abbreviated IPv6 forms such as &#39;::1&#39; vs &#39;0:0:...:1&#39;.
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">900 → 906 → 932</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">900 → 906 → 0</span></span>  900: 	my $canonical = ($family == AF_INET)
+</span><span class="">  901: 		? inet_ntoa($packed)
+</span><span class="">  902: 		: Socket::inet_ntop(Socket::AF_INET6, $packed);
+</span><span class="">  903: 
+</span><span class="">  904: 	my ($hostname, @forward_ips);
+</span><span class="">  905: 
+</span><span class="">  906: 	if($^O ne &#39;MSWin32&#39;) {
+</span><span class="">  907: 		# Non-Windows: guard against indefinitely-blocking DNS calls
+</span><span class="">  908: 		local $SIG{ALRM} = sub { die &quot;DNS timeout\n&quot; };
+</span><span class="">  909: 		alarm($DNS_TIMEOUT);
+</span><span class="">  910: 		eval {
+</span><span class="">  911: 			# Step 1: reverse lookup (IP -&gt; hostname)
+</span><span class="">  912: 			$hostname = gethostbyaddr($packed, $family);
+</span><span class="">  913: 			if($hostname) {
+</span><span class="">  914: 				# Step 2: forward lookup (hostname -&gt; IP list)
+</span><span class="">  915: 				@forward_ips = _rdns_forward($hostname, $family);
+</span><span class="">  916: 			}
+</span><span class="">  917: 			# Cancel the alarm inside the eval to avoid a post-eval race
+</span><span class="">  918: 			alarm(0);
+</span><span class="">  919: 		};
+</span><span class="">  920: 		# Belt-and-suspenders: ensure the alarm is always cancelled
+</span><span class="">  921: 		alarm(0);
+</span><span class="">  922: 		return if $@ || !$hostname;
+</span><span class="">  923: 	} else {
+</span><span class="">  924: 		# Windows: no alarm support; perform lookups synchronously
+</span><span class="">  925: 		$hostname = gethostbyaddr($packed, $family) or return;
+</span><span class="">  926: 
+</span><span class="">  927: 		# Forward lookup to confirm the hostname maps back to the original IP
+</span><span class="">  928: 		@forward_ips = _rdns_forward($hostname, $family);
+</span><span class="">  929: 	}
+</span><span class="">  930: 
+</span><span class="">  931: 	# Step 3: the hostname is only trusted if a forward record confirms the IP
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">932 → 932 → 0</span></span>  932: 	return ($hostname &amp;&amp; grep { $_ eq $canonical } @forward_ips)
+</span><span class="">  933: 		? $hostname
+</span><span class="">  934: 		: undef;
+</span><span class="">  935: }
+</span><span class="">  936: 
+</span><span class="">  937: # _rdns_forward
+</span><span class="survived-2 tooltip" data-tooltip="Boundary mutation survived. Add tests around edge values (e.g. min, max, off-by-one). Mutation survived. Add targeted tests to validate this branch.">  938: #
 </span>
 					<details class="mutant-details">
 					<summary>Mutants (Total: 2, Killed: 0, Survived: 2)</summary>
@@ -1300,28 +1300,28 @@ is( func(VALUE_AT_BOUNDARY), EXPECTED, &#39;Test boundary behaviour&#39; );
 								</div>
 							</li><li><b>COND_INV_938_2: Invert condition if to unless</b><br>MEDIUM: Add tests asserting both true and false outcomes
 </li></ul></details>
-<span class="">  939: 
-</span><span class="">  940: 	# IPv4 path: resolve A record and convert each packed address to a string
-</span><span class="">  941: 	if($family == AF_INET) {
-</span><span class="">  942: 		return map  { inet_ntoa($_)  }
-</span><span class="">  943: 		       grep { defined        }
-</span><span class="">  944: 		       map  { inet_aton($_)  }
-</span><span class="">  945: 		       ($hostname);
-</span><span class="">  946: 	}
-</span><span class="">  947: 
-</span><span class="">  948: 	# IPv6 path: use getaddrinfo to resolve AAAA records
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">949 → 957 → 963</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">949 → 957 → 0</span></span>  949: 	my ($err, @addrs) = Socket::getaddrinfo(
-</span><span class="">  950: 		$hostname, undef,
-</span><span class="">  951: 		{ family =&gt; $family, socktype =&gt; SOCK_STREAM },
-</span><span class="">  952: 	);
-</span><span class="">  953: 	return () if $err;
+<span class="">  939: # Purpose:    Resolves a hostname to a list of IP address strings for use in
+</span><span class="">  940: #             the forward-confirmation step of _verified_rdns().
+</span><span class="">  941: #
+</span><span class="">  942: # Entry:      $hostname - the fully-qualified domain name to resolve.
+</span><span class="">  943: #             $family   - address family: AF_INET or Socket::AF_INET6.
+</span><span class="">  944: #
+</span><span class="">  945: # Exit:       Returns a list of IP address strings (may be empty on failure).
+</span><span class="">  946: #
+</span><span class="">  947: # Side effects: Performs a DNS A or AAAA lookup.
+</span><span class="">  948: #
+</span><span class="">  949: # Notes:      For IPv4 uses the classic inet_aton/inet_ntoa chain.
+</span><span class="">  950: #             For IPv6 uses Socket::getaddrinfo and Socket::getnameinfo
+</span><span class="">  951: #             (available since Perl 5.14 / Socket 1.99).
+</span><span class="">  952: sub _rdns_forward {
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">953 → 956 → 964</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">953 → 956 → 0</span></span>  953: 	my ($hostname, $family) = @_;
 </span><span class="">  954: 
-</span><span class="">  955: 	# Convert each opaque sockaddr to a numeric IP string
-</span><span class="">  956: 	my @ips;
-</span><span class="">  957: 	for my $addr_info (@addrs) {
-</span><span class="">  958: 		my ($e, $host) = Socket::getnameinfo(
-</span><span class="">  959: 			$addr_info-&gt;{addr}, Socket::NI_NUMERICHOST,
-</span><span class="survived-2 tooltip" data-tooltip="Return value mutation survived. Add tests asserting exact return values. Boolean logic mutation survived. Add tests covering both true and false paths.">  960: 		);
+</span><span class="">  955: 	# IPv4 path: resolve A record and convert each packed address to a string
+</span><span class="">  956: 	if($family == AF_INET) {
+</span><span class="">  957: 		return map  { inet_ntoa($_)  }
+</span><span class="">  958: 		       grep { defined        }
+</span><span class="">  959: 		       map  { inet_aton($_)  }
+</span><span class="survived-2 tooltip" data-tooltip="Boolean logic mutation survived. Add tests covering both true and false paths. Return value mutation survived. Add tests asserting exact return values.">  960: 		       ($hostname);
 </span>
 					<details class="mutant-details">
 					<summary>Mutants (Total: 2, Killed: 0, Survived: 2)</summary>
@@ -1343,178 +1343,195 @@ is( func(INPUT), EXPECTED, &#39;Verify correct return value&#39; );
 </pre>
 								</div>
 							</li></ul></details>
-<span class="">  961: 		push @ips, $host unless $e;
-</span><span class="">  962: 	}
-</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">963 → 963 → 0</span></span>  963: 	return @ips;
-</span><span class="">  964: }
-</span><span class="">  965: 
-</span><span class="">  966: =encoding utf-8
-</span><span class="">  967: 
-</span><span class="">  968: =head1 AUTHOR
+<span class="">  961: 	}
+</span><span class="">  962: 
+</span><span class="">  963: 	# IPv6 path: use getaddrinfo to resolve AAAA records
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">964 → 972 → 978</span></span><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">964 → 972 → 0</span></span>  964: 	my ($err, @addrs) = Socket::getaddrinfo(
+</span><span class="">  965: 		$hostname, undef,
+</span><span class="">  966: 		{ family =&gt; $family, socktype =&gt; SOCK_STREAM },
+</span><span class="">  967: 	);
+</span><span class="">  968: 	return () if $err;
 </span><span class="">  969: 
-</span><span class="">  970: Nigel Horne, C&lt;&lt; &lt;njh at nigelhorne.com&gt; &gt;&gt;
-</span><span class="">  971: 
-</span><span class="">  972: =head1 BUGS
-</span><span class="">  973: 
-</span><span class="">  974: Please report any bugs or feature requests to
-</span><span class="">  975: C&lt;bug-cgi-acl at rt.cpan.org&gt;, or through the web interface at
-</span><span class="">  976: L&lt;http://rt.cpan.org/NoAuth/ReportBug.html?Queue=CGI-ACL&gt;.
-</span><span class="">  977: 
-</span><span class="">  978: A VPN or proxy will most likely bypass IP-based access control.
-</span><span class="">  979: 
-</span><span class="">  980: =head1 SEE ALSO
-</span><span class="">  981: 
-</span><span class="">  982: =over 4
-</span><span class="">  983: 
-</span><span class="">  984: =item * L&lt;CGI::Lingua&gt;
-</span><span class="">  985: 
-</span><span class="">  986: =item * L&lt;Configure an Object at Runtime|Object::Configure&gt;
-</span><span class="">  987: 
-</span><span class="">  988: =item * L&lt;Net::CIDR&gt;
-</span><span class="">  989: 
-</span><span class="">  990: =item * L&lt;Test Dashboard|https://nigelhorne.github.io/CGI-ACL/coverage/&gt;
-</span><span class="">  991: 
-</span><span class="">  992: =back
-</span><span class="">  993: 
-</span><span class="">  994: =head1 SUPPORT
-</span><span class="">  995: 
-</span><span class="">  996:     perldoc CGI::ACL
-</span><span class="">  997: 
-</span><span class="">  998: =over 4
-</span><span class="">  999: 
-</span><span class=""> 1000: =item * MetaCPAN: L&lt;https://metacpan.org/release/CGI-ACL&gt;
-</span><span class=""> 1001: 
-</span><span class=""> 1002: =item * RT: L&lt;https://rt.cpan.org/NoAuth/Bugs.html?Dist=CGI-ACL&gt;
-</span><span class=""> 1003: 
-</span><span class=""> 1004: =item * CPANTS: L&lt;http://cpants.cpanauthors.org/dist/CGI-ACL&gt;
-</span><span class=""> 1005: 
-</span><span class=""> 1006: =item * CPAN Testers: L&lt;http://matrix.cpantesters.org/?dist=CGI-ACL&gt;
-</span><span class=""> 1007: 
-</span><span class=""> 1008: =back
-</span><span class=""> 1009: 
-</span><span class=""> 1010: =head2 FORMAL SPECIFICATION
-</span><span class=""> 1011: 
-</span><span class=""> 1012: =head3 new
-</span><span class=""> 1013: 
-</span><span class=""> 1014:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128; ACLState &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
-</span><span class=""> 1015:       allowed_ips    : IP_Str &acirc;&#135;&cedil; Bool
-</span><span class=""> 1016:       deny_countries : Country &acirc;&#135;&cedil; Bool
-</span><span class=""> 1017:       allow_countries: Country &acirc;&#135;&cedil; Bool
-</span><span class=""> 1018:       deny_cloud     : Bool
-</span><span class=""> 1019:       _cidrlist      : [CIDR_Str]?        -- memoised; cleared on allow_ip
-</span><span class=""> 1020:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
-</span><span class=""> 1021: 
-</span><span class=""> 1022:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128; New &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
-</span><span class=""> 1023:       class  : ClassName &acirc;&#136;&ordf; ACLState
-</span><span class=""> 1024:       params : ACLState?
-</span><span class=""> 1025:       &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
-</span><span class=""> 1026:       blessed(class) &acirc;&#159;&sup1;
-</span><span class=""> 1027:         result! = bless( class &acirc;&#136;&ordf; params, ref(class) )   -- clone
-</span><span class=""> 1028:       &Acirc;&not;blessed(class) &acirc;&#159;&sup1;
-</span><span class=""> 1029:         result! = bless( configure(class, params), class )
-</span><span class=""> 1030:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
-</span><span class=""> 1031: 
-</span><span class=""> 1032: =head3 allow_ip
-</span><span class=""> 1033: 
-</span><span class=""> 1034:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128; AllowIP &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
-</span><span class=""> 1035:       &Icirc;&#148;ACL
-</span><span class=""> 1036:       ip? : IP_Str
-</span><span class=""> 1037:       &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
-</span><span class=""> 1038:       allowed_ips&#39; = allowed_ips &acirc;&#136;&ordf; { ip? &acirc;&#134;&brvbar; 1 }
-</span><span class=""> 1039:       _cidrlist&#39;   = &acirc;&#136;&#133;          -- cache invalidated
-</span><span class=""> 1040:       deny_countries&#39; = deny_countries
-</span><span class=""> 1041:       allow_countries&#39; = allow_countries
-</span><span class=""> 1042:       deny_cloud&#39;     = deny_cloud
-</span><span class=""> 1043:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
-</span><span class=""> 1044: 
-</span><span class=""> 1045: =head3 deny_country
+</span><span class="">  970: 	# Convert each opaque sockaddr to a numeric IP string
+</span><span class="">  971: 	my @ips;
+</span><span class="">  972: 	for my $addr_info (@addrs) {
+</span><span class="">  973: 		my ($e, $host) = Socket::getnameinfo(
+</span><span class="">  974: 			$addr_info-&gt;{addr}, Socket::NI_NUMERICHOST,
+</span><span class="">  975: 		);
+</span><span class="">  976: 		push @ips, $host unless $e;
+</span><span class="">  977: 	}
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">978 → 978 → 0</span></span>  978: 	return @ips;
+</span><span class="">  979: }
+</span><span class="">  980: 
+</span><span class="">  981: =encoding utf-8
+</span><span class="">  982: 
+</span><span class="">  983: =head1 AUTHOR
+</span><span class="">  984: 
+</span><span class="">  985: Nigel Horne, C&lt;&lt; &lt;njh at nigelhorne.com&gt; &gt;&gt;
+</span><span class="">  986: 
+</span><span class="">  987: =head1 BUGS
+</span><span class="">  988: 
+</span><span class="">  989: Please report any bugs or feature requests to
+</span><span class="">  990: C&lt;bug-cgi-acl at rt.cpan.org&gt;, or through the web interface at
+</span><span class="">  991: L&lt;http://rt.cpan.org/NoAuth/ReportBug.html?Queue=CGI-ACL&gt;.
+</span><span class="">  992: 
+</span><span class="">  993: A VPN or proxy will most likely bypass IP-based access control.
+</span><span class="">  994: 
+</span><span class="">  995: =head1 SEE ALSO
+</span><span class="">  996: 
+</span><span class="">  997: =over 4
+</span><span class="">  998: 
+</span><span class="">  999: =item * L&lt;CGI::Lingua&gt;
+</span><span class=""> 1000: 
+</span><span class=""> 1001: =item * L&lt;Configure an Object at Runtime|Object::Configure&gt;
+</span><span class=""> 1002: 
+</span><span class=""> 1003: =item * L&lt;Net::CIDR&gt;
+</span><span class=""> 1004: 
+</span><span class=""> 1005: =item * L&lt;Test Dashboard|https://nigelhorne.github.io/CGI-ACL/coverage/&gt;
+</span><span class=""> 1006: 
+</span><span class=""> 1007: =back
+</span><span class=""> 1008: 
+</span><span class=""> 1009: =head1 SUPPORT
+</span><span class=""> 1010: 
+</span><span class=""> 1011:     perldoc CGI::ACL
+</span><span class=""> 1012: 
+</span><span class=""> 1013: =over 4
+</span><span class=""> 1014: 
+</span><span class=""> 1015: =item * MetaCPAN: L&lt;https://metacpan.org/release/CGI-ACL&gt;
+</span><span class=""> 1016: 
+</span><span class=""> 1017: =item * RT: L&lt;https://rt.cpan.org/NoAuth/Bugs.html?Dist=CGI-ACL&gt;
+</span><span class=""> 1018: 
+</span><span class=""> 1019: =item * CPANTS: L&lt;http://cpants.cpanauthors.org/dist/CGI-ACL&gt;
+</span><span class=""> 1020: 
+</span><span class=""> 1021: =item * CPAN Testers: L&lt;http://matrix.cpantesters.org/?dist=CGI-ACL&gt;
+</span><span class=""> 1022: 
+</span><span class=""> 1023: =back
+</span><span class=""> 1024: 
+</span><span class=""> 1025: =head2 FORMAL SPECIFICATION
+</span><span class=""> 1026: 
+</span><span class=""> 1027: =head3 new
+</span><span class=""> 1028: 
+</span><span class=""> 1029:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128; ACLState &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class=""> 1030:       allowed_ips    : IP_Str &acirc;&#135;&cedil; Bool
+</span><span class=""> 1031:       deny_countries : Country &acirc;&#135;&cedil; Bool
+</span><span class=""> 1032:       allow_countries: Country &acirc;&#135;&cedil; Bool
+</span><span class=""> 1033:       deny_cloud     : Bool
+</span><span class=""> 1034:       _cidrlist      : [CIDR_Str]?        -- memoised; cleared on allow_ip
+</span><span class=""> 1035:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class=""> 1036: 
+</span><span class=""> 1037:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128; New &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class=""> 1038:       class  : ClassName &acirc;&#136;&ordf; ACLState
+</span><span class=""> 1039:       params : ACLState?
+</span><span class=""> 1040:       &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class=""> 1041:       blessed(class) &acirc;&#159;&sup1;
+</span><span class=""> 1042:         result! = bless( class &acirc;&#136;&ordf; params, ref(class) )   -- clone
+</span><span class=""> 1043:       &Acirc;&not;blessed(class) &acirc;&#159;&sup1;
+</span><span class=""> 1044:         result! = bless( configure(class, params), class )
+</span><span class=""> 1045:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
 </span><span class=""> 1046: 
-</span><span class=""> 1047:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128; DenyCountry &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
-</span><span class=""> 1048:       &Icirc;&#148;ACL
-</span><span class=""> 1049:       country? : ISO_Code &acirc;&#136;&ordf; {&#39;*&#39;} &acirc;&#136;&ordf; seq ISO_Code
-</span><span class=""> 1050:       &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
-</span><span class=""> 1051:       country? &acirc;&#136;&#136; seq ISO_Code &acirc;&#159;&sup1;
-</span><span class=""> 1052:         deny_countries&#39; = deny_countries &acirc;&#136;&ordf;
-</span><span class=""> 1053:                           { lc(c) &acirc;&#134;&brvbar; 1 | c &acirc;&#136;&#136; country? }
-</span><span class=""> 1054:       country? &acirc;&#136;&#137; seq ISO_Code &acirc;&#159;&sup1;
-</span><span class=""> 1055:         deny_countries&#39; = deny_countries &acirc;&#136;&ordf; { lc(country?) &acirc;&#134;&brvbar; 1 }
+</span><span class=""> 1047: =head3 allow_ip
+</span><span class=""> 1048: 
+</span><span class=""> 1049:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128; AllowIP &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class=""> 1050:       &Icirc;&#148;ACL
+</span><span class=""> 1051:       ip? : IP_Str
+</span><span class=""> 1052:       &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class=""> 1053:       allowed_ips&#39; = allowed_ips &acirc;&#136;&ordf; { ip? &acirc;&#134;&brvbar; 1 }
+</span><span class=""> 1054:       _cidrlist&#39;   = &acirc;&#136;&#133;          -- cache invalidated
+</span><span class=""> 1055:       deny_countries&#39; = deny_countries
 </span><span class=""> 1056:       allow_countries&#39; = allow_countries
-</span><span class=""> 1057:       allowed_ips&#39;     = allowed_ips
-</span><span class=""> 1058:       deny_cloud&#39;      = deny_cloud
-</span><span class=""> 1059:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
-</span><span class=""> 1060: 
-</span><span class=""> 1061: =head3 allow_country
-</span><span class=""> 1062: 
-</span><span class=""> 1063:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128; AllowCountry &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
-</span><span class=""> 1064:       &Icirc;&#148;ACL
-</span><span class=""> 1065:       country? : ISO_Code &acirc;&#136;&ordf; seq ISO_Code
-</span><span class=""> 1066:       &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
-</span><span class=""> 1067:       country? &acirc;&#136;&#136; seq ISO_Code &acirc;&#159;&sup1;
-</span><span class=""> 1068:         allow_countries&#39; = allow_countries &acirc;&#136;&ordf;
-</span><span class=""> 1069:                            { lc(c) &acirc;&#134;&brvbar; 1 | c &acirc;&#136;&#136; country? }
-</span><span class=""> 1070:       country? &acirc;&#136;&#137; seq ISO_Code &acirc;&#159;&sup1;
-</span><span class=""> 1071:         allow_countries&#39; = allow_countries &acirc;&#136;&ordf; { lc(country?) &acirc;&#134;&brvbar; 1 }
-</span><span class=""> 1072:       deny_countries&#39; = deny_countries
-</span><span class=""> 1073:       allowed_ips&#39;    = allowed_ips
-</span><span class=""> 1074:       deny_cloud&#39;     = deny_cloud
-</span><span class=""> 1075:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
-</span><span class=""> 1076: 
-</span><span class=""> 1077: =head3 deny_cloud
-</span><span class=""> 1078: 
-</span><span class=""> 1079:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128; DenyCloud &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
-</span><span class=""> 1080:       &Icirc;&#148;ACL
+</span><span class=""> 1057:       deny_cloud&#39;     = deny_cloud
+</span><span class=""> 1058:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class=""> 1059: 
+</span><span class=""> 1060: =head3 deny_country
+</span><span class=""> 1061: 
+</span><span class=""> 1062:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128; DenyCountry &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class=""> 1063:       &Icirc;&#148;ACL
+</span><span class=""> 1064:       country? : ISO_Code &acirc;&#136;&ordf; {&#39;*&#39;} &acirc;&#136;&ordf; seq ISO_Code
+</span><span class=""> 1065:       &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class=""> 1066:       country? &acirc;&#136;&#136; seq ISO_Code &acirc;&#159;&sup1;
+</span><span class=""> 1067:         deny_countries&#39; = deny_countries &acirc;&#136;&ordf;
+</span><span class=""> 1068:                           { lc(c) &acirc;&#134;&brvbar; 1 | c &acirc;&#136;&#136; country? }
+</span><span class=""> 1069:       country? &acirc;&#136;&#137; seq ISO_Code &acirc;&#159;&sup1;
+</span><span class=""> 1070:         deny_countries&#39; = deny_countries &acirc;&#136;&ordf; { lc(country?) &acirc;&#134;&brvbar; 1 }
+</span><span class=""> 1071:       allow_countries&#39; = allow_countries
+</span><span class=""> 1072:       allowed_ips&#39;     = allowed_ips
+</span><span class=""> 1073:       deny_cloud&#39;      = deny_cloud
+</span><span class=""> 1074:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class=""> 1075: 
+</span><span class=""> 1076: =head3 allow_country
+</span><span class=""> 1077: 
+</span><span class=""> 1078:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128; AllowCountry &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class=""> 1079:       &Icirc;&#148;ACL
+</span><span class=""> 1080:       country? : ISO_Code &acirc;&#136;&ordf; seq ISO_Code
 </span><span class=""> 1081:       &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
-</span><span class=""> 1082:       deny_cloud&#39;     = 1
-</span><span class=""> 1083:       allowed_ips&#39;    = allowed_ips
-</span><span class=""> 1084:       deny_countries&#39; = deny_countries
-</span><span class=""> 1085:       allow_countries&#39;= allow_countries
-</span><span class=""> 1086:       _cidrlist&#39;      = _cidrlist
-</span><span class=""> 1087:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
-</span><span class=""> 1088: 
-</span><span class=""> 1089: =head3 all_denied
-</span><span class=""> 1090: 
-</span><span class=""> 1091:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128; AllDenied &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
-</span><span class=""> 1092:       &Icirc;&#158;ACL                          -- state unchanged (modulo cache)
-</span><span class=""> 1093:       addr    : IPv4 &acirc;&#136;&ordf; IPv6         -- REMOTE_ADDR or DEFAULT_ADDR
-</span><span class=""> 1094:       lingua? : Lingua              -- country resolver (optional)
-</span><span class=""> 1095:       result! : {0, 1}              -- 0 = allow, 1 = deny
+</span><span class=""> 1082:       country? &acirc;&#136;&#136; seq ISO_Code &acirc;&#159;&sup1;
+</span><span class=""> 1083:         allow_countries&#39; = allow_countries &acirc;&#136;&ordf;
+</span><span class=""> 1084:                            { lc(c) &acirc;&#134;&brvbar; 1 | c &acirc;&#136;&#136; country? }
+</span><span class=""> 1085:       country? &acirc;&#136;&#137; seq ISO_Code &acirc;&#159;&sup1;
+</span><span class=""> 1086:         allow_countries&#39; = allow_countries &acirc;&#136;&ordf; { lc(country?) &acirc;&#134;&brvbar; 1 }
+</span><span class=""> 1087:       deny_countries&#39; = deny_countries
+</span><span class=""> 1088:       allowed_ips&#39;    = allowed_ips
+</span><span class=""> 1089:       deny_cloud&#39;     = deny_cloud
+</span><span class=""> 1090:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class=""> 1091: 
+</span><span class=""> 1092: =head3 deny_cloud
+</span><span class=""> 1093: 
+</span><span class=""> 1094:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128; DenyCloud &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class=""> 1095:       &Icirc;&#148;ACL
 </span><span class=""> 1096:       &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
-</span><span class=""> 1097:       no_restrictions(self) &acirc;&#159;&sup1; result! = 0
-</span><span class=""> 1098: 
-</span><span class=""> 1099:       &Acirc;&not;valid_ip(addr) &acirc;&#159;&sup1; result! = 1
-</span><span class=""> 1100: 
-</span><span class=""> 1101:       deny_cloud = 1 &acirc;&#136;&sect; is_cloud(addr) &acirc;&#159;&sup1; result! = 1
-</span><span class=""> 1102:       deny_cloud = 1 &acirc;&#136;&sect; &Acirc;&not;is_cloud(addr)
-</span><span class=""> 1103:         &acirc;&#136;&sect; allowed_ips = &acirc;&#136;&#133; &acirc;&#136;&sect; deny_countries = &acirc;&#136;&#133;
-</span><span class=""> 1104:         &acirc;&#136;&sect; allow_countries = &acirc;&#136;&#133;            &acirc;&#159;&sup1; result! = 0
+</span><span class=""> 1097:       deny_cloud&#39;     = 1
+</span><span class=""> 1098:       allowed_ips&#39;    = allowed_ips
+</span><span class=""> 1099:       deny_countries&#39; = deny_countries
+</span><span class=""> 1100:       allow_countries&#39;= allow_countries
+</span><span class=""> 1101:       _cidrlist&#39;      = _cidrlist
+</span><span class=""> 1102:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class=""> 1103: 
+</span><span class=""> 1104: =head3 all_denied
 </span><span class=""> 1105: 
-</span><span class=""> 1106:       addr &acirc;&#136;&#136; dom(allowed_ips) &acirc;&#159;&sup1; result! = 0
-</span><span class=""> 1107:       cidr_match(addr, allowed_ips) &acirc;&#159;&sup1; result! = 0
-</span><span class=""> 1108: 
-</span><span class=""> 1109:       (deny_countries &acirc;&#137;&nbsp; &acirc;&#136;&#133; &acirc;&#136;&uml; allow_countries &acirc;&#137;&nbsp; &acirc;&#136;&#133;)
-</span><span class=""> 1110:         &acirc;&#136;&sect; lingua? = &acirc;&#136;&#133; &acirc;&#159;&sup1; result! = 1      -- no lingua supplied
-</span><span class=""> 1111:       lingua?.country() = undef &acirc;&#159;&sup1; result! = 1   -- unknown country
-</span><span class=""> 1112: 
-</span><span class=""> 1113:       deny_countries($WILDCARD) = 1
-</span><span class=""> 1114:         &acirc;&#136;&sect; allow_countries(lc(lingua?.country())) = 1 &acirc;&#159;&sup1; result! = 0
-</span><span class=""> 1115:       deny_countries($WILDCARD) = 1
-</span><span class=""> 1116:         &acirc;&#136;&sect; allow_countries(lc(lingua?.country())) &acirc;&#137;&nbsp; 1 &acirc;&#159;&sup1; result! = 1
-</span><span class=""> 1117: 
-</span><span class=""> 1118:       deny_countries($WILDCARD) &acirc;&#137;&nbsp; 1
-</span><span class=""> 1119:         &acirc;&#136;&sect; deny_countries(lc(lingua?.country())) = 1 &acirc;&#159;&sup1; result! = 1
-</span><span class=""> 1120:       deny_countries($WILDCARD) &acirc;&#137;&nbsp; 1
-</span><span class=""> 1121:         &acirc;&#136;&sect; deny_countries(lc(lingua?.country())) &acirc;&#137;&nbsp; 1 &acirc;&#159;&sup1; result! = 0
-</span><span class=""> 1122:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class=""> 1106:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128; AllDenied &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class=""> 1107:       &Icirc;&#158;ACL                          -- state unchanged (modulo cache)
+</span><span class=""> 1108:       addr    : IPv4 &acirc;&#136;&ordf; IPv6         -- REMOTE_ADDR or DEFAULT_ADDR
+</span><span class=""> 1109:       lingua? : Lingua              -- country resolver (optional)
+</span><span class=""> 1110:       result! : {0, 1}              -- 0 = allow, 1 = deny
+</span><span class=""> 1111:       &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class=""> 1112:       no_restrictions(self) &acirc;&#159;&sup1; result! = 0
+</span><span class=""> 1113: 
+</span><span class=""> 1114:       &Acirc;&not;valid_ip(addr) &acirc;&#159;&sup1; result! = 1
+</span><span class=""> 1115: 
+</span><span class=""> 1116:       deny_cloud = 1 &acirc;&#136;&sect; is_cloud(addr) &acirc;&#159;&sup1; result! = 1
+</span><span class=""> 1117:       deny_cloud = 1 &acirc;&#136;&sect; &Acirc;&not;is_cloud(addr)
+</span><span class=""> 1118:         &acirc;&#136;&sect; allowed_ips = &acirc;&#136;&#133; &acirc;&#136;&sect; deny_countries = &acirc;&#136;&#133;
+</span><span class=""> 1119:         &acirc;&#136;&sect; allow_countries = &acirc;&#136;&#133;            &acirc;&#159;&sup1; result! = 0
+</span><span class=""> 1120: 
+</span><span class=""> 1121:       addr &acirc;&#136;&#136; dom(allowed_ips) &acirc;&#159;&sup1; result! = 0
+</span><span class=""> 1122:       cidr_match(addr, allowed_ips) &acirc;&#159;&sup1; result! = 0
 </span><span class=""> 1123: 
-</span><span class=""> 1124: =head1 LICENSE AND COPYRIGHT
-</span><span class=""> 1125: 
-</span><span class=""> 1126: Copyright 2017-2026 Nigel Horne.
+</span><span class=""> 1124:       (deny_countries &acirc;&#137;&nbsp; &acirc;&#136;&#133; &acirc;&#136;&uml; allow_countries &acirc;&#137;&nbsp; &acirc;&#136;&#133;)
+</span><span class=""> 1125:         &acirc;&#136;&sect; lingua? = &acirc;&#136;&#133; &acirc;&#159;&sup1; result! = 1      -- no lingua supplied
+</span><span class=""> 1126:       lingua?.country() = undef &acirc;&#159;&sup1; result! = 1   -- unknown country
 </span><span class=""> 1127: 
-</span><span class=""> 1128: This program is released under the following licence: GPL2
-</span><span class=""> 1129: 
-</span><span class=""> 1130: =cut
-</span><span class=""> 1131: 
-</span><span class=""> 1132: 1;
+</span><span class=""> 1128:       deny_countries($WILDCARD) = 1
+</span><span class=""> 1129:         &acirc;&#136;&sect; allow_countries(lc(lingua?.country())) = 1 &acirc;&#159;&sup1; result! = 0
+</span><span class=""> 1130:       deny_countries($WILDCARD) = 1
+</span><span class=""> 1131:         &acirc;&#136;&sect; allow_countries(lc(lingua?.country())) &acirc;&#137;&nbsp; 1 &acirc;&#159;&sup1; result! = 1
+</span><span class=""> 1132: 
+</span><span class=""> 1133:       deny_countries($WILDCARD) &acirc;&#137;&nbsp; 1
+</span><span class=""> 1134:         &acirc;&#136;&sect; deny_countries(lc(lingua?.country())) = 1 &acirc;&#159;&sup1; result! = 1
+</span><span class=""> 1135:       deny_countries($WILDCARD) &acirc;&#137;&nbsp; 1
+</span><span class=""> 1136:         &acirc;&#136;&sect; deny_countries(lc(lingua?.country())) &acirc;&#137;&nbsp; 1 &acirc;&#159;&sup1; result! = 0
+</span><span class=""> 1137:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class=""> 1138: 
+</span><span class=""> 1139: =head1 LICENSE AND COPYRIGHT
+</span><span class=""> 1140: 
+</span><span class=""> 1141: Copyright 2017-2026 Nigel Horne.
+</span><span class=""> 1142: 
+</span><span class=""> 1143: Usage is subject to the GPL2 licence terms.
+</span><span class=""> 1144: If you use it,
+</span><span class=""> 1145: please let me know.
+</span><span class=""> 1146: 
+</span><span class=""> 1147: =cut
+</span><span class=""> 1148: 
+</span><span class=""> 1149: 1;
 </span></pre>
 
 <script>

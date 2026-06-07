@@ -31,6 +31,7 @@ t/kwalitee.t
 t/locales.t
 t/manifest.t
 t/metrics.t
+t/mutant_killers.t
 t/no404s.t
 t/noop.t
 t/noopentickets.t

@@ -4,11 +4,6 @@ package CGI::ACL;
 # Copyright (C) 2017-2026, Nigel Horne
 #
 # Usage is subject to licence terms.
-# The licence terms of this software are as follows:
-# Personal single user, single computer use: GPL2
-# All other users (including Commercial, Charity, Educational, Government)
-#   must apply in writing for a licence for use from Nigel Horne at the
-#   above e-mail.
 
 # TODO: Add deny_all_countries() so operators can easily allow only a few countries.
 # TODO: Add optional rate-limiter to block brute-force attacks.
@@ -64,13 +59,11 @@ CGI::ACL - Decide whether to allow a client to run a CGI script
 
 =head1 VERSION
 
-Version 0.07
+Version 0.08
 
 =cut
 
-our $VERSION = '0.07';
-
-# ── Synopsis ───────────────────────────────────────────────────────────────────
+our $VERSION = '0.08';
 
 =head1 SYNOPSIS
 

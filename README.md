@@ -11,7 +11,7 @@ CGI::ACL - Decide whether to allow a client to run a CGI script
 
 # VERSION
 
-Version 0.07
+Version 0.08
 
 # SYNOPSIS
 
@@ -133,7 +133,7 @@ Invalidates the internal CIDR lookup cache so the next call to
 
     # Compatible with Params::Validate::Strict:
     {
-        ip => { type => SCALAR, regex => qr/\S+/, required => 1 },
+        ip => { type => 'string', regex => qr/\S+/, required => 1 },
     }
 
 #### Output
@@ -200,7 +200,7 @@ not restrict access.
     # Compatible with Params::Validate::Strict:
     {
         country => {
-            type     => SCALAR | ARRAYREF,
+            type     => 'string' | 'arrayref',
             required => 1,
         },
     }
@@ -265,7 +265,7 @@ consulted.
     # Compatible with Params::Validate::Strict:
     {
         country => {
-            type     => SCALAR | ARRAYREF,
+            type     => 'string' | 'arrayref',
             required => 1,
         },
     }
@@ -423,7 +423,7 @@ structure) as a performance optimisation.
 #### Output
 
     # Compatible with Return::Set:
-    { type => SCALAR, regex => qr/^[01]$/ }
+    { type => 'string', regex => qr/^[01]$/ }
 
 ### MESSAGES
 
@@ -581,4 +581,6 @@ A VPN or proxy will most likely bypass IP-based access control.
 
 Copyright 2017-2026 Nigel Horne.
 
-This program is released under the following licence: GPL2
+Usage is subject to the GPL2 licence terms.
+If you use it,
+please let me know.

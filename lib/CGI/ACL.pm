@@ -717,7 +717,11 @@ sub all_denied {
 		# Deny if the IP resolves to a cloud provider hostname.
 		# Wrap in eval: DNS failures must not kill the CGI process; fail safe.
 		my $is_cloud = eval { _is_cloud_host($addr) };
-		return 1 if !$@ && $is_cloud;
+		my $error = $@;
+		if($@ =~ /^DNS timeout: /) {
+			undef $@;
+		}
+		return 1 if !$error && $is_cloud;
 
 		# Non-cloud and no other restrictions: allow
 		return 0 unless $self->{allowed_ips}
@@ -899,7 +903,7 @@ sub _verified_rdns {
 	if($^O ne 'MSWin32') {
 		# Non-Windows: guard against indefinitely-blocking DNS calls
 		local $SIG{ALRM} = sub { die "DNS timeout: $ip" };
-		alarm($DNS_TIMEOUT);
+		my $old_alarm = alarm($DNS_TIMEOUT) || 0;
 		eval {
 			# Step 1: reverse lookup (IP -> hostname)
 			$hostname = gethostbyaddr($packed, $family);
@@ -908,10 +912,10 @@ sub _verified_rdns {
 				@forward_ips = _rdns_forward($hostname, $family);
 			}
 			# Cancel the alarm inside the eval to avoid a post-eval race
-			alarm(0);
+			alarm($old_alarm);
 		};
-		# Belt-and-suspenders: ensure the alarm is always cancelled
-		alarm(0);
+		# Ensure the alarm is always cancelled
+		alarm($old_alarm);
 		return if $@ || !$hostname;
 	} else {
 		# Windows: no alarm support; perform lookups synchronously

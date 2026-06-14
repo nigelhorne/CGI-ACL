@@ -153,9 +153,9 @@
 
 <tbody>
 
-<tr class="high"><td><a href="blib-lib-CGI-ACL-pm.html" title="View coverage line by line" target="_blank">lib/CGI/ACL.pm</a> <a href="https://github.com/nigelhorne/CGI-ACL/blob/2e399e1bf099cdcabd0538fc54ed79f0e905cc3c/lib/CGI/ACL.pm" class="icon-link" title="View source on GitHub">&#128269;</a><canvas class="sparkline" width="80" height="20" data-points="72.9,98.0,95.9,95.9,96.2,96.2,95.9,98.0"></canvas></td><td>99.0</td><td>97.1</td><td>95.5</td><td>100.0</td><td><span class="coverage-badge badge-good" title="Excellent coverage">98.0%</span></td><td class="positive" title="Previous (sparkline): 95.9%">&#9650; 2.1%</td></tr>
+<tr class="high"><td><a href="blib-lib-CGI-ACL-pm.html" title="View coverage line by line" target="_blank">lib/CGI/ACL.pm</a> <a href="https://github.com/nigelhorne/CGI-ACL/blob/aa4a5339233a7ed0b666b23490319e9f74bb157e/lib/CGI/ACL.pm" class="icon-link" title="View source on GitHub">&#128269;</a><canvas class="sparkline" width="80" height="20" data-points="72.9,98.0,95.9,95.9,96.2,96.2,95.9,98.0,98.0"></canvas></td><td>98.5</td><td>96.2</td><td>94.1</td><td>100.0</td><td><span class="coverage-badge badge-good" title="Excellent coverage">97.3%</span></td><td class="neutral" title="Previous (sparkline): 98.0%">&#9679; 0.0%</td></tr>
 <tr class="summary-row nosort"><td colspan="2"><strong>Summary</strong></td><td colspan="2">1 files</td><td colspan="3">Avg: 97%, Low: 0</td></tr>
-<tr class="high nosort"><td><strong>Total</strong></td><td>99.0</td><td>97.1</td><td>95.5</td><td>100.0</td><td colspan="2"><strong>98.0</strong></td></tr>
+<tr class="high nosort"><td><strong>Total</strong></td><td>98.5</td><td>96.2</td><td>94.1</td><td>100.0</td><td colspan="2"><strong>97.3</strong></td></tr>
 </tbody></table>
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1em;">
 	<div>
@@ -209,7 +209,8 @@ const dataPoints = [ { x: "2026-06-05T21:22:09+00:00", y: 72.8531855955679, delt
 { x: "2026-06-06T19:56:45+00:00", y: 96.2216624685139, delta: 0.3, url: "https://github.com/nigelhorne/CGI-ACL/commit/e82c6ffab4f972ebbaf57f98aa06e3470710e9a5", label: "2026-06-06T19:56:45+00:00", pointBackgroundColor: "green", comment: "Update mutation results (2026-06-06 fb6229d)" },
 { x: "2026-06-06T20:37:14+00:00", y: 96.2216624685139, delta: 0.0, url: "https://github.com/nigelhorne/CGI-ACL/commit/7d2a2695a6ec9c514ac5674a294aa99b3c23823a", label: "2026-06-06T20:37:14+00:00", pointBackgroundColor: "gray", comment: "Update mutation results (2026-06-06 ecd1bcf)" },
 { x: "2026-06-06T20:55:23+00:00", y: 97.9746835443038, delta: 1.8, url: "https://github.com/nigelhorne/CGI-ACL/commit/1d494c1761fbf84f8d512ae0a58530a4b887f538", label: "2026-06-06T20:55:23+00:00", pointBackgroundColor: "green", comment: "Update mutation results (2026-06-06 bb258af)" },
-{ x: "2026-06-07T01:00:25+00:00", y: 97.9746835443038, delta: 0.0, url: "https://github.com/nigelhorne/CGI-ACL/commit/6de3de63617f84feb17c2d7188285d84938a7b00", label: "2026-06-07T01:00:25+00:00", pointBackgroundColor: "gray", comment: "Update mutation results (2026-06-07 8501d4f)" } ];
+{ x: "2026-06-07T01:00:25+00:00", y: 97.9746835443038, delta: 0.0, url: "https://github.com/nigelhorne/CGI-ACL/commit/6de3de63617f84feb17c2d7188285d84938a7b00", label: "2026-06-07T01:00:25+00:00", pointBackgroundColor: "gray", comment: "Update mutation results (2026-06-07 8501d4f)" },
+{ x: "2026-06-07T01:39:16+00:00", y: 97.9746835443038, delta: 0.0, url: "https://github.com/nigelhorne/CGI-ACL/commit/35e47583a69209e37c1cbcb77ed2cc3248b06c9a", label: "2026-06-07T01:39:16+00:00", pointBackgroundColor: "gray", comment: "Update mutation results (2026-06-07 2e399e1)" } ];
 const regressionPoints = linearRegression(dataPoints);
 // Try to register the zoom plugin (handles different UMD builds)
 (function registerZoomPlugin(){
@@ -461,17 +462,225 @@ function refresh(){
 
 <p><center>Use mouse wheel or pinch to zoom; drag to pan</center></p>
 <p>No issues active on <a href="https://rt.cpan.org/Public/Dist/Display.html?Name=CGI-ACL">RT</a></p>
-<p>No <A HREF="https://fast2-matrix.cpantesters.org/?dist=CGI-ACL+0.07">CPAN Testers</A> failures reported for CGI-ACL 0.07</p>
+<h2>CPAN Testers Failures for CGI-ACL 0.08</h2>
+<h3>Failure Summary (all reports)</h3>
+<ul>
+<li><b>Perl 5.42.x</b>: 8 failures</li>
+<li><b>linux</b>: 29 failures</li>
+<li><b>5.42 / linux</b>: 4 failures</li>
+</ul>
+<h3>Likely Root Causes</h3>
+<table class="root-causes">
+<thead>
+<tr>
+	<th>Cause</th>
+	<th>Confidence</th>
+	<th>Evidence</th>
+</tr>
+</thead>
+<tbody>
+
+<tr class="high">
+	<td halign="center"><strong>Locale-sensitive behavior (de_DE)</strong></td>
+	<td halign="center">Strong (100%)</td>
+	<td halign="center"><ul><li>4/4 failures with LANG=de_DE</li><li>English locales show fewer or no failures</li></ul></td>
+</tr>
+
+<tr class="low">
+	<td halign="center"><strong>Scattered failures (no clear version or OS pattern)</strong></td>
+	<td halign="center">Weak (40%)</td>
+	<td halign="center"><ul><li>Failures and passes both seen on 11 common Perl series</li><li>Possible causes: flaky tests, optional dependency differences, or CGI environment assumptions</li><li>Review test output from failing reports for specific error messages</li></ul></td>
+</tr>
+
+</tbody>
+</table>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+	const toggleFail = document.getElementById('toggleFail');
+	const toggleUnknown = document.getElementById('toggleUnknown');
+	const toggleNA = document.getElementById('toggleNA');
+	const toggleNew = document.getElementById('toggleNew');
+
+	function update() {
+		document.querySelectorAll('tr').forEach(row => {
+			// Skip header rows
+			if(row.querySelector('th')) return;
+
+			// Determine row status
+			const isFail = row.classList.contains('cpan-fail');
+			const isUnknown = row.classList.contains('cpan-unknown');
+			const isNA = row.classList.contains('cpan-na');
+			const isNew = !!row.querySelector('.new-failure');
+
+			// Decide whether to show the row
+			let show = true;
+
+			if(toggleFail && !toggleFail.checked && isFail) show = false;
+			if(toggleUnknown && !toggleUnknown.checked && isUnknown) show = false;
+			if(toggleNA && !toggleNA.checked && isNA) show = false;
+			if(toggleNew && toggleNew.checked && !isNew) show = false;
+
+			row.style.display = show ? '' : 'none';
+		});
+	}
+
+	[toggleFail, toggleUnknown, toggleNA, toggleNew].forEach(cb => {
+		if(cb) cb.addEventListener('change', update);
+	});
+
+	update();
+});
+document.addEventListener("DOMContentLoaded", () => {
+	const th = document.querySelector("table.sortable-table th");
+	if(th) sortTable(th, 0);
+});
+</script>
+
+<p><em>Showing one failure per OS/Perl combination.</em></p>
+<div style="margin-bottom: 0.5em;">
+	<label>
+		<input type="checkbox" id="toggleFail" checked>
+		FAIL
+	</label>
+	<label style="margin-left: 1em;">
+		<input type="checkbox" id="toggleUnknown">
+		UNKNOWN
+	</label>
+	<label style="margin-left: 1em;">
+		<input type="checkbox" id="toggleNA">
+		NA
+	</label>
+	<label style="margin-left: 1em;">
+		<input type="checkbox" id="toggleNew">
+		NEW only
+	</label>
+</div>
+
+<table class="sortable-table" data-sort-col="0" data-sort-order="asc">
+<thead>
+<tr>
+	<th class="sortable" onclick="sortTable(this, 0)">
+		<span class="label">Date</span> <span class="arrow">&#x25B2;</span>
+	</th>
+	<th class="sortable" onclick="sortTable(this, 1)">
+		<span class="label">OS</span> <span class="arrow">&#x25B2;</span>
+	</th>
+	<th class="sortable" onclick="sortTable(this, 2)">
+		<span class="label">Perl</span> <span class="arrow">&#x25B2;</span>
+	</th>
+	<th class="sortable" onclick="sortTable(this, 3)">
+		<span class="label">Reporter</span> <span class="arrow">&#x25B2;</span>
+	</th>
+	<th class="sortable" onclick="sortTable(this, 4)" title="Marks failures that did not occur in the previous release. The same OS, Perl version, architecture, and platform were passing before.">
+		<span class="label">New</span> <span class="arrow">&#x25B2;</span>
+	</th>
+	<th>Report</th>
+</tr>
+</thead>
+<tbody>
+
+<tr class="cpan-fail"><td>2026-06-09T09:07:00Z</td><td>freebsd</td><td>5.43.11</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/b5dd10a0-63e2-11f1-bd38-57396e8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-09T00:45:00Z</td><td>linux</td><td>5.40.3</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/7df2e0f2-639c-11f1-89c0-dc066e8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-07T10:02:00Z</td><td>linux</td><td>5.43.10</td><td>Andreas J. K&ouml;nig (ANDK)</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/fca3c29a-6257-11f1-b2a9-fa24c6e2bba1" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-09T09:09:00Z</td><td>freebsd</td><td>5.28.1</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/de3d0078-63e2-11f1-bd38-57396e8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-09T00:29:00Z</td><td>linux</td><td>5.32.1</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/5950f1be-639a-11f1-89c0-dc066e8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-07T09:11:00Z</td><td>linux</td><td>5.42.2</td><td>Andreas J. K&ouml;nig (ANDK)</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/f02a35d2-6250-11f1-be33-b34915290e52" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-09T00:42:00Z</td><td>linux</td><td>5.42.0</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/18b7c284-639c-11f1-89c0-dc066e8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-09T09:14:00Z</td><td>linux</td><td>5.43.11</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/993c8bfa-63e3-11f1-bd38-57396e8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-07T10:43:00Z</td><td>linux</td><td>5.26.2</td><td>Andreas J. K&ouml;nig (ANDK)</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/a85e4934-625d-11f1-ab67-bc7f3ff6f7d7" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-07T10:32:00Z</td><td>linux</td><td>5.36.3</td><td>Andreas J. K&ouml;nig (ANDK)</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/3bcbbd20-625c-11f1-a3fe-f94c4e3a9d0e" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-07T10:38:00Z</td><td>linux</td><td>5.36.3</td><td>Andreas J. K&ouml;nig (ANDK)</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/fd34ec16-625c-11f1-a1ba-da5c75bf2b85" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-09T00:31:00Z</td><td>linux</td><td>5.40.1</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/8142e02e-639a-11f1-89c0-dc066e8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-07T10:42:00Z</td><td>linux</td><td>5.26.3</td><td>Andreas J. K&ouml;nig (ANDK)</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/9298ece4-625d-11f1-8a38-d9707fca4bca" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-09T00:18:00Z</td><td>freebsd</td><td>5.40.3</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/b3e27726-6398-11f1-89c0-dc066e8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-09T00:23:00Z</td><td>freebsd</td><td>5.20.1</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/701f42d4-6399-11f1-89c0-dc066e8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-09T00:16:00Z</td><td>freebsd</td><td>5.43.10</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/781d48ce-6398-11f1-89c0-dc066e8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-07T09:32:00Z</td><td>linux</td><td>5.43.10</td><td>Andreas J. K&ouml;nig (ANDK)</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/dd153a48-6253-11f1-b1ab-ce51f1ebf215" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-09T00:24:00Z</td><td>freebsd</td><td>5.22.1</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/9e25e6c4-6399-11f1-89c0-dc066e8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-09T00:19:00Z</td><td>freebsd</td><td>5.42.2</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/ed3a94d6-6398-11f1-89c0-dc066e8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-09T00:35:00Z</td><td>linux</td><td>5.32.1</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/16e561d8-639b-11f1-89c0-dc066e8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-12T05:06:00Z</td><td>freebsd</td><td>5.30.3</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/7457d318-661c-11f1-a661-64ff6d8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-09T00:07:00Z</td><td>freebsd</td><td>5.42.2</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/243e742c-6397-11f1-89c0-dc066e8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-09T00:36:00Z</td><td>linux</td><td>5.40.0</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/4845f4fe-639b-11f1-89c0-dc066e8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-09T00:39:00Z</td><td>linux</td><td>5.34.1</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/a26cc408-639b-11f1-89c0-dc066e8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-09T00:45:00Z</td><td>linux</td><td>5.38.5</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/721008d2-639c-11f1-89c0-dc066e8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-09T00:41:00Z</td><td>linux</td><td>5.32.1</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/e2ce48c8-639b-11f1-89c0-dc066e8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-09T00:34:00Z</td><td>linux</td><td>5.40.4</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/ea6922ca-639a-11f1-89c0-dc066e8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-09T00:12:00Z</td><td>freebsd</td><td>5.40.0</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/f66cf86a-6397-11f1-89c0-dc066e8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-09T00:32:00Z</td><td>linux</td><td>5.42.0</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/a4458860-639a-11f1-89c0-dc066e8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-09T00:38:00Z</td><td>linux</td><td>5.14.4</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/883a4da8-639b-11f1-89c0-dc066e8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-09T00:26:00Z</td><td>freebsd</td><td>5.40.3</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/e82993e2-6399-11f1-89c0-dc066e8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-09T00:42:00Z</td><td>linux</td><td>5.43.10</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/2760e6ee-639c-11f1-89c0-dc066e8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-07T10:54:00Z</td><td>linux</td><td>5.16.3</td><td>Andreas J. K&ouml;nig (ANDK)</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/35f5474c-625f-11f1-9185-a147ffa6bffa" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-09T00:10:00Z</td><td>freebsd</td><td>5.42.0</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/93e488b6-6397-11f1-89c0-dc066e8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-09T00:47:00Z</td><td>linux</td><td>5.36.3</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/b9a5e7c0-639c-11f1-89c0-dc066e8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-09T00:36:00Z</td><td>linux</td><td>5.38.2</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/305a4228-639b-11f1-89c0-dc066e8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-07T10:41:00Z</td><td>linux</td><td>5.28.2</td><td>Andreas J. K&ouml;nig (ANDK)</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/73fab772-625d-11f1-bab9-ca7c4d85b65f" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-09T00:27:00Z</td><td>freebsd</td><td>5.28.3</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/0cc1c9a4-639a-11f1-89c0-dc066e8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-09T00:25:00Z</td><td>freebsd</td><td>5.20.2</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/c6fc0ed4-6399-11f1-89c0-dc066e8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-07T08:45:00Z</td><td>linux</td><td>5.42.2</td><td>Andreas J. K&ouml;nig (ANDK)</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/4df40e44-624d-11f1-b8ff-bfab92fd1d85" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-07T18:14:00Z</td><td>openbsd</td><td>5.28.3</td><td>David Cantrell (DCANTRELL)</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/ab281f34-629c-11f1-b3ea-ef2bb6b09dfa" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-09T00:28:00Z</td><td>linux</td><td>5.36.0</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/33c47c72-639a-11f1-89c0-dc066e8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-07T10:44:00Z</td><td>linux</td><td>5.22.4</td><td>Andreas J. K&ouml;nig (ANDK)</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/dba7056a-625d-11f1-a9f9-d7796faee6b5" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-09T09:13:00Z</td><td>linux</td><td>5.20.0</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/6adbc172-63e3-11f1-bd38-57396e8775ea" target="_blank">View</a></td></tr>
+<tr class="cpan-fail"><td>2026-06-09T00:03:00Z</td><td>freebsd</td><td>5.42.2</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/b4cf1376-6396-11f1-89c0-dc066e8775ea" target="_blank">View</a></td></tr>
+</tbody></table>
 <h2>Mutation Report</h2>
 <h3>Mutation Summary</h3>
 <ul>
-<li><b>Score</b>: 83.08%</li>
-<li><b>Total</b>: 65</li>
+<li><b>Score</b>: 100.00%</li>
+<li><b>Total</b>: 74</li>
 <li><b>Killed</b>: 
-54
+74
 </li>
 <li><b>Survived</b>: 
-11
+0
 </li>
 </ul>
 <h3>Mutation Files</h3>
@@ -480,22 +689,22 @@ function refresh(){
 
 <tr><th>File</th><th>Total</th><th>Killed</th><th>Survivors</th><th>Skipped</th><th>Score%</th><th>Complexity</th><th title="TER1=Statement, TER2=Branch, TER3=LCSAJ Path">TER1 / TER2 / TER3</th></tr>
 
-<tr class="med"><td><a href="mutation_html/lib/CGI/ACL.pm.html" title="View mutation line by line" target="_blank">lib/CGI/ACL.pm</a> <a href="https://github.com/nigelhorne/CGI-ACL/blob/2e399e1bf099cdcabd0538fc54ed79f0e905cc3c/lib/CGI/ACL.pm" class="icon-link" title="View source on GitHub">&#128269;</a></td><td>65</td><td>54</td><td>11</td><td>0</td><td><span class="coverage-badge badge-warn" title="Moderate">83.1%</span></td><td><span class="coverage-badge badge-warn" title="Moderate">72</span></td><td><span class="coverage-badge badge-good" title="Excellent">99.0%</span> / <span class="coverage-badge badge-good" title="Excellent">97.1%</span> / <span class="coverage-badge badge-good" title="Excellent">100.0%</span></td></tr>
+<tr class="high"><td><a href="mutation_html/lib/CGI/ACL.pm.html" title="View mutation line by line" target="_blank">lib/CGI/ACL.pm</a> <a href="https://github.com/nigelhorne/CGI-ACL/blob/aa4a5339233a7ed0b666b23490319e9f74bb157e/lib/CGI/ACL.pm" class="icon-link" title="View source on GitHub">&#128269;</a></td><td>74</td><td>74</td><td>0</td><td>0</td><td><span class="coverage-badge badge-good" title="Excellent">100.0%</span></td><td><span class="coverage-badge badge-warn" title="Moderate">74</span></td><td><span class="coverage-badge badge-good" title="Excellent">98.5%</span> / <span class="coverage-badge badge-good" title="Excellent">96.2%</span> / <span class="coverage-badge badge-good" title="Excellent">100.0%</span></td></tr>
 </table>
 
 <h2>Structural Coverage (Approximate)</h2>
 <div class='summary'>
-Statement Coverage: 98.98% (195 / 197)<br>
-Branch Coverage: 97.06% (99 / 102)<br>
+Statement Coverage: 98.50% (197 / 200)<br>
+Branch Coverage: 96.15% (100 / 104)<br>
 <em>Approximate LCSAJ derived from branch and statement coverage.</em>
 </div>
 <h2>Executive Summary</h2>
 <div class='summary'>
-Tests execute 98.98% of the code but detect only 83.08% of injected faults.
+Tests execute 98.50% of the code and detect 100.00% of injected faults.
 </div>
 <footer>
 	<p>Project: <a href="https://github.com/nigelhorne/CGI-ACL">CGI-ACL</a></p>
-	<p><em>Last updated: 2026-06-07 01:32:59 - <a href="https://github.com/nigelhorne/CGI-ACL/commit/2e399e1bf099cdcabd0538fc54ed79f0e905cc3c">commit <code>2e399e1</code></a></em></p>
+	<p><em>Last updated: 2026-06-14 11:38:23 - <a href="https://github.com/nigelhorne/CGI-ACL/commit/aa4a5339233a7ed0b666b23490319e9f74bb157e">commit <code>aa4a533</code></a></em></p>
 	<p style="float: right; font-size: 0.85em; color: #999;">Powered by <a href="https://metacpan.org/dist/App-Test-Generator">App::Test::Generator 0.38</a></p>
 </footer>
 </body>

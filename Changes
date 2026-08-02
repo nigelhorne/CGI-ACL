@@ -10,6 +10,8 @@ Revision history for CGI-ACL
 	  repeated requests from the same IP skip both DNS round-trips entirely.
 	  DNS errors and timeouts are not cached so the next request retries.
 	  Cache is cleared when an object is cloned via new()
+	[ Testing ]
+	- Bump minimum version of Test::Mockingbird
 
 0.08	Sat Jun  6 21:26 EDT 2026
 	[ Bug Fixes ]

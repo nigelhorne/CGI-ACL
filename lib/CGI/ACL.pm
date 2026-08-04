@@ -50,8 +50,8 @@ Readonly my $PRIVATE_IP_RE => qr{
         169\.254\.                            # IPv4 link-local (169.254.0.0/16)
     )
   | ^::1$                                     # IPv6 loopback
-  | ^f[cd][0-9a-f]*:                          # IPv6 unique local (fc00::/7)
-  | ^fe[89ab][0-9a-f]*:                       # IPv6 link-local (fe80::/10)
+  | ^f[cd][0-9a-f]{2}:                        # IPv6 unique local (fc00::/7)
+  | ^fe[89ab][0-9a-f]:                        # IPv6 link-local (fe80::/10)
 }xi;
 
 # Compiled regexes that identify cloud-provider reverse-DNS hostnames.
@@ -66,7 +66,7 @@ Readonly my @CLOUD_PATTERNS => (
 	qr/hetzner/i,                               # Hetzner Cloud
 	qr/your-server\.de$/i,                      # Hetzner (legacy dedicated)
 	qr/\.ovh\.net$/i,                           # OVH Cloud
-	qr/^ip-\d+-\d+-\d+-\d+\.eu$/i,             # OVH European IP range
+	qr/^ip-\d{1,3}-\d{1,3}-\d{1,3}-\d{1,3}\.eu$/i,   # OVH European IP range
 );
 
 # ── Version ────────────────────────────────────────────────────────────────────

@@ -29,6 +29,7 @@ t/integration.t
 t/ip.t
 t/kwalitee.t
 t/locales.t
+t/logic_reducer.t
 t/manifest.t
 t/metrics.t
 t/mutant_killers.t

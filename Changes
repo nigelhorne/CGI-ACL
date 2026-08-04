@@ -77,7 +77,24 @@ Revision history for CGI-ACL
 	  modules inside map/grep), RIPE rate-limit detection, and SKIP blocks so
 	  tests that depend on RIPE WHOIS resolve gracefully when the server is
 	  rate-limiting.  Reduces WHOIS round-trips per test run from O(N subtests)
-	  to O(distinct IPs) (318 tests total)
+	  to O(distinct IPs) (338 tests total)
+	- Fix all_denied() country check entry condition: replace
+	  "if(deny_countries || allow_countries)" with "if(deny_countries)".
+	  Premise: allow_countries alone always produces 0 in non-wildcard mode.
+	  Conclusion: it is vacuous in the condition and triggers an unnecessary
+	  lingua lookup; removing it is a strict boolean reduction.  Transitive
+	  reduction also removes the now-redundant inner "$self->{deny_countries} &&"
+	  guards (proved non-nil by the block entry condition)
+	- Apply fail-fast guard-clause style to allow_ip(), deny_country(),
+	  allow_country(): each error path is a guard at the top with explicit
+	  return; the happy path is at the bottom with no nesting
+	- Add t/logic_reducer.t: equivalence-partition proofs for all_denied() boolean
+	  logic; each subtest targets one decision boundary.  Includes the key proofs
+	  that deny_cloud()->allow_country('X') without lingua allows non-cloud IPs,
+	  and that allow_ip() + allow_country() (no deny_country) correctly denies
+	  unlisted IPs without carping about a missing lingua (339 tests total)
+	- Fix stale comment in t/extended_tests.t "deny_cloud + allow_country" subtest:
+	  the country check no longer runs in that case; the cloud fast-path returns 0
 
 0.09	Sun Aug  2 08:54:20 PM EDT 2026
 	[ Performance ]

@@ -487,22 +487,23 @@ C<allow_ip(ip =E<gt> '192.0.2.1')>.
 sub allow_ip {
 	my $self = shift;
 
-	# Reject non-hash, non-scalar references (e.g. a scalar ref passed by mistake)
-	if(ref($_[0]) && ref($_[0]) ne 'HASH') {
+	# Guard 1: reject non-hash, non-scalar references (e.g. scalar ref passed by mistake)
+	my $ref = ref($_[0]);
+	if($ref && $ref ne 'HASH') {
 		Carp::carp('Usage: allow_ip($ip_address)');
 		return $self;
 	}
 
-	# Extract the 'ip' parameter from positional, named, or hashref styles
+	# Guard 2: require a non-undef 'ip' value (missing key or empty call)
 	my $ip = _get_param('ip', @_);
-
-	# Store the address and invalidate the memoised CIDR list
-	if(defined $ip) {
-		$self->{allowed_ips}->{$ip} = 1;
-		delete $self->{_cidrlist};
-	} else {
+	unless(defined $ip) {
 		Carp::carp('Usage: allow_ip($ip_address)');
+		return $self;
 	}
+
+	# Happy path: store the address and invalidate the memoised CIDR list
+	$self->{allowed_ips}->{$ip} = 1;
+	delete $self->{_cidrlist};
 	return $self;
 }
 
@@ -606,22 +607,25 @@ C<deny_country('BR')> or C<deny_country(country =E<gt> ['BR','CN'])>.
 sub deny_country {
 	my $self = shift;
 
-	# Reject references that are neither hashes nor arrays
-	if(ref($_[0]) && ref($_[0]) ne 'HASH' && ref($_[0]) ne 'ARRAY') {
+	# Guard 1: reject references that are neither hashes nor arrays
+	my $ref = ref($_[0]);
+	if($ref && $ref ne 'HASH' && $ref ne 'ARRAY') {
 		Carp::carp('Usage: deny_country($country)');
 		return $self;
 	}
 
-	# Extract the 'country' parameter from positional, named, or hashref styles
+	# Guard 2: require a non-undef 'country' value
 	my $c = _get_param('country', @_);
-
-	# An empty arrayref is a no-op — do not create deny_countries = {}.
-	if(defined $c) {
-		return $self if ref($c) eq 'ARRAY' && !@{$c};
-		_set_countries($self->{deny_countries} //= {}, $c);
-	} else {
+	unless(defined $c) {
 		Carp::carp('Usage: deny_country($country)');
+		return $self;
 	}
+
+	# Guard 3: an empty arrayref is a no-op — do not create deny_countries = {}
+	return $self if ref($c) eq 'ARRAY' && !@{$c};
+
+	# Happy path: store the country code(s) in the deny set
+	_set_countries($self->{deny_countries} //= {}, $c);
 	return $self;
 }
 
@@ -721,22 +725,25 @@ C<allow_country('US')> or C<allow_country(country =E<gt> ['GB','US'])>.
 sub allow_country {
 	my $self = shift;
 
-	# Reject references that are neither hashes nor arrays
-	if(ref($_[0]) && ref($_[0]) ne 'HASH' && ref($_[0]) ne 'ARRAY') {
+	# Guard 1: reject references that are neither hashes nor arrays
+	my $ref = ref($_[0]);
+	if($ref && $ref ne 'HASH' && $ref ne 'ARRAY') {
 		Carp::carp('Usage: allow_country($country)');
 		return $self;
 	}
 
-	# Extract the 'country' parameter from positional, named, or hashref styles
+	# Guard 2: require a non-undef 'country' value
 	my $c = _get_param('country', @_);
-
-	# An empty arrayref is a no-op — do not create allow_countries = {}.
-	if(defined $c) {
-		return $self if ref($c) eq 'ARRAY' && !@{$c};
-		_set_countries($self->{allow_countries} //= {}, $c);
-	} else {
+	unless(defined $c) {
 		Carp::carp('Usage: allow_country($country)');
+		return $self;
 	}
+
+	# Guard 3: an empty arrayref is a no-op — do not create allow_countries = {}
+	return $self if ref($c) eq 'ARRAY' && !@{$c};
+
+	# Happy path: store the country code(s) in the permit set
+	_set_countries($self->{allow_countries} //= {}, $c);
 	return $self;
 }
 
@@ -1042,7 +1049,9 @@ C<all_denied(lingua =E<gt> $lingua)>.
             IF no error THEN cache result END IF
         END IF
         IF is_cloud THEN RETURN 1 (deny -- cloud host)
-        IF no other restrictions THEN RETURN 0 (allow)
+        IF no meaningful further restrictions THEN RETURN 0 (allow)
+        -- "meaningful" = allowed_ips ≠ ∅ OR deny_countries ≠ ∅
+        -- allow_countries alone is not meaningful (never changes the decision)
     END IF
 
     IF allowed_ips is set THEN
@@ -1050,12 +1059,16 @@ C<all_denied(lingua =E<gt> $lingua)>.
         IF addr falls inside any CIDR range THEN RETURN 0 (allow)
     END IF
 
-    IF deny_countries or allow_countries is set THEN
+    IF deny_countries is set THEN
+        -- Premise: allow_countries alone is vacuous (always returns 0 in
+        -- non-wildcard mode); if only allow_countries was set, earlier guards
+        -- already returned 0.  This condition is therefore necessary and sufficient.
         IF no lingua supplied THEN carp; RETURN 1 (deny)
         IF lingua is not a blessed object THEN carp; RETURN 1 (deny)
         country := lingua->country()   [wrapped in eval]
         IF country is falsy (undef / "" / "0") THEN RETURN 1 (deny)
         country := lc(country)
+        -- Transitive reduction: deny_countries is provably non-nil here.
         IF wildcard (*) in deny_countries THEN
             IF country in allow_countries THEN RETURN 0 (allow)
             ELSE                               RETURN 1 (deny)
@@ -1081,14 +1094,15 @@ C<all_denied(lingua =E<gt> $lingua)>.
 
       deny_cloud = 1 ∧ is_cloud(addr) ⟹ result! = 1
       deny_cloud = 1 ∧ ¬is_cloud(addr)
-        ∧ allowed_ips = ∅ ∧ deny_countries = ∅
-        ∧ allow_countries = ∅            ⟹ result! = 0
+        ∧ allowed_ips = ∅ ∧ deny_countries = ∅ ⟹ result! = 0
+        -- allow_countries is intentionally absent: it never changes the result
+        -- without deny_countries('*'), so it is not a meaningful restriction.
 
       addr ∈ dom(allowed_ips) ⟹ result! = 0
       cidr_match(addr, allowed_ips) ⟹ result! = 0
 
-      (deny_countries ≠ ∅ ∨ allow_countries ≠ ∅)
-        ∧ lingua? = ∅ ⟹ result! = 1
+      deny_countries ≠ ∅ ∧ lingua? = ∅ ⟹ result! = 1
+        -- allow_countries alone is vacuous; only deny_countries triggers the check.
       lingua?.country() = undef ⟹ result! = 1
 
       deny_countries('*') = 1
@@ -1154,10 +1168,16 @@ sub all_denied {
 		}
 		return 1 if !$dns_error && $is_cloud;
 
-		# Non-cloud and no other restrictions: allow
+		# Non-cloud and no other meaningful restrictions: allow immediately.
+		# Premise: allow_country alone (without deny_country('*')) never changes
+		# the access decision — it always allows.
+		# Premise: the early-return guard excludes allow_countries for this reason.
+		# Conclusion: after the cloud check passes, apply the same principle —
+		# allow_countries alone is not a "meaningful further restriction".
+		# Including it here would cause deny_cloud()->allow_country('X') without
+		# a lingua argument to carp and deny, contradicting documented semantics.
 		return 0 unless $self->{allowed_ips}
-		             || $self->{deny_countries}
-		             || $self->{allow_countries};
+		             || $self->{deny_countries};
 	}
 
 	# ── IP / CIDR allow-list check ──────────────────────────────────────────
@@ -1182,40 +1202,48 @@ sub all_denied {
 	}
 
 	# ── Country check ───────────────────────────────────────────────────────
-	if($self->{deny_countries} || $self->{allow_countries}) {
-		# Extract lingua from positional, named, or hashref calling styles
+	# Premise: allow_countries alone (without deny_countries) always produces 0.
+	# Premise: if only allow_countries is set, the early-return guard or the
+	#          cloud fast-path has already returned 0 before we get here.
+	# Conclusion: deny_countries being non-empty is the necessary and sufficient
+	#             condition for the country check to have any effect — allow_countries
+	#             alone is vacuous here.  Removing it from the condition eliminates
+	#             an unnecessary lingua lookup and carps for that edge case.
+	if($self->{deny_countries}) {
+		# Premise: we are inside this block iff deny_countries is defined and non-empty.
+		# Transitive reduction: all inner $self->{deny_countries} && guards are redundant.
 		my $lingua = _get_param('lingua', @_);
 
-		if($lingua) {
-			# Reject non-objects to avoid "can't call method on non-ref" crashes
-			unless(blessed($lingua)) {
-				Carp::carp('all_denied: lingua must be a blessed object');
-				return 1;
-			}
-			# Resolve and normalise the client's country code.
-			# Wrap in eval: the object may not implement country().
-			my $country_val = eval { $lingua->country() };
-			if($@) { undef $@; return 1 }   # method missing or threw — deny
-			if(my $country = $country_val) {
-				$country = lc $country;
-
-				# Default-deny mode: deny_countries contains the wildcard
-				if($self->{deny_countries} && $self->{deny_countries}->{$WILDCARD}) {
-					return ($self->{allow_countries} && $self->{allow_countries}->{$country})
-						? 0   # country is explicitly permitted
-						: 1;  # not in the permit list; deny
-				}
-
-				# Default-allow mode: deny only explicitly listed countries
-				return ($self->{deny_countries} && $self->{deny_countries}->{$country})
-					? 1   # country is explicitly denied
-					: 0;  # not in the deny list; allow
-			}
-			# country() returned undef: country is unknown; deny access
-		} else {
+		unless($lingua) {
 			# Country restrictions active but no lingua was provided
 			Carp::carp('Usage: all_denied($lingua)');
+			return 1;
 		}
+
+		# Reject non-objects to avoid "can't call method on non-ref" crashes
+		unless(blessed($lingua)) {
+			Carp::carp('all_denied: lingua must be a blessed object');
+			return 1;
+		}
+
+		# Resolve and normalise the client's country code.
+		# Wrap in eval: the object may not implement country().
+		my $country_val = eval { $lingua->country() };
+		if($@) { undef $@; return 1 }   # method missing or threw — deny
+		my $country = $country_val or return 1;   # undef/falsy => unknown country => deny
+		$country = lc $country;
+
+		# Default-deny mode: deny_countries contains the wildcard sentinel.
+		# Premise: deny_countries is defined (proved above); no redundant && guard needed.
+		if($self->{deny_countries}->{$WILDCARD}) {
+			return ($self->{allow_countries} && $self->{allow_countries}->{$country})
+				? 0   # country is explicitly permitted
+				: 1;  # not in the permit list; deny
+		}
+
+		# Default-allow mode: deny only explicitly listed countries.
+		# Premise: deny_countries is defined and non-wildcard.
+		return $self->{deny_countries}->{$country} ? 1 : 0;
 	}
 
 	# Fall-through: no rule allowed the request; deny

@@ -52,8 +52,32 @@ Revision history for CGI-ACL
 	  country code case handling, DNS cache not shared between CGI requests
 	- Add =head1 VERSION HISTORY section with per-release summaries from 0.01
 	  through 0.10 in plain English
+	[ Performance ]
+	- _rdns_forward(): use gethostbyname() instead of inet_aton() for the IPv4
+	  path so all A records are returned rather than just the first; false-negative
+	  forward confirmation was possible when a cloud provider PTR resolves to a
+	  multi-A hostname and the confirming IP is not the first record returned.
+	  Falls back to inet_aton() on resolvers that return no results for a
+	  dotted-quad string (resolver-configuration-dependent behaviour)
+	- _get_param(): add a fast path for the most common calling style (two-element
+	  list, key eq $args[0]): avoids allocating a throwaway hash just to extract
+	  one key
+	[ Bug Fixes ]
+	- Fix all_denied() early-return guard: allow_countries was incorrectly
+	  included in the guard, causing allow_country()-only ACLs to fall through
+	  to the country-check code.  The country check then denied requests when
+	  lingua->country() returned undef (e.g. during RIPE WHOIS rate-limiting),
+	  contradicting the documented "allow_country alone has no effect" behaviour.
+	  allow_countries is now intentionally absent from the guard so ACLs with
+	  only allow_country() set return 0 (allow all) immediately.
 	[ Tests ]
-	- Add 5 subtests for deny_all_countries() in t/function.t (319 total)
+	- Add 5 subtests for deny_all_countries() in t/function.t
+	- Fix t/locales.t, t/country.t, t/integration.t: add CGI::Lingua result
+	  caching (lingua_for() with local $_ to prevent $_ clobbering by WHOIS
+	  modules inside map/grep), RIPE rate-limit detection, and SKIP blocks so
+	  tests that depend on RIPE WHOIS resolve gracefully when the server is
+	  rate-limiting.  Reduces WHOIS round-trips per test run from O(N subtests)
+	  to O(distinct IPs) (318 tests total)
 
 0.09	Sun Aug  2 08:54:20 PM EDT 2026
 	[ Performance ]

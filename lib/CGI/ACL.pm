@@ -1107,14 +1107,15 @@ C<all_denied(lingua =E<gt> $lingua)>.
 sub all_denied {
 	my $self = shift;
 
-	# Fast-path: if no restrictions are configured at all, allow immediately.
-	# This guard must list every restriction type; missing one means that
-	# restriction silently has no effect when used alone.
+	# Fast-path: if no meaningful restrictions are configured, allow immediately.
+	# allow_countries is intentionally omitted: it only has effect when paired
+	# with deny_countries('*').  Including it would cause allow_country() alone
+	# to trigger a country lookup that then denies on undef — contradicting the
+	# documented "allow_country alone has no effect" behaviour.
 	if(
 		(!defined($self->{allowed_ips}))    &&
 		(!defined($self->{deny_countries})) &&
-		(!$self->{deny_cloud})              &&
-		(!defined($self->{allow_countries}))
+		(!$self->{deny_cloud})
 	) {
 		return 0;
 	}
@@ -1264,9 +1265,12 @@ sub _set_countries {
 #             No side effects; does not modify @args or @_.
 sub _get_param {
 	my ($key, @args) = @_;
-	return $args[0]{$key}     if ref($args[0]) eq 'HASH';
-	return { @args }->{$key}  if @args % 2 == 0;
-	return $args[0];          # positional: single value, no key
+	return $args[0]{$key}                       if ref($args[0]) eq 'HASH';
+	# Fast path for the most common calling style (name => value): avoids
+	# allocating a throwaway hash just to extract one key.
+	return $args[1] if @args == 2 && $args[0] eq $key;
+	return { @args }->{$key}                    if @args % 2 == 0;
+	return $args[0];    # positional: single value, no key
 }
 
 # _is_cloud_host
@@ -1396,12 +1400,19 @@ sub _verified_rdns {
 sub _rdns_forward {
 	my ($hostname, $family) = @_;
 
-	# IPv4 path: resolve A record and convert each packed address to a string
+	# IPv4 path: resolve ALL A records and convert each packed address to a string.
+	# gethostbyname() returns the full address list; inet_aton() silently discards
+	# every record after the first.  Returning the complete set prevents false-negative
+	# forward confirmation when the confirming IP is not the first result from the
+	# resolver (which is common for cloud providers with multiple A records per PTR).
+	# Some resolver configurations (and test environments) do not return results
+	# when gethostbyname() is called with a dotted-quad string; fall back to
+	# inet_aton() in that case, which always handles dotted-quads directly.
 	if($family == AF_INET) {
-		return map  { inet_ntoa($_)  }
-		       grep { defined        }
-		       map  { inet_aton($_)  }
-		       ($hostname);
+		my @addrs = map { inet_ntoa($_) } (gethostbyname($hostname))[4 .. -1];
+		return @addrs if @addrs;
+		my $packed = inet_aton($hostname);
+		return $packed ? (inet_ntoa($packed)) : ();
 	}
 
 	# IPv6 path: use getaddrinfo to resolve AAAA records

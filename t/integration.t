@@ -54,7 +54,7 @@ Readonly my %config => (
 	NONCLOUD_HOST     => 'mail.example.com',
 );
 
-# ── Helper ───────────────────────────────────────────────────────────────────
+# ── Helpers ───────────────────────────────────────────────────────────────────
 
 # Run all_denied() with a fixed REMOTE_ADDR without polluting the global env
 sub denied_at {
@@ -63,11 +63,46 @@ sub denied_at {
 	return $acl->all_denied(@rest);
 }
 
-# Build a real CGI::Lingua for a given REMOTE_ADDR (resolves country from GeoIP)
+# Per-run lingua cache: each IP address makes exactly one WHOIS query for the
+# entire test run.  CGI::Lingua caches the resolved country inside the object;
+# subsequent calls to country() on the cached object return the stored value
+# without a new network round-trip.
+#
+# local $_ protects the caller's loop variable: CGI::Lingua and the WHOIS
+# modules it calls use $_ internally (e.g. in grep/map inside
+# Net::Whois::IANA), and without localisation that clobbers map/grep
+# iterations in the calling code, producing scrambled results.
+my %_lingua_cache;
 sub lingua_for {
 	my $addr = shift;
-	local $ENV{REMOTE_ADDR} = $addr;
-	return CGI::Lingua->new(supported => ['en']);
+	unless(exists $_lingua_cache{$addr}) {
+		local $_;
+		local $ENV{REMOTE_ADDR} = $addr;
+		my $l = CGI::Lingua->new(supported => ['en']);
+		do { local $SIG{__WARN__} = sub {}; $l->country() };
+		$_lingua_cache{$addr} = $l;
+	}
+	return $_lingua_cache{$addr};
+}
+
+# ── RIPE WHOIS availability check ─────────────────────────────────────────────
+# Subtests that rely on RIPE-registered IPs (GB, RU) are wrapped in a SKIP
+# block when RIPE's WHOIS server is rate-limiting.  ARIN (US) and APNIC (CN)
+# use independent servers and are unaffected.
+#
+# Pre-resolve now so every subsequent lingua_for() call hits the cache and makes
+# zero additional WHOIS requests.
+my %_ripe_ips = map { $config{$_} => 1 } qw(IP_GB IP_RU);
+my $ripe_ok = 1;
+
+# Pre-resolve RIPE IPs once: populates the lingua cache and detects rate-limiting.
+# Using lingua_for() here means zero additional WHOIS calls inside the subtests.
+for my $ip (sort keys %_ripe_ips) {
+	my $country = do { local $SIG{__WARN__} = sub {}; lingua_for($ip)->country() };
+	unless(defined $country) {
+		$ripe_ok = 0;
+		last;
+	}
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -228,22 +263,15 @@ subtest 'Concurrent instances: independent access policies' => sub {
 # Purpose: test real GeoIP lookup + deny_country working together
 # ─────────────────────────────────────────────────────────────────────────────
 subtest 'CGI::Lingua integration: deny_country with real GeoIP' => sub {
-	# Deny Russian Federation by ISO code
+	plan skip_all => 'RIPE WHOIS rate-limited; run again later' unless $ripe_ok;
+
 	my $acl = CGI::ACL->new()->deny_country($config{COUNTRY_RU});
 
-	# Build lingua for each test IP under the right REMOTE_ADDR
-	local $ENV{REMOTE_ADDR} = $config{IP_RU};
-	my $ru_lingua = CGI::Lingua->new(supported => ['en']);
-	diag "RU lingua->country=" . ($ru_lingua->country() // 'undef') if $ENV{TEST_VERBOSE};
+	diag "RU country=" . (lingua_for($config{IP_RU})->country() // 'undef') if $ENV{TEST_VERBOSE};
+	is(denied_at($acl, $config{IP_RU}, lingua => lingua_for($config{IP_RU})), 1, 'Russian IP is denied');
 
-	# Russian IP must be denied
-	is($acl->all_denied(lingua => $ru_lingua), 1, 'Russian IP is denied');
-
-	# UK IP must be allowed (not on the deny list)
-	local $ENV{REMOTE_ADDR} = $config{IP_GB};
-	my $gb_lingua = CGI::Lingua->new(supported => ['en']);
-	diag "GB lingua->country=" . ($gb_lingua->country() // 'undef') if $ENV{TEST_VERBOSE};
-	is($acl->all_denied(lingua => $gb_lingua), 0, 'UK IP is allowed');
+	diag "GB country=" . (lingua_for($config{IP_GB})->country() // 'undef') if $ENV{TEST_VERBOSE};
+	is(denied_at($acl, $config{IP_GB}, lingua => lingua_for($config{IP_GB})), 0, 'UK IP is allowed');
 };
 
 # Purpose: wildcard deny with an explicit allow list
@@ -287,19 +315,13 @@ subtest 'CGI::Lingua integration: lingua->country() is called by all_denied' => 
 
 # Purpose: multiple country restrictions in an arrayref work correctly
 subtest 'CGI::Lingua integration: arrayref of denied countries' => sub {
-	# Deny both RU and BR in a single call
+	plan skip_all => 'RIPE WHOIS rate-limited; run again later' unless $ripe_ok;
+
 	my $acl = CGI::ACL->new()->deny_country(country => [$config{COUNTRY_RU}, $config{COUNTRY_BR}]);
 	diag "deny_countries: " . join(',', sort keys %{$acl->{deny_countries}}) if $ENV{TEST_VERBOSE};
 
-	# Russian IP must be denied
-	local $ENV{REMOTE_ADDR} = $config{IP_RU};
-	my $ru_lingua = CGI::Lingua->new(supported => ['en']);
-	is($acl->all_denied(lingua => $ru_lingua), 1, 'Russian IP denied from arrayref list');
-
-	# UK IP must be allowed
-	local $ENV{REMOTE_ADDR} = $config{IP_GB};
-	my $gb_lingua = CGI::Lingua->new(supported => ['en']);
-	is($acl->all_denied(lingua => $gb_lingua), 0, 'UK IP allowed (not in deny list)');
+	is(denied_at($acl, $config{IP_RU}, lingua => lingua_for($config{IP_RU})), 1, 'Russian IP denied from arrayref list');
+	is(denied_at($acl, $config{IP_GB}, lingua => lingua_for($config{IP_GB})), 0, 'UK IP allowed (not in deny list)');
 };
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -307,24 +329,19 @@ subtest 'CGI::Lingua integration: arrayref of denied countries' => sub {
 # Purpose: when an IP is in the allow-list, country is not consulted
 # ─────────────────────────────────────────────────────────────────────────────
 subtest 'IP allow-list overrides country deny (IP match short-circuits country check)' => sub {
-	# Deny the UK country, but allow the specific IP explicitly
+	plan skip_all => 'RIPE WHOIS rate-limited; run again later' unless $ripe_ok;
+
 	my $acl = CGI::ACL->new()
 		->deny_country($config{COUNTRY_GB})
 		->allow_ip($config{IP_GB});
 
-	# The IP is explicitly allowed, so it must not be denied despite the country rule
-	local $ENV{REMOTE_ADDR} = $config{IP_GB};
-	my $gb_lingua = CGI::Lingua->new(supported => ['en']);
-	diag "IP allow beats country deny: IP=$config{IP_GB} country=" . ($gb_lingua->country() // 'undef') if $ENV{TEST_VERBOSE};
-	is($acl->all_denied(lingua => $gb_lingua), 0, 'explicitly allowed IP is not denied by country rule');
+	# Explicitly allowed IP must not be denied despite the country rule
+	diag "IP allow beats country deny: IP=$config{IP_GB} country=" . (lingua_for($config{IP_GB})->country() // 'undef') if $ENV{TEST_VERBOSE};
+	is(denied_at($acl, $config{IP_GB}, lingua => lingua_for($config{IP_GB})), 0, 'explicitly allowed IP is not denied by country rule');
 
-	# A non-GB, non-allowed IP falls through to the country check: RU is not in
-	# the deny list, so it should be allowed.  This confirms the deny_country rule
-	# is selective — only clients from GB are denied.
-	local $ENV{REMOTE_ADDR} = $config{IP_RU};
-	my $other_lingua = CGI::Lingua->new(supported => ['en']);
-	diag "non-GB, non-allowed IP: country=" . ($other_lingua->country() // 'undef') if $ENV{TEST_VERBOSE};
-	is($acl->all_denied(lingua => $other_lingua), 0, 'non-GB non-allowed IP is allowed (only GB is denied)');
+	# Non-GB, non-allowed IP: RU is not in the deny list so it should be allowed
+	diag "non-GB, non-allowed IP: country=" . (lingua_for($config{IP_RU})->country() // 'undef') if $ENV{TEST_VERBOSE};
+	is(denied_at($acl, $config{IP_RU}, lingua => lingua_for($config{IP_RU})), 0, 'non-GB non-allowed IP is allowed (only GB is denied)');
 };
 
 # ─────────────────────────────────────────────────────────────────────────────

@@ -20,7 +20,7 @@ https://pjcj.net
 <h1>Branch Coverage</h1>
 <table>
 <tr><td class="h" align="right">File:</td><td align="left">blib/lib/CGI/ACL.pm</td></tr>
-<tr><td class="h" align="right">Coverage:</td><td align="left" class="c2">96.9%</td></tr>
+<tr><td class="h" align="right">Coverage:</td><td align="left" class="c2">96.1%</td></tr>
 </table>
 <div><br/></div>
 <table>
@@ -28,51 +28,54 @@ https://pjcj.net
 <tr><td class="h"><a id="L378">378</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (not defined $class) { }</td></tr>
 <tr><td class="h"></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">elsif (&amp;blessed($class)) { }</td></tr>
 <tr><td class="h"><a id="L387">387</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ref $copy{$key} eq &quot;HASH&quot;</td></tr>
-<tr><td class="h"><a id="L491">491</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (ref $_[0] and ref $_[0] ne &quot;HASH&quot;)</td></tr>
-<tr><td class="h"><a id="L500">500</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (defined $ip) { }</td></tr>
-<tr><td class="h"><a id="L610">610</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (ref $_[0] and ref $_[0] ne &quot;HASH&quot; and ref $_[0] ne &quot;ARRAY&quot;)</td></tr>
-<tr><td class="h"><a id="L619">619</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (defined $c) { }</td></tr>
-<tr><td class="h"><a id="L620">620</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ref $c eq &quot;ARRAY&quot; and not @{$c;}</td></tr>
-<tr><td class="h"><a id="L725">725</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (ref $_[0] and ref $_[0] ne &quot;HASH&quot; and ref $_[0] ne &quot;ARRAY&quot;)</td></tr>
-<tr><td class="h"><a id="L734">734</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (defined $c) { }</td></tr>
-<tr><td class="h"><a id="L735">735</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ref $c eq &quot;ARRAY&quot; and not @{$c;}</td></tr>
-<tr><td class="h"><a id="L1113">1113</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless (defined $self-&gt;{&#39;allowed_ips&#39;} or defined $self-&gt;{&#39;deny_countries&#39;} or $self-&gt;{&#39;deny_cloud&#39;} or defined $self-&gt;{&#39;allow_countries&#39;})</td></tr>
-<tr><td class="h"><a id="L1127">1127</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless $addr =~ /^$CGI::ACL::RE{&#39;net&#39;}{&#39;IPv4&#39;}$/ou or $addr =~ /^$CGI::ACL::RE{&#39;net&#39;}{&#39;IPv6&#39;}$/ou</td></tr>
-<tr><td class="h"><a id="L1131">1131</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($self-&gt;{&#39;deny_cloud&#39;})</td></tr>
-<tr><td class="h"><a id="L1137">1137</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($cached and $cached-&gt;{&#39;expires&#39;} &gt; time) { }</td></tr>
-<tr><td class="h"><a id="L1147">1147</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless ($dns_error)</td></tr>
-<tr><td class="h"><a id="L1154">1154</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if not $dns_error and $is_cloud</td></tr>
-<tr><td class="h"><a id="L1159">1159</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless $self-&gt;{&#39;allowed_ips&#39;} or $self-&gt;{&#39;deny_countries&#39;} or $self-&gt;{&#39;allow_countries&#39;}</td></tr>
-<tr><td class="h"><a id="L1163">1163</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($self-&gt;{&#39;allowed_ips&#39;})</td></tr>
-<tr><td class="h"><a id="L1165">1165</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if $self-&gt;{&#39;allowed_ips&#39;}{$addr}</td></tr>
-<tr><td class="h"><a id="L1169">1169</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless ($self-&gt;{&#39;_cidrlist&#39;})</td></tr>
-<tr><td class="h"><a id="L1180">1180</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if $in_cidr</td></tr>
-<tr><td class="h"><a id="L1184">1184</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($self-&gt;{&#39;deny_countries&#39;} or $self-&gt;{&#39;allow_countries&#39;})</td></tr>
-<tr><td class="h"><a id="L1188">1188</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($lingua) { }</td></tr>
-<tr><td class="h"><a id="L1190">1190</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless (&amp;blessed($lingua))</td></tr>
-<tr><td class="h"><a id="L1197">1197</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($@)</td></tr>
-<tr><td class="h"><a id="L1198">1198</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (my $country = $country_val)</td></tr>
-<tr><td class="h"><a id="L1202">1202</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($self-&gt;{&#39;deny_countries&#39;} and $self-&gt;{&#39;deny_countries&#39;}{$WILDCARD})</td></tr>
-<tr><td class="h"><a id="L1203">1203</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">$self-&gt;{&#39;allow_countries&#39;} &amp;&amp; $self-&gt;{&#39;allow_countries&#39;}{$country} ? :</td></tr>
-<tr><td class="h"><a id="L1209">1209</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">$self-&gt;{&#39;deny_countries&#39;} &amp;&amp; $self-&gt;{&#39;deny_countries&#39;}{$country} ? :</td></tr>
-<tr><td class="h"><a id="L1244">1244</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (ref $value eq &#39;ARRAY&#39;) { }</td></tr>
-<tr><td class="h"><a id="L1267">1267</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ref $args[0] eq &quot;HASH&quot;</td></tr>
-<tr><td class="h"><a id="L1268">1268</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if @args % 2 == 0</td></tr>
-<tr><td class="h"><a id="L1294">1294</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if $ip =~ /$PRIVATE_IP_RE/u</td></tr>
-<tr><td class="h"><a id="L1297">1297</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless my $hostname = _verified_rdns($ip)</td></tr>
-<tr><td class="h"><a id="L1301">1301</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if $hostname =~ /$pattern/u</td></tr>
-<tr><td class="h"><a id="L1333">1333</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($ip =~ /:/u) { }</td></tr>
-<tr><td class="h"><a id="L1336">1336</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless $packed = Socket::inet_pton(10, $ip)</td></tr>
-<tr><td class="h"><a id="L1340">1340</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless $packed = inet_aton($ip)</td></tr>
-<tr><td class="h"><a id="L1345">1345</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">$family == 2 ? :</td></tr>
-<tr><td class="h"><a id="L1351">1351</a></td><td class="c0">50</td><td class="c3">T</td><td class="c0">F</td><td class="s">if ($^O ne &#39;MSWin32&#39;) { }</td></tr>
-<tr><td class="h"><a id="L1358">1358</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($hostname)</td></tr>
-<tr><td class="h"><a id="L1368">1368</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if $@ or not $hostname</td></tr>
-<tr><td class="h"><a id="L1371">1371</a></td><td class="c0">0</td><td class="c0">T</td><td class="c0">F</td><td class="s">unless $hostname = gethostbyaddr($packed, $family)</td></tr>
-<tr><td class="h"><a id="L1378">1378</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">grep({$_ eq $canonical;} @forward_ips) ? :</td></tr>
-<tr><td class="h"><a id="L1400">1400</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($family == 2)</td></tr>
-<tr><td class="h"><a id="L1412">1412</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if $err</td></tr>
-<tr><td class="h"><a id="L1420">1420</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless $e</td></tr>
+<tr><td class="h"><a id="L492">492</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($ref and $ref ne &quot;HASH&quot;)</td></tr>
+<tr><td class="h"><a id="L499">499</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless (defined $ip)</td></tr>
+<tr><td class="h"><a id="L612">612</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($ref and $ref ne &quot;HASH&quot; and $ref ne &quot;ARRAY&quot;)</td></tr>
+<tr><td class="h"><a id="L619">619</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless (defined $c)</td></tr>
+<tr><td class="h"><a id="L625">625</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ref $c eq &quot;ARRAY&quot; and not @{$c;}</td></tr>
+<tr><td class="h"><a id="L730">730</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($ref and $ref ne &quot;HASH&quot; and $ref ne &quot;ARRAY&quot;)</td></tr>
+<tr><td class="h"><a id="L737">737</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless (defined $c)</td></tr>
+<tr><td class="h"><a id="L743">743</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ref $c eq &quot;ARRAY&quot; and not @{$c;}</td></tr>
+<tr><td class="h"><a id="L1129">1129</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless (defined $self-&gt;{&#39;allowed_ips&#39;} or defined $self-&gt;{&#39;deny_countries&#39;} or $self-&gt;{&#39;deny_cloud&#39;})</td></tr>
+<tr><td class="h"><a id="L1142">1142</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless $addr =~ /^$CGI::ACL::RE{&#39;net&#39;}{&#39;IPv4&#39;}$/ou or $addr =~ /^$CGI::ACL::RE{&#39;net&#39;}{&#39;IPv6&#39;}$/ou</td></tr>
+<tr><td class="h"><a id="L1146">1146</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($self-&gt;{&#39;deny_cloud&#39;})</td></tr>
+<tr><td class="h"><a id="L1152">1152</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($cached and $cached-&gt;{&#39;expires&#39;} &gt; time) { }</td></tr>
+<tr><td class="h"><a id="L1162">1162</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless ($dns_error)</td></tr>
+<tr><td class="h"><a id="L1169">1169</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if not $dns_error and $is_cloud</td></tr>
+<tr><td class="h"><a id="L1180">1180</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless $self-&gt;{&#39;allowed_ips&#39;} or $self-&gt;{&#39;deny_countries&#39;}</td></tr>
+<tr><td class="h"><a id="L1184">1184</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($self-&gt;{&#39;allowed_ips&#39;})</td></tr>
+<tr><td class="h"><a id="L1186">1186</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if $self-&gt;{&#39;allowed_ips&#39;}{$addr}</td></tr>
+<tr><td class="h"><a id="L1190">1190</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless ($self-&gt;{&#39;_cidrlist&#39;})</td></tr>
+<tr><td class="h"><a id="L1201">1201</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if $in_cidr</td></tr>
+<tr><td class="h"><a id="L1212">1212</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($self-&gt;{&#39;deny_countries&#39;})</td></tr>
+<tr><td class="h"><a id="L1217">1217</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless ($lingua)</td></tr>
+<tr><td class="h"><a id="L1224">1224</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless (&amp;blessed($lingua))</td></tr>
+<tr><td class="h"><a id="L1232">1232</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($@)</td></tr>
+<tr><td class="h"><a id="L1233">1233</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless my $country = $country_val</td></tr>
+<tr><td class="h"><a id="L1238">1238</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($self-&gt;{&#39;deny_countries&#39;}{$WILDCARD})</td></tr>
+<tr><td class="h"><a id="L1239">1239</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">$self-&gt;{&#39;allow_countries&#39;} &amp;&amp; $self-&gt;{&#39;allow_countries&#39;}{$country} ? :</td></tr>
+<tr><td class="h"><a id="L1246">1246</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">$self-&gt;{&#39;deny_countries&#39;}{$country} ? :</td></tr>
+<tr><td class="h"><a id="L1273">1273</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (ref $value eq &#39;ARRAY&#39;) { }</td></tr>
+<tr><td class="h"><a id="L1296">1296</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ref $args[0] eq &quot;HASH&quot;</td></tr>
+<tr><td class="h"><a id="L1299">1299</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if @args == 2 and $args[0] eq $key</td></tr>
+<tr><td class="h"><a id="L1300">1300</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if @args % 2 == 0</td></tr>
+<tr><td class="h"><a id="L1326">1326</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if $ip =~ /$PRIVATE_IP_RE/u</td></tr>
+<tr><td class="h"><a id="L1329">1329</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless my $hostname = _verified_rdns($ip)</td></tr>
+<tr><td class="h"><a id="L1333">1333</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if $hostname =~ /$pattern/u</td></tr>
+<tr><td class="h"><a id="L1365">1365</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($ip =~ /:/u) { }</td></tr>
+<tr><td class="h"><a id="L1368">1368</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless $packed = Socket::inet_pton(10, $ip)</td></tr>
+<tr><td class="h"><a id="L1372">1372</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless $packed = inet_aton($ip)</td></tr>
+<tr><td class="h"><a id="L1377">1377</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">$family == 2 ? :</td></tr>
+<tr><td class="h"><a id="L1383">1383</a></td><td class="c0">50</td><td class="c3">T</td><td class="c0">F</td><td class="s">if ($^O ne &#39;MSWin32&#39;) { }</td></tr>
+<tr><td class="h"><a id="L1390">1390</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($hostname)</td></tr>
+<tr><td class="h"><a id="L1400">1400</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if $@ or not $hostname</td></tr>
+<tr><td class="h"><a id="L1403">1403</a></td><td class="c0">0</td><td class="c0">T</td><td class="c0">F</td><td class="s">unless $hostname = gethostbyaddr($packed, $family)</td></tr>
+<tr><td class="h"><a id="L1410">1410</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">grep({$_ eq $canonical;} @forward_ips) ? :</td></tr>
+<tr><td class="h"><a id="L1439">1439</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($family == 2)</td></tr>
+<tr><td class="h"><a id="L1441">1441</a></td><td class="c0">50</td><td class="c0">T</td><td class="c3">F</td><td class="s">if @addrs</td></tr>
+<tr><td class="h"><a id="L1443">1443</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">$packed ? :</td></tr>
+<tr><td class="h"><a id="L1451">1451</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if $err</td></tr>
+<tr><td class="h"><a id="L1459">1459</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless $e</td></tr>
 </table>
 </body>
 </html>

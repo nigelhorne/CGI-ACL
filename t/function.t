@@ -330,6 +330,64 @@ subtest 'allow_country() - missing key carps and chains' => sub {
 # Subtest: deny_cloud()
 # Purpose: verify deny_cloud flag is set and method chaining works
 # ─────────────────────────────────────────────────────────────────────────────
+# Subtest: deny_all_countries()
+# Purpose: convenience sugar for deny_country('*'); must activate default-deny mode
+# ─────────────────────────────────────────────────────────────────────────────
+subtest 'deny_all_countries() - stores wildcard and returns $self' => sub {
+	my $acl = CGI::ACL->new();
+	my $ret = $acl->deny_all_countries();
+	diag "deny_countries after deny_all_countries: " . join(',', sort keys %{$acl->{deny_countries} // {}}) if $ENV{TEST_VERBOSE};
+
+	# The wildcard sentinel must be set in deny_countries
+	ok($acl->{deny_countries}{ $config{WILDCARD} }, "deny_countries{'*'} is set");
+	is($ret, $acl, 'returns $self for chaining');
+	returns_ok($ret, { type => 'OBJECT' }, 'return schema ok');
+};
+
+# Purpose: calling deny_all_countries twice is idempotent
+subtest 'deny_all_countries() - idempotent on double call' => sub {
+	my $acl = CGI::ACL->new()->deny_all_countries()->deny_all_countries();
+	ok($acl->{deny_countries}{ $config{WILDCARD} }, 'wildcard still set after double call');
+	is(scalar keys %{$acl->{deny_countries}}, 1, 'no duplicate keys from double call');
+};
+
+# Purpose: deny_all_countries is equivalent to deny_country('*')
+subtest 'deny_all_countries() - equivalent to deny_country("*")' => sub {
+	my $via_method = CGI::ACL->new()->deny_all_countries();
+	my $via_call   = CGI::ACL->new()->deny_country($config{WILDCARD});
+
+	is_deeply($via_method->{deny_countries}, $via_call->{deny_countries},
+		'deny_all_countries and deny_country("*") produce identical state');
+};
+
+# Purpose: in default-deny mode only allow_country permits a country
+subtest 'deny_all_countries() + allow_country - denies non-allowed country' => sub {
+	my $acl = CGI::ACL->new()
+		->deny_all_countries()
+		->allow_country($config{COUNTRY_GB_UPPER});
+
+	local $ENV{REMOTE_ADDR} = $config{LOCAL_IP};
+	diag "deny_all_countries + allow GB" if $ENV{TEST_VERBOSE};
+
+	is($acl->all_denied(lingua => Test::FakeLingua->new($config{COUNTRY_GB})), 0,
+		'allowed country passes in default-deny mode');
+	is($acl->all_denied(lingua => Test::FakeLingua->new($config{COUNTRY_BR})), 1,
+		'non-allowed country denied in default-deny mode');
+};
+
+# Purpose: method chain deny_all_countries()->allow_country()->allow_ip() compiles cleanly
+subtest 'deny_all_countries() - full method chain works' => sub {
+	my $acl = CGI::ACL->new()
+		->deny_all_countries()
+		->allow_country($config{COUNTRY_US_UPPER})
+		->allow_ip($config{RFC5737_IP});
+
+	ok($acl->{deny_countries}{ $config{WILDCARD} }, 'wildcard set via chain');
+	ok($acl->{allow_countries}{ $config{COUNTRY_US} }, 'allow_country set via chain');
+	ok($acl->{allowed_ips}{ $config{RFC5737_IP} },     'allow_ip set via chain');
+};
+
+# ─────────────────────────────────────────────────────────────────────────────
 subtest 'deny_cloud() - sets flag and returns $self' => sub {
 	my $acl = CGI::ACL->new();
 	my $ret = $acl->deny_cloud();

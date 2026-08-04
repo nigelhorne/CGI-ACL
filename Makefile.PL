@@ -70,5 +70,5 @@ WriteMakefile(
 			}
 		},
 	},
-	MIN_PERL_VERSION	=> '5.6.2'	# Probably would work, but never tested on earlier versions than this
+	MIN_PERL_VERSION	=> '5.014'	# Socket::getaddrinfo requires Socket 2.000 (first in Perl 5.14)
 );

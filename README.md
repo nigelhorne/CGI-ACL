@@ -41,7 +41,7 @@ Constructor arguments may also be supplied via environment variables of the
 form `CGI__ACL__<field>` or via a config file; see [Object::Configure](https://metacpan.org/pod/Object%3A%3AConfigure)
 for details.
 
-### USAGE
+### EXAMPLE
 
     # No restrictions (allow all by default)
     my $acl = CGI::ACL->new();
@@ -79,13 +79,34 @@ for details.
     as a class method.
     **Action:** Change the call to `CGI::ACL->new(...)`.
 
+### FORMAL SPECIFICATION
+
+    ──────────────── ACLState ────────────────────────────────────────
+      allowed_ips    : IP_Str ⇸ Bool
+      deny_countries : Country ⇸ Bool
+      allow_countries: Country ⇸ Bool
+      deny_cloud     : Bool
+      _cidrlist      : [CIDR_Str]?   -- memoised; cleared on allow_ip
+      _cloud_cache   : IP_Str ⇸ {result: Bool, expires: Nat}?
+    ──────────────────────────────────────────────────────────────────
+
+    ─────────────── New ──────────────────────────────────────────────
+      class  : ClassName ∪ ACLState
+      params : ACLState?
+      ─────────────────────────────────────────────────────────────────
+      blessed(class) ⟹
+        result! = bless( class ∪ params, ref(class) )   -- clone
+      ¬blessed(class) ⟹
+        result! = bless( configure(class, params), class )
+    ──────────────────────────────────────────────────────────────────
+
 ## allow\_ip
 
 Adds an IPv4/IPv6 address or CIDR block to the set of explicitly permitted
 clients.  When `allowed_ips` is non-empty, any client address not matched
 by an entry in the set is denied (subject to `deny_cloud` taking precedence).
 
-### USAGE
+### EXAMPLE
 
     use CGI::ACL;
 
@@ -144,6 +165,19 @@ Invalidates the internal CIDR lookup cache so the next call to
     **Action:** Pass a scalar IP/CIDR string: `allow_ip('192.0.2.1')` or
     `allow_ip(ip => '192.0.2.1')`.
 
+### FORMAL SPECIFICATION
+
+    ─────────────── AllowIP ──────────────────────────────────────────
+      ΔACL
+      ip? : IP_Str
+      ─────────────────────────────────────────────────────────────────
+      allowed_ips' = allowed_ips ∪ { ip? ↦ 1 }
+      _cidrlist'   = ∅          -- cache invalidated
+      deny_countries' = deny_countries
+      allow_countries' = allow_countries
+      deny_cloud'     = deny_cloud
+    ──────────────────────────────────────────────────────────────────
+
 ## deny\_country
 
 Adds one or more countries to the deny list.  Countries are identified by
@@ -153,7 +187,7 @@ Passing the special value `'*'` (wildcard) switches to default-deny mode:
 all countries are denied unless they also appear in the allow list set by
 `allow_country()`.
 
-### USAGE
+### EXAMPLE
 
     use CGI::ACL;
 
@@ -213,13 +247,29 @@ not restrict access.
     **Action:** Pass a scalar ISO code or arrayref:
     `deny_country('BR')` or `deny_country(country => ['BR','CN'])`.
 
+### FORMAL SPECIFICATION
+
+    ─────────────── DenyCountry ─────────────────────────────────────
+      ΔACL
+      country? : ISO_Code ∪ {'*'} ∪ seq ISO_Code
+      ─────────────────────────────────────────────────────────────────
+      country? ∈ seq ISO_Code ⟹
+        deny_countries' = deny_countries ∪
+                          { lc(c) ↦ 1 | c ∈ country? }
+      country? ∉ seq ISO_Code ⟹
+        deny_countries' = deny_countries ∪ { lc(country?) ↦ 1 }
+      allow_countries' = allow_countries
+      allowed_ips'     = allowed_ips
+      deny_cloud'      = deny_cloud
+    ──────────────────────────────────────────────────────────────────
+
 ## allow\_country
 
 Adds one or more countries to the explicit permit list.  This is meaningful
 only when `deny_country('*')` has been called first; without the wildcard
 deny, this method has no observable effect on access decisions.
 
-### USAGE
+### EXAMPLE
 
     use CGI::ACL;
 
@@ -278,6 +328,22 @@ consulted.
     **Action:** Pass a scalar ISO code or arrayref:
     `allow_country('US')` or `allow_country(country => ['GB','US'])`.
 
+### FORMAL SPECIFICATION
+
+    ─────────────── AllowCountry ────────────────────────────────────
+      ΔACL
+      country? : ISO_Code ∪ seq ISO_Code
+      ─────────────────────────────────────────────────────────────────
+      country? ∈ seq ISO_Code ⟹
+        allow_countries' = allow_countries ∪
+                           { lc(c) ↦ 1 | c ∈ country? }
+      country? ∉ seq ISO_Code ⟹
+        allow_countries' = allow_countries ∪ { lc(country?) ↦ 1 }
+      deny_countries' = deny_countries
+      allowed_ips'    = allowed_ips
+      deny_cloud'     = deny_cloud
+    ──────────────────────────────────────────────────────────────────
+
 ## deny\_cloud
 
 Enables blocking of requests that originate from major cloud-hosting
@@ -293,7 +359,7 @@ Microsoft Azure, DigitalOcean, Linode/Akamai, Hetzner, OVH.
 that is explicitly permitted via `allow_ip()` is still denied if its
 reverse DNS resolves to a cloud provider hostname.
 
-### USAGE
+### EXAMPLE
 
     use CGI::ACL;
 
@@ -342,6 +408,89 @@ DNS lookups are performed synchronously.  On non-Windows platforms a
 
 This method emits no messages.
 
+### FORMAL SPECIFICATION
+
+    ─────────────── DenyCloud ───────────────────────────────────────
+      ΔACL
+      ─────────────────────────────────────────────────────────────────
+      deny_cloud'     = 1
+      allowed_ips'    = allowed_ips
+      deny_countries' = deny_countries
+      allow_countries'= allow_countries
+      _cidrlist'      = _cidrlist
+    ──────────────────────────────────────────────────────────────────
+
+## deny\_all\_countries
+
+Convenience method equivalent to `deny_country('*')`.  Switches the ACL
+into default-deny mode for country checks: every country is denied unless
+it also appears in the permit list added by `allow_country()`.
+
+This is the idiomatic way to build an allowlist-only country policy without
+spelling out the wildcard literal.
+
+### EXAMPLE
+
+    use CGI::ACL;
+
+    # Allow only the UK and US; deny every other country
+    my $acl = CGI::ACL->new()
+        ->deny_all_countries()
+        ->allow_country('GB')
+        ->allow_country('US');
+
+    if ($acl->all_denied(lingua => $lingua)) {
+        print "Your country is not permitted.\n";
+        exit;
+    }
+
+### ARGUMENTS
+
+None.
+
+### RETURNS
+
+The object itself, to allow method chaining.
+
+### SIDE EFFECTS
+
+Sets `$self->{deny_countries}{'*'}` to `1`, activating default-deny
+mode.  `allow_country()` calls made before or after this method both take
+effect — evaluation order is irrelevant because all data is applied at
+`all_denied()` call time.
+
+### NOTES
+
+`allow_country()` has no restrictive effect unless this method (or
+`deny_country('*')`) has also been called.
+
+### API SPECIFICATION
+
+#### Input
+
+    # No parameters accepted.
+    {}
+
+#### Output
+
+    # Compatible with Return::Set:
+    { type => 'object', isa => 'CGI::ACL' }
+
+### MESSAGES
+
+This method emits no messages.
+
+### FORMAL SPECIFICATION
+
+    ─────────────── DenyAllCountries ────────────────────────────────
+      ΔACL
+      ─────────────────────────────────────────────────────────────────
+      deny_countries' = deny_countries ∪ { '*' ↦ 1 }
+      allow_countries' = allow_countries
+      allowed_ips'    = allowed_ips
+      deny_cloud'     = deny_cloud
+    ──────────────────────────────────────────────────────────────────
+
 ## all\_denied
 
 Evaluates every active restriction against the current client and returns
@@ -365,7 +514,7 @@ If no lingua is provided, emit a warning and return `1` (deny).
 Note that localhost (`127.0.0.1`) is **not** automatically allowed once
 any restriction is configured; call `allow_ip('127.0.0.1')` explicitly.
 
-### USAGE
+### EXAMPLE
 
     use CGI::Lingua;
     use CGI::ACL;
@@ -428,6 +577,82 @@ structure) as a performance optimisation.
     **Action:** Pass a `CGI::Lingua` object:
     `all_denied(lingua => $lingua)`.
 
+### PSEUDOCODE
+
+    IF no restrictions configured THEN
+        RETURN 0  (allow -- fast path)
+
+    addr := REMOTE_ADDR // '127.0.0.1'
+    IF addr not a valid IPv4 or IPv6 address THEN
+        RETURN 1  (deny -- bad or injected address)
+
+    IF deny_cloud is set THEN
+        consult per-object cache keyed by addr (TTL 300 s)
+        IF cache miss THEN
+            is_cloud := _is_cloud_host(addr)  [DNS; may throw]
+            IF no error THEN cache result END IF
+        END IF
+        IF is_cloud THEN RETURN 1 (deny -- cloud host)
+        IF no other restrictions THEN RETURN 0 (allow)
+    END IF
+
+    IF allowed_ips is set THEN
+        IF addr matches exact-match entry THEN RETURN 0 (allow)
+        IF addr falls inside any CIDR range THEN RETURN 0 (allow)
+    END IF
+
+    IF deny_countries or allow_countries is set THEN
+        IF no lingua supplied THEN carp; RETURN 1 (deny)
+        IF lingua is not a blessed object THEN carp; RETURN 1 (deny)
+        country := lingua->country()   [wrapped in eval]
+        IF country is falsy (undef / "" / "0") THEN RETURN 1 (deny)
+        country := lc(country)
+        IF wildcard (*) in deny_countries THEN
+            IF country in allow_countries THEN RETURN 0 (allow)
+            ELSE                               RETURN 1 (deny)
+        ELSE
+            IF country in deny_countries THEN RETURN 1 (deny)
+            ELSE                              RETURN 0 (allow)
+        END IF
+    END IF
+
+    RETURN 1  (deny -- no rule permitted the request)
+
+### FORMAL SPECIFICATION
+
+    ──────────────────────── AllDenied ──────────────────────────────
+      ΞACL                          -- state unchanged (modulo cache)
+      addr    : IPv4 ∪ IPv6         -- REMOTE_ADDR or DEFAULT_ADDR
+      lingua? : Lingua              -- country resolver (optional)
+      result! : {0, 1}              -- 0 = allow, 1 = deny
+      ─────────────────────────────────────────────────────────────────
+      no_restrictions(self) ⟹ result! = 0
+
+      ¬valid_ip(addr) ⟹ result! = 1
+
+      deny_cloud = 1 ∧ is_cloud(addr) ⟹ result! = 1
+      deny_cloud = 1 ∧ ¬is_cloud(addr)
+        ∧ allowed_ips = ∅ ∧ deny_countries = ∅
+        ∧ allow_countries = ∅            ⟹ result! = 0
+
+      addr ∈ dom(allowed_ips) ⟹ result! = 0
+      cidr_match(addr, allowed_ips) ⟹ result! = 0
+
+      (deny_countries ≠ ∅ ∨ allow_countries ≠ ∅)
+        ∧ lingua? = ∅ ⟹ result! = 1
+      lingua?.country() = undef ⟹ result! = 1
+
+      deny_countries('*') = 1
+        ∧ allow_countries(lc(lingua?.country())) = 1 ⟹ result! = 0
+      deny_countries('*') = 1
+        ∧ allow_countries(lc(lingua?.country())) ≠ 1 ⟹ result! = 1
+
+      deny_countries('*') ≠ 1
+        ∧ deny_countries(lc(lingua?.country())) = 1 ⟹ result! = 1
+      deny_countries('*') ≠ 1
+        ∧ deny_countries(lc(lingua?.country())) ≠ 1 ⟹ result! = 0
+    ──────────────────────────────────────────────────────────────────
+
 # AUTHOR
 
 Nigel Horne, `<njh at nigelhorne.com>`
@@ -456,119 +681,37 @@ A VPN or proxy will most likely bypass IP-based access control.
 - CPANTS: [http://cpants.cpanauthors.org/dist/CGI-ACL](http://cpants.cpanauthors.org/dist/CGI-ACL)
 - CPAN Testers: [http://matrix.cpantesters.org/?dist=CGI-ACL](http://matrix.cpantesters.org/?dist=CGI-ACL)
 
-## FORMAL SPECIFICATION
+# LIMITATIONS
 
-### new
-
-    ──────────────── ACLState ────────────────────────────────────────
-      allowed_ips    : IP_Str ⇸ Bool
-      deny_countries : Country ⇸ Bool
-      allow_countries: Country ⇸ Bool
-      deny_cloud     : Bool
-      _cidrlist      : [CIDR_Str]?        -- memoised; cleared on allow_ip
-    ──────────────────────────────────────────────────────────────────
-
-    ─────────────── New ──────────────────────────────────────────────
-      class  : ClassName ∪ ACLState
-      params : ACLState?
-      ─────────────────────────────────────────────────────────────────
-      blessed(class) ⟹
-        result! = bless( class ∪ params, ref(class) )   -- clone
-      ¬blessed(class) ⟹
-        result! = bless( configure(class, params), class )
-    ──────────────────────────────────────────────────────────────────
-
-### allow\_ip
-
-    ─────────────── AllowIP ──────────────────────────────────────────
-      ΔACL
-      ip? : IP_Str
-      ─────────────────────────────────────────────────────────────────
-      allowed_ips' = allowed_ips ∪ { ip? ↦ 1 }
-      _cidrlist'   = ∅          -- cache invalidated
-      deny_countries' = deny_countries
-      allow_countries' = allow_countries
-      deny_cloud'     = deny_cloud
-    ──────────────────────────────────────────────────────────────────
-
-### deny\_country
-
-    ─────────────── DenyCountry ─────────────────────────────────────
-      ΔACL
-      country? : ISO_Code ∪ {'*'} ∪ seq ISO_Code
-      ─────────────────────────────────────────────────────────────────
-      country? ∈ seq ISO_Code ⟹
-        deny_countries' = deny_countries ∪
-                          { lc(c) ↦ 1 | c ∈ country? }
-      country? ∉ seq ISO_Code ⟹
-        deny_countries' = deny_countries ∪ { lc(country?) ↦ 1 }
-      allow_countries' = allow_countries
-      allowed_ips'     = allowed_ips
-      deny_cloud'      = deny_cloud
-    ──────────────────────────────────────────────────────────────────
-
-### allow\_country
-
-    ─────────────── AllowCountry ────────────────────────────────────
-      ΔACL
-      country? : ISO_Code ∪ seq ISO_Code
-      ─────────────────────────────────────────────────────────────────
-      country? ∈ seq ISO_Code ⟹
-        allow_countries' = allow_countries ∪
-                           { lc(c) ↦ 1 | c ∈ country? }
-      country? ∉ seq ISO_Code ⟹
-        allow_countries' = allow_countries ∪ { lc(country?) ↦ 1 }
-      deny_countries' = deny_countries
-      allowed_ips'    = allowed_ips
-      deny_cloud'     = deny_cloud
-    ──────────────────────────────────────────────────────────────────
-
-### deny\_cloud
-
-    ─────────────── DenyCloud ───────────────────────────────────────
-      ΔACL
-      ─────────────────────────────────────────────────────────────────
-      deny_cloud'     = 1
-      allowed_ips'    = allowed_ips
-      deny_countries' = deny_countries
-      allow_countries'= allow_countries
-      _cidrlist'      = _cidrlist
-    ──────────────────────────────────────────────────────────────────
-
-### all\_denied
-
-    ──────────────────────── AllDenied ──────────────────────────────
-      ΞACL                          -- state unchanged (modulo cache)
-      addr    : IPv4 ∪ IPv6         -- REMOTE_ADDR or DEFAULT_ADDR
-      lingua? : Lingua              -- country resolver (optional)
-      result! : {0, 1}              -- 0 = allow, 1 = deny
-      ─────────────────────────────────────────────────────────────────
-      no_restrictions(self) ⟹ result! = 0
-
-      ¬valid_ip(addr) ⟹ result! = 1
-
-      deny_cloud = 1 ∧ is_cloud(addr) ⟹ result! = 1
-      deny_cloud = 1 ∧ ¬is_cloud(addr)
-        ∧ allowed_ips = ∅ ∧ deny_countries = ∅
-        ∧ allow_countries = ∅            ⟹ result! = 0
-
-      addr ∈ dom(allowed_ips) ⟹ result! = 0
-      cidr_match(addr, allowed_ips) ⟹ result! = 0
-
-      (deny_countries ≠ ∅ ∨ allow_countries ≠ ∅)
-        ∧ lingua? = ∅ ⟹ result! = 1      -- no lingua supplied
-      lingua?.country() = undef ⟹ result! = 1   -- unknown country
-
-      deny_countries($WILDCARD) = 1
-        ∧ allow_countries(lc(lingua?.country())) = 1 ⟹ result! = 0
-      deny_countries($WILDCARD) = 1
-        ∧ allow_countries(lc(lingua?.country())) ≠ 1 ⟹ result! = 1
-
-      deny_countries($WILDCARD) ≠ 1
-        ∧ deny_countries(lc(lingua?.country())) = 1 ⟹ result! = 1
-      deny_countries($WILDCARD) ≠ 1
-        ∧ deny_countries(lc(lingua?.country())) ≠ 1 ⟹ result! = 0
-    ──────────────────────────────────────────────────────────────────
+- A VPN or anonymous proxy will likely bypass IP-based access control and may
+defeat country detection as well.
+- Country detection relies on [CGI::Lingua](https://metacpan.org/pod/CGI%3A%3ALingua) and its underlying GeoIP database,
+which must be updated regularly.  GeoIP databases are never fully accurate;
+satellite and mobile networks in particular can be misattributed.
+- Cloud detection depends on provider-maintained reverse-DNS records.  A cloud
+host whose PTR record does not follow its provider's naming convention will
+not be detected.  Conversely, a legitimate host whose PTR record accidentally
+matches a cloud pattern could be falsely denied.
+- DNS lookups are synchronous.  On non-Windows platforms a `$DNS_TIMEOUT`-second
+alarm prevents indefinite blocking, but under high resolver load that latency
+can still affect every request for an uncached IP.  For persistent processes
+(FastCGI, mod\_perl) the built-in per-object cache (`$CLOUD_CACHE_TTL` seconds)
+mitigates this significantly.
+- The per-object DNS result cache is neither shared between processes nor
+persistent across objects.  Under a pre-forking server each worker child
+maintains an independent cache.
+- Private methods (`_is_cloud_host`, `_verified_rdns`, `_rdns_forward`,
+`_set_countries`, `_get_param`) are not enforced as private with
+`Sub::Private` because this module's white-box test suite (`t/function.t`,
+`t/extended_tests.t`, etc.) calls them directly by fully-qualified name to
+exercise specific code paths.  The `namespace::clean` pragma removes them
+from the object's method dispatch table, and the `_` naming convention
+signals their internal nature.
+- Windows platforms do not support `alarm()`-based timeouts.  DNS lookups on
+Windows block synchronously for as long as the OS resolver takes.
+- An optional rate-limiting feature (to block brute-force attacks) has not yet
+been implemented.  It would require persistent shared state (e.g. Redis or an
+in-memory cache) beyond this module's current dependency set.
 
 # LICENSE AND COPYRIGHT
 

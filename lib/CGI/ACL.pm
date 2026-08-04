@@ -389,11 +389,25 @@ sub new {
 		# Clear derived caches; they will be rebuilt fresh from the cloned state.
 		delete $copy{_cidrlist};
 		delete $copy{_cloud_cache};
-		return bless { %copy, %{$params} }, ref($class);
+
+		# Strip private/derived keys from caller-supplied params before merging.
+		# Accepting _cloud_cache would let a caller pre-seed the DNS result cache
+		# to permanently suppress cloud detection for a targeted IP address.
+		# Accepting _cidrlist would inject a fabricated CIDR lookup structure.
+		# Public keys (deny_cloud, allowed_ips, deny_countries, allow_countries)
+		# are intentionally preserved so clone overrides still work.
+		my %safe_params = map  { $_ => $params->{$_} }
+		                  grep { !/\A_/xms }
+		                  keys %{$params};
+		return bless { %copy, %safe_params }, ref($class);
 	}
 
-	# Merge any config-file or environment-variable overrides
-	return bless Object::Configure::configure($class, $params), $class;
+	# Merge any config-file or environment-variable overrides, then strip any
+	# private/cache keys that may have arrived via CGI__ACL__* env vars or a
+	# config file.  Private state must be derived at runtime, not supplied externally.
+	my $cfg = Object::Configure::configure($class, $params);
+	delete $cfg->{$_} for grep { /\A_/xms } keys %{$cfg};
+	return bless $cfg, $class;
 }
 
 =head2 allow_ip
@@ -501,7 +515,33 @@ sub allow_ip {
 		return $self;
 	}
 
-	# Happy path: store the address and invalidate the memoised CIDR list
+	# Initialise allowed_ips before format validation so that the early-return
+	# guard in all_denied() sees the ACL as "has IP restrictions" even when every
+	# supplied address turns out to be invalid.  Without this, an ACL that only
+	# received invalid IPs would appear restriction-free and allow all traffic
+	# (fail-open).  With an empty hashref, the guard skips its fast path and the
+	# IP check finds no match → all_denied returns 1 (deny — fail-closed).
+	$self->{allowed_ips} //= {};
+
+	# Validate format before storage: extract the base address (stripping any
+	# prefix length) and confirm it is a syntactically valid IPv4 or IPv6 address.
+	# Rejecting invalid strings prevents memory accumulation in persistent processes
+	# and eliminates the O(n) eval overhead per cidradd on bad entries.
+	my ($base) = $ip =~ /\A([^\/]+)/;
+	unless(
+		defined($base) && (
+			$base =~ /\A$RE{net}{IPv4}\z/o ||
+			$base =~ /\A$RE{net}{IPv6}\z/o
+		)
+	) {
+		# Truncate the offending value in the message to prevent log flooding
+		# when an attacker supplies a very long string (e.g. 64 KiB garbage).
+		my $display = length($ip) > 60 ? substr($ip, 0, 60) . '...' : $ip;
+		Carp::carp("allow_ip: '$display' is not a valid IP address or CIDR block");
+		return $self;
+	}
+
+	# Happy path: store the validated address and invalidate the memoised CIDR list
 	$self->{allowed_ips}->{$ip} = 1;
 	delete $self->{_cidrlist};
 	return $self;
@@ -1136,11 +1176,18 @@ sub all_denied {
 
 	# Determine the client address, falling back to localhost when absent.
 	# Use // (defined-or) not || to avoid treating "0" or "" as absent.
-	my $addr = $ENV{REMOTE_ADDR} // $DEFAULT_ADDR;
+	my $raw = $ENV{REMOTE_ADDR} // $DEFAULT_ADDR;
 
-	# Reject addresses that are not syntactically valid IPv4 or IPv6
-	return 1 unless $addr =~ /^$RE{net}{IPv4}$/o
-	             || $addr =~ /^$RE{net}{IPv6}$/o;
+	# Reject addresses that are not syntactically valid IPv4 or IPv6.
+	# Use \A and \z (not ^ and $): \z is the absolute end-of-string anchor
+	# and never matches before a trailing \n as $ does in Perl.
+	return 1 unless $raw =~ /\A$RE{net}{IPv4}\z/o || $raw =~ /\A$RE{net}{IPv6}\z/o;
+
+	# Detaint: format is proved above; extract via a character-class capture.
+	# All IP/IPv6 chars are [0-9A-Fa-f:.]; the capture eliminates taint so that
+	# $addr never propagates a tainted value to callers that are -T sensitive.
+	my ($addr) = $raw =~ /\A([0-9A-Fa-f:.]+)\z/;
+	return 1 unless defined $addr;    # unreachable; belt-and-suspenders
 
 	# ── Cloud check (highest precedence; overrides allow_ip) ────────────────
 	if($self->{deny_cloud}) {
@@ -1327,6 +1374,11 @@ sub _is_cloud_host {
 
 	# Attempt a verified reverse DNS lookup; returns undef on failure
 	my $hostname = _verified_rdns($ip) or return 0;
+
+	# RFC 1035 §3.1: FQDNs are at most 253 characters.  Reject longer strings
+	# before running all cloud patterns; protocol-invalid hostnames are never
+	# genuine cloud provider names, and the check costs one integer comparison.
+	return 0 if length($hostname) > 253;
 
 	# Compare the confirmed hostname against every known cloud pattern
 	for my $pattern (@CLOUD_PATTERNS) {

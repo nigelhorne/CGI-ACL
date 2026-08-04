@@ -4,6 +4,7 @@
 use strict;
 use warnings;
 
+use Carp;	# required: prevents Test::Carp glob aliasing from clearing Carp::carp
 use Test::Most;
 use Test::Carp;
 use Test::Memory::Cycle;
@@ -59,13 +60,20 @@ Readonly my %config => (
 	PLAIN_FN_WARN         => 'CGI::ACL: use ->new() not ::new() to instantiate',
 );
 
-# ── Mock Lingua helper ────────────────────────────────────────────────────────
+# ── Mock Lingua helpers ───────────────────────────────────────────────────────
 
 # Minimal lingua stub that returns a fixed country code
 {
 	package Test::FakeLingua;
 	sub new      { my ($class, $country) = @_; bless { country => $country }, $class }
 	sub country  { $_[0]->{country} }
+}
+
+# Lingua stub whose country() always throws — tests the eval guard in all_denied()
+{
+	package Test::DyingLingua;
+	sub new     { bless {}, shift }
+	sub country { die "country() intentionally dies for testing\n" }
 }
 
 # ── Helper ───────────────────────────────────────────────────────────────────
@@ -627,7 +635,9 @@ subtest 'all_denied() - no auto-vivification with deny_cloud + allow_country' =>
 	local $ENV{REMOTE_ADDR} = $config{LOCAL_IP};
 	diag "deny_cloud + allow_country: checking auto-vivification guard" if $ENV{TEST_VERBOSE};
 
-	# Call all_denied with a lingua so the country branch executes
+	# After the cloud fast-path optimization, deny_cloud + allow_country (no
+	# deny_countries) short-circuits to return 0 before any country check.
+	# Lingua is passed here to avoid any latent warnings but is not consulted.
 	$acl->all_denied(lingua => Test::FakeLingua->new($config{COUNTRY_GB}));
 
 	# The wildcard-deny branch must not have auto-vivified deny_countries
@@ -919,6 +929,324 @@ subtest '_rdns_forward() - IPv6: getnameinfo error is skipped' => sub {
 	# A getnameinfo error means the address is skipped, list is empty
 	is(scalar @ips, 0, 'getnameinfo error skips the address, returns empty list');
 };
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Subtest: _get_param() (internal helper)
+# Purpose: verify every dispatch path — hashref, named-pair fast-path,
+# even-length list, and positional scalar.  This helper centralises the
+# three calling conventions; a bug here breaks every public setter.
+# ─────────────────────────────────────────────────────────────────────────────
+subtest '_get_param() - hashref: extracts keyed value' => sub {
+	my $result = CGI::ACL::_get_param('ip', { ip => $config{RFC5737_IP} });
+	is($result, $config{RFC5737_IP}, 'hashref dispatch returns correct value');
+};
+
+subtest '_get_param() - hashref: missing key returns undef' => sub {
+	my $result = CGI::ACL::_get_param('ip', {});
+	is($result, undef, 'hashref with no matching key returns undef');
+};
+
+# The fast path avoids allocating a throw-away hash for the most common style
+subtest '_get_param() - named-pair fast path: key matches first arg' => sub {
+	my $result = CGI::ACL::_get_param('ip', 'ip', $config{RFC5737_IP});
+	is($result, $config{RFC5737_IP}, 'fast path (key eq arg[0]) returns arg[1]');
+};
+
+subtest '_get_param() - named-pair fast path: key mismatch falls to hash path' => sub {
+	# Two args but $args[0] ne $key -> even-length list path -> {foo=>val}->{ip} = undef
+	my $result = CGI::ACL::_get_param('ip', 'foo', $config{RFC5737_IP});
+	is($result, undef, 'key mismatch in 2-arg form returns undef');
+};
+
+subtest '_get_param() - even-length list: correct key extracted from 4-arg list' => sub {
+	my $result = CGI::ACL::_get_param('ip',
+		'country', $config{COUNTRY_GB}, 'ip', $config{RFC5737_IP});
+	is($result, $config{RFC5737_IP}, '4-arg even list: correct key extracted via hash construction');
+};
+
+subtest '_get_param() - positional scalar: single odd arg returned as-is' => sub {
+	# 1 arg -> odd-length -> positional path ($args[0] is the value)
+	my $result = CGI::ACL::_get_param('ip', $config{RFC5737_IP});
+	is($result, $config{RFC5737_IP}, 'single positional arg returned directly');
+};
+
+subtest '_get_param() - empty args returns undef' => sub {
+	# 0 args -> 0 % 2 == 0 -> even-length path -> {}->{key} = undef
+	my $result = CGI::ACL::_get_param('ip');
+	is($result, undef, 'empty args returns undef via even-length path');
+};
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Subtest: new() — clone isolation (deep copy)
+# Purpose: mutations to a clone must never propagate back to the original.
+# The deep copy covers allowed_ips, deny_countries, and allow_countries.
+# Derived caches (_cidrlist, _cloud_cache) must be cleared on every clone.
+# ─────────────────────────────────────────────────────────────────────────────
+subtest 'new() - clone deep-copies allowed_ips (mutations isolated)' => sub {
+	my $orig  = CGI::ACL->new()->allow_ip($config{RFC5737_IP});
+	my $clone = $orig->new();
+	diag "orig allowed_ips addr=" . refaddr($orig->{allowed_ips}) .
+	     " clone addr=" . refaddr($clone->{allowed_ips}) if $ENV{TEST_VERBOSE};
+
+	isnt(refaddr($orig->{allowed_ips}), refaddr($clone->{allowed_ips}),
+		'clone gets a fresh allowed_ips hashref (not the same reference)');
+
+	$clone->allow_ip($config{RFC5737_IP2});
+	ok(!$orig->{allowed_ips}{ $config{RFC5737_IP2} },
+		'IP added to clone does not appear in original');
+};
+
+subtest 'new() - clone deep-copies deny_countries (mutations isolated)' => sub {
+	my $orig  = CGI::ACL->new()->deny_country($config{COUNTRY_GB});
+	my $clone = $orig->new();
+
+	isnt(refaddr($orig->{deny_countries}), refaddr($clone->{deny_countries}),
+		'clone gets a fresh deny_countries hashref');
+
+	$clone->deny_country($config{COUNTRY_US});
+	ok(!$orig->{deny_countries}{ $config{COUNTRY_US} },
+		'country denied in clone does not affect original');
+};
+
+subtest 'new() - clone clears _cidrlist and _cloud_cache' => sub {
+	# Derived caches belong to the object; they must be cleared on clone
+	# so the fresh object rebuilds them from its own (possibly modified) state.
+	my $orig = CGI::ACL->new()->allow_ip($config{RFC5737_CIDR});
+	$orig->{_cidrlist}    = ['synthetic-cidr'];
+	$orig->{_cloud_cache} = { $config{RFC5737_IP} => { result => 1, expires => time() + 9999 } };
+
+	my $clone = $orig->new();
+
+	ok(!defined $clone->{_cidrlist},    'clone starts with no _cidrlist');
+	ok(!defined $clone->{_cloud_cache}, 'clone starts with no _cloud_cache');
+};
+
+# ─────────────────────────────────────────────────────────────────────────────
+# deny_country() / allow_country() — empty arrayref and undef-element edge cases
+# Purpose: an empty arrayref must be a strict no-op (no hashref created).
+# A arrayref containing undef must have those elements silently filtered.
+# ─────────────────────────────────────────────────────────────────────────────
+subtest 'deny_country() - empty arrayref is a no-op, no deny_countries created' => sub {
+	# If deny_countries is created as {} (truthy empty hashref), the early-return
+	# guard would fire and all subsequent calls would require a lingua argument.
+	my $acl = CGI::ACL->new();
+	$acl->deny_country(country => []);
+	is($acl->{deny_countries}, undef,
+		'deny_country([]) must leave deny_countries as undef');
+};
+
+subtest 'deny_country() - arrayref with undef elements filters them out' => sub {
+	my $acl = CGI::ACL->new();
+	$acl->deny_country(country => [ $config{COUNTRY_GB}, undef, $config{COUNTRY_US} ]);
+	ok($acl->{deny_countries}{ $config{COUNTRY_GB} }, 'GB stored correctly');
+	ok($acl->{deny_countries}{ $config{COUNTRY_US} }, 'US stored correctly');
+	ok(!exists $acl->{deny_countries}{''}, 'empty-string key absent (undef was filtered)');
+	is(scalar keys %{$acl->{deny_countries}}, 2, 'exactly two keys in deny_countries');
+};
+
+subtest 'allow_country() - empty arrayref is a no-op, no allow_countries created' => sub {
+	my $acl = CGI::ACL->new();
+	$acl->allow_country(country => []);
+	is($acl->{allow_countries}, undef,
+		'allow_country([]) must leave allow_countries as undef');
+};
+
+subtest 'allow_country() - arrayref with undef elements filters them out' => sub {
+	my $acl = CGI::ACL->new();
+	$acl->allow_country(country => [ undef, $config{COUNTRY_US}, undef ]);
+	ok($acl->{allow_countries}{ $config{COUNTRY_US} }, 'US stored from mixed arrayref');
+	ok(!exists $acl->{allow_countries}{''}, 'empty-string key absent (undef was filtered)');
+	is(scalar keys %{$acl->{allow_countries}}, 1, 'exactly one key in allow_countries');
+};
+
+# ─────────────────────────────────────────────────────────────────────────────
+# _set_countries() — undef element filtering
+# Purpose: a bug here would silently store '' as a country code and could
+# match falsy $@ or empty lingua->country() returns in unexpected ways.
+# ─────────────────────────────────────────────────────────────────────────────
+subtest '_set_countries() - undef elements in arrayref are silently skipped' => sub {
+	my $h = {};
+	CGI::ACL::_set_countries($h, [ $config{COUNTRY_GB}, undef, $config{COUNTRY_US} ]);
+	ok($h->{ $config{COUNTRY_GB} }, 'GB stored');
+	ok($h->{ $config{COUNTRY_US} }, 'US stored');
+	ok(!exists $h->{''}, 'undef did not become empty-string key');
+	is(scalar keys %{$h}, 2, 'exactly two keys stored (undef counted correctly)');
+};
+
+# ─────────────────────────────────────────────────────────────────────────────
+# all_denied() — additional paths not covered by the earlier subtests
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Purpose: absent REMOTE_ADDR must default to '127.0.0.1', not die or treat as invalid
+subtest 'all_denied() - absent REMOTE_ADDR defaults to 127.0.0.1' => sub {
+	delete local $ENV{REMOTE_ADDR};
+
+	my $acl_match = CGI::ACL->new()->allow_ip($config{LOCAL_IP});
+	is($acl_match->all_denied(), 0,
+		'missing REMOTE_ADDR defaults to 127.0.0.1 — matches allow_ip');
+
+	my $acl_no_match = CGI::ACL->new()->allow_ip($config{RFC5737_IP});
+	is($acl_no_match->all_denied(), 1,
+		'missing REMOTE_ADDR as 127.0.0.1 — not in allow list — denied');
+};
+
+# Purpose: a DNS failure inside _is_cloud_host() must never escape all_denied().
+# The eval wrapper must catch it and fail safe (treat the IP as non-cloud).
+subtest 'all_denied() - DNS exception in _is_cloud_host() is caught (fail-safe)' => sub {
+	my $guard = mock_scoped 'CGI::ACL::_is_cloud_host' => sub {
+		die "simulated DNS timeout\n";
+	};
+	my $acl = CGI::ACL->new()->deny_cloud();
+
+	my $result = eval { denied_with_addr($acl, $config{RFC5737_IP}) };
+	my $err    = $@; undef $@;
+
+	is($err,    '',  'DNS exception does not propagate from all_denied()');
+	is($result, 0,   'DNS failure treated as non-cloud (fail safe: allow)');
+	diag "fail-safe result=$result" if $ENV{TEST_VERBOSE};
+};
+
+# Purpose: $@ must be cleared after catching a DNS exception so that any outer
+# eval in the caller does not see a stale error string from inside all_denied().
+subtest 'all_denied() - $@ is cleared after catching a DNS exception' => sub {
+	my $guard = mock_scoped 'CGI::ACL::_is_cloud_host' => sub {
+		die "intentional DNS die for $@ clearing test\n";
+	};
+	my $acl = CGI::ACL->new()->deny_cloud();
+
+	denied_with_addr($acl, $config{RFC5737_IP});
+
+	# $@ must not contain the DNS die message after all_denied() returns
+	ok(!$@, '$@ is empty after all_denied() swallows the DNS exception');
+};
+
+# Purpose: the per-object cloud cache must eliminate repeated DNS round-trips
+# for the same IP within the TTL.  We count _verified_rdns calls to prove it.
+subtest 'all_denied() - cloud result is cached (second call skips DNS)' => sub {
+	my $dns_calls = 0;
+	my $guard = mock_scoped 'CGI::ACL::_verified_rdns' => sub {
+		$dns_calls++;
+		return undef;    # non-cloud
+	};
+	my $acl = CGI::ACL->new()->deny_cloud();
+	diag "Expect exactly 1 DNS call for 2 back-to-back requests" if $ENV{TEST_VERBOSE};
+
+	denied_with_addr($acl, $config{RFC5737_IP});
+	is($dns_calls, 1, 'first request triggers one DNS lookup');
+
+	denied_with_addr($acl, $config{RFC5737_IP});
+	is($dns_calls, 1, 'second request uses cache — DNS not called again');
+};
+
+# Purpose: the cache is per-object; two independent ACL instances each do their
+# own DNS lookup because their _cloud_cache hashrefs are separate.
+subtest 'all_denied() - cloud cache is NOT shared between ACL objects' => sub {
+	my $dns_calls = 0;
+	my $guard = mock_scoped 'CGI::ACL::_verified_rdns' => sub {
+		$dns_calls++;
+		return undef;
+	};
+
+	my $acl1 = CGI::ACL->new()->deny_cloud();
+	my $acl2 = CGI::ACL->new()->deny_cloud();
+
+	denied_with_addr($acl1, $config{RFC5737_IP});
+	denied_with_addr($acl2, $config{RFC5737_IP});
+
+	is($dns_calls, 2, 'each object does its own DNS lookup (independent caches)');
+};
+
+# Purpose: a plain string passed as lingua must carp and return 1 (deny).
+# The check happens BEFORE any country() call, preventing "can't call method on non-ref".
+subtest 'all_denied() - non-blessed lingua carps and returns deny' => sub {
+	my $acl = CGI::ACL->new()->deny_country($config{COUNTRY_BR});
+	local $ENV{REMOTE_ADDR} = $config{LOCAL_IP};
+	my $result;
+
+	does_carp_that_matches(
+		sub { $result = $acl->all_denied(lingua => 'plain-string') },
+		qr/lingua must be a blessed object/,
+	);
+	is($result, 1, 'non-blessed lingua causes deny');
+};
+
+# Purpose: an exception thrown by lingua->country() must be caught inside all_denied().
+# The $@ value must be cleared so the caller's eval (if any) is not confused.
+subtest 'all_denied() - dying lingua->country() is caught, returns deny, $@ cleared' => sub {
+	my $acl = CGI::ACL->new()->deny_country($config{COUNTRY_BR});
+	local $ENV{REMOTE_ADDR} = $config{LOCAL_IP};
+
+	my $result = eval { $acl->all_denied(lingua => Test::DyingLingua->new()) };
+	my $err    = $@; undef $@;
+
+	is($err, '', 'dying country() does not propagate from all_denied()');
+	is($result, 1, 'exception from country() causes deny (unknown country)');
+};
+
+# Purpose: prove the boolean reduction for the cloud fast-path.
+# deny_cloud + allow_country (no deny_country) must allow without consulting lingua.
+# Before the optimization, this path would carp about a missing lingua and deny.
+subtest 'all_denied() - deny_cloud + allow_country alone allows without lingua' => sub {
+	my $guard = mock_scoped 'CGI::ACL::_verified_rdns' => sub { undef };
+	my $acl   = CGI::ACL->new()->deny_cloud()->allow_country($config{COUNTRY_GB_UPPER});
+	diag "deny_cloud+allow_country: fast-path should return 0" if $ENV{TEST_VERBOSE};
+
+	# No lingua — would carp if the country check fired.  Prove it does NOT fire.
+	is(denied_with_addr($acl, $config{RFC5737_IP}), 0,
+		'non-cloud IP allowed via cloud fast-path (no lingua, no carp)');
+};
+
+# Purpose: an injection string passed to allow_ip() must be rejected early (carp)
+# and must not reach Net::CIDR or all_denied(); the valid CIDR added afterwards
+# must still function correctly.
+subtest 'all_denied() - invalid allow_ip entry is rejected early, valid CIDR still works' => sub {
+	my $acl = CGI::ACL->new();
+
+	# Injection string: now rejected at allow_ip() with a carp (not silently stored)
+	does_carp(sub { $acl->allow_ip('"; DROP TABLE users; --') });
+
+	# Valid CIDR added after the rejection must work normally
+	$acl->allow_ip($config{RFC5737_CIDR});
+
+	my $result = eval { denied_with_addr($acl, $config{CIDR_INSIDE}) };
+	my $err    = $@; undef $@;
+
+	is($err, '', 'no exception from all_denied() after an invalid entry was rejected');
+	is($result, 0, 'IP inside valid CIDR still allowed after invalid entry was rejected');
+
+	my $result2 = eval { denied_with_addr($acl, $config{CIDR_OUTSIDE}) };
+	undef $@;
+	is($result2, 1, 'IP outside all ranges is denied');
+};
+
+# ─────────────────────────────────────────────────────────────────────────────
+# _is_cloud_host() — private/loopback/link-local IP short-circuit
+# Purpose: the $PRIVATE_IP_RE guard must return 0 BEFORE calling _verified_rdns.
+# Strategy: install a mock that explicitly fails the test if called.  If
+# _is_cloud_host() incorrectly attempts DNS for a private address the mock
+# fires and the test fails, making the regression immediately visible.
+# ─────────────────────────────────────────────────────────────────────────────
+for my $case (
+	[ 'IPv4 loopback (127.0.0.1)',         '127.0.0.1'   ],
+	[ 'RFC 1918 class A (10.0.0.1)',        '10.0.0.1'    ],
+	[ 'RFC 1918 class B (172.16.0.1)',      '172.16.0.1'  ],
+	[ 'RFC 1918 class C (192.168.1.1)',     '192.168.1.1' ],
+	[ 'IPv4 link-local (169.254.1.1)',      '169.254.1.1' ],
+	[ 'IPv6 loopback (::1)',               '::1'          ],
+	[ 'IPv6 unique-local fc00::/7 (fc00::1)', 'fc00::1'   ],
+	[ 'IPv6 link-local fe80::/10 (fe80::1)',  'fe80::1'   ],
+) {
+	my ($label, $ip) = @{$case};
+	subtest "_is_cloud_host() - $label returns 0 without DNS" => sub {
+		# The sentinel mock must NEVER be called; if it is, the short-circuit is broken
+		my $guard = mock_scoped 'CGI::ACL::_verified_rdns' => sub {
+			fail("_verified_rdns called for private IP '$ip' — short-circuit is broken");
+			return undef;
+		};
+		diag "_is_cloud_host($ip) — expect short-circuit" if $ENV{TEST_VERBOSE};
+		is(CGI::ACL::_is_cloud_host($ip), 0, "$label returns 0 (no DNS call)");
+	};
+}
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Subtest: memory cycle checks

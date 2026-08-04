@@ -95,6 +95,42 @@ Revision history for CGI-ACL
 	  unlisted IPs without carping about a missing lingua (339 tests total)
 	- Fix stale comment in t/extended_tests.t "deny_cloud + allow_country" subtest:
 	  the country check no longer runs in that case; the cloud fast-path returns 0
+	- Add t/function.t: 32 new white-box subtests covering _get_param() all dispatch
+	  paths, new() clone isolation and cache-clearing, deny_country/allow_country empty-
+	  arrayref no-op and undef-element filtering, _set_countries() undef filtering,
+	  all_denied() absent-REMOTE_ADDR default, DNS exception fail-safe, $@ clearing
+	  after DNS/country exceptions, per-object cloud cache hit and isolation, non-blessed
+	  lingua deny, dying country() deny, deny_cloud+allow_country fast-path optimization,
+	  invalid CIDR eval guard, and all 8 _is_cloud_host() private-IP short-circuit paths
+	  verified with killing mocks
+	[ Security ]
+	- Fix all_denied() IP validator: replace ^ / $ anchors with \A / \z so that
+	  a trailing-newline REMOTE_ADDR ("1.2.3.4\n") cannot slip past the regex check;
+	  Perl's $ matches before a terminating \n, \z never does
+	- Fix all_denied(): add capture-based detaint step after IP validation so that $addr
+	  is never a tainted value downstream; any future caller of _is_cloud_host() or the
+	  CIDR lookup that adds an exec/system operation inherits a clean value
+	- Fix new() clone path: filter _* (private/cache) keys from caller-supplied params
+	  before merging; accepting _cloud_cache allowed a caller to pre-seed DNS cache
+	  entries to permanently suppress cloud detection for a targeted IP address
+	- Fix new() class path: strip _* keys from Object::Configure::configure() output;
+	  CGI__ACL__* env vars could previously inject _cloud_cache or _cidrlist state
+	- Fix allow_ip(): validate IP/CIDR format before storage; inject strings such as
+	  '"; DROP TABLE; --' were previously stored and silently discarded by the eval-
+	  wrapped Net::CIDR calls — now rejected early with a carp, preventing memory
+	  accumulation in persistent processes and O(n) cidradd overhead per request;
+	  allowed_ips is initialised to {} so the early-return guard treats the ACL as
+	  "has IP restrictions" even when all entries were invalid (fail-closed, not
+	  fail-open)
+	- Fix _is_cloud_host(): add RFC 1035 §3.1 hostname length check (>253 chars) before
+	  running cloud patterns; protocol-invalid hostnames from DNS are now rejected before
+	  any regex matching
+	- Fix t/function.t: add `use Carp` to prevent Test::Carp glob aliasing from clearing
+	  Carp::carp; the missing use caused subsequent calls to Carp::carp from allow_ip()
+	  to die with "Undefined subroutine" inside subtests that follow does_carp_that_matches
+	- Add t/edge_cases.t: two new security subtests — private cache key injection via
+	  new() (clone and class paths), and allow_ip() injection string behaviour change
+	  (carp+fail-closed instead of silent-store+deny) (373 tests total)
 
 0.09	Sun Aug  2 08:54:20 PM EDT 2026
 	[ Performance ]

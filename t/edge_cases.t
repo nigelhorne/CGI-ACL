@@ -117,6 +117,40 @@ subtest 'new(): circular reference in params does not crash' => sub {
 	isa_ok($acl, 'CGI::ACL', 'still returns a CGI::ACL object');
 };
 
+subtest 'new(): private cache keys are stripped from clone constructor params' => sub {
+	# Exploit scenario: caller passes _cloud_cache with a pre-seeded entry that
+	# marks a cloud IP as non-cloud (result => 0) with a far-future expiry.
+	# If the cache entry were accepted, all_denied() would trust the cache hit
+	# and never call DNS, silently bypassing deny_cloud() for the targeted IP.
+	my $orig  = CGI::ACL->new()->deny_cloud();
+	my $clone = $orig->new(
+		_cloud_cache => { $config{VALID_IP} => { result => 0, expires => 9_999_999_999 } },
+		_cidrlist    => ['synthetic-cidr-entry'],
+	);
+
+	ok(!defined($clone->{_cloud_cache}),
+		'_cloud_cache is stripped from clone params (cache injection prevented)');
+	ok(!defined($clone->{_cidrlist}),
+		'_cidrlist is stripped from clone params (CIDR injection prevented)');
+	ok($clone->{deny_cloud},
+		'deny_cloud (public key) is preserved through clone');
+};
+
+subtest 'new(): private cache keys are stripped from class constructor params' => sub {
+	# Same injection via the class-method path (CGI::ACL->new(_cloud_cache => ...))
+	# The injected key flows through Object::Configure::configure; it must be
+	# stripped from the bless'd hashref before the object is returned.
+	my $acl = CGI::ACL->new(
+		deny_cloud   => 1,
+		_cloud_cache => { $config{VALID_IP} => { result => 0, expires => 9_999_999_999 } },
+	);
+
+	ok(!defined($acl->{_cloud_cache}),
+		'_cloud_cache is stripped from class constructor (env-var injection path closed)');
+	ok($acl->{deny_cloud},
+		'deny_cloud (public key) survives stripping');
+};
+
 # ─────────────────────────────────────────────────────────────────────────────
 # allow_ip EDGE CASES
 # ─────────────────────────────────────────────────────────────────────────────
@@ -159,22 +193,30 @@ subtest 'allow_ip(): "0.0.0.0/0" (default-route CIDR) allows every IP' => sub {
 	is(denied_at($acl, $config{ZERO_IP}),   0, '0.0.0.0/0 allows 0.0.0.0');
 };
 
-subtest 'allow_ip(): injection strings stored in allow-list do not crash all_denied' => sub {
-	# An injection string would never match a real REMOTE_ADDR, but its
-	# presence must not cause Net::CIDR to die inside all_denied.
+subtest 'allow_ip(): injection strings are rejected with carp, not stored' => sub {
+	# allow_ip() now validates format at input and carps on invalid values.
+	# Previously invalid strings were silently stored and discarded by the
+	# eval-wrapped Net::CIDR calls; this change rejects them early, preventing
+	# memory accumulation in persistent processes and O(n) cidradd overhead.
 	my $acl = CGI::ACL->new();
 
-	# These should store without crashing (allow_ip does not validate format)
-	# but all_denied must handle them gracefully when building the CIDR list.
 	for my $bad ($config{SHELL_INJECT}, $config{SQL_INJECT}, $config{LONG_STRING}) {
-		$acl->allow_ip($bad);
+		my $ret;
+		does_carp(sub { $ret = $acl->allow_ip($bad) });
+		is($ret, $acl, 'allow_ip returns $self on invalid input (chaining not broken)');
 	}
-	diag "allow_ip with injection strings stored" if $ENV{TEST_VERBOSE};
+	diag "allow_ip with injection strings rejected" if $ENV{TEST_VERBOSE};
 
-	# VALID_IP is not in the list → must be denied without an unhandled exception
+	# allowed_ips MUST be defined (as an empty hashref) so that the early-return
+	# guard in all_denied() sees "IP restrictions configured" and does not allow
+	# all traffic (fail-open).  The values must be empty (nothing stored).
+	ok(defined($acl->{allowed_ips}),        'allowed_ips initialised to signal IP restrictions intended');
+	ok(!%{$acl->{allowed_ips}},             'allowed_ips is empty — invalid entries were not stored');
+
+	# With an empty allow-list the IP check finds no match → all_denied denies (fail-closed).
 	my $result = eval { denied_at($acl, $config{VALID_IP}) };
-	ok(!$@,              'all_denied does not throw when allow-list has invalid entries');
-	is($result, 1,       'VALID_IP is denied (not in the (invalid) allow-list)');
+	ok(!$@,     'all_denied does not throw when only invalid entries were attempted');
+	is($result, 1, 'VALID_IP denied — empty allow-list fails closed, not open');
 };
 
 # ─────────────────────────────────────────────────────────────────────────────

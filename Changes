@@ -1,5 +1,38 @@
 Revision history for CGI-ACL
 
+0.10
+	[ Enhancements ]
+	- Add deny_all_countries() convenience method: sugar for deny_country('*'),
+	  switches all_denied() into default-deny mode for country checks
+	- Factor _get_param() private helper to eliminate repeated
+	  positional/named/hashref dispatch boilerplate in allow_ip(),
+	  deny_country(), allow_country(), and all_denied()
+	- Fix $@ not cleared after capturing DNS eval error and lingua->country()
+	  eval error; callers were seeing stale $@ state
+	- Fix `my $ip = $_[0]` → `my ($ip) = @_` in _is_cloud_host and
+	  _verified_rdns (idiomatic Perl list-assignment style)
+	- Remove vacuous /o modifier from literal `if($ip =~ /:/)` pattern (/o is
+	  a no-op when there are no interpolated variables)
+	- Fix misleading alarm comment: "cancel the alarm" → "restore the previous
+	  alarm that was active before we started"
+	[ Bug Fixes ]
+	- Correct minimum Perl version to 5.014 (was 5.006_001); Socket::getaddrinfo
+	  and Socket::getnameinfo require Socket 2.000, first shipped with Perl 5.14
+	- Correct MIN_PERL_VERSION to '5.014' in Makefile.PL accordingly
+	[ Documentation ]
+	- Move =encoding utf-8 to be the first POD directive (before =head1 NAME) so
+	  the parser handles Z-calculus Unicode symbols correctly throughout the file
+	- Add =head1 LIMITATIONS section documenting: VPN bypass, GeoIP inaccuracy,
+	  cloud detection gaps, DNS blocking latency, cache not shared between
+	  processes, Sub::Private white-box exemption, Windows alarm limitation,
+	  deferred rate-limiter
+	- Add =head3 PSEUDOCODE to all_denied() (public method > 15 lines)
+	- Add =head3 FORMAL SPECIFICATION (Z-calculus) inline per public method,
+	  replacing the old monolithic =head2 FORMAL SPECIFICATION bulk section
+	- Rename =head3 USAGE → =head3 EXAMPLE in all public-method POD blocks
+	[ Tests ]
+	- Add 5 subtests for deny_all_countries() in t/function.t (319 total)
+
 0.09	Sun Aug  2 08:54:20 PM EDT 2026
 	[ Performance ]
 	- Skip DNS lookup entirely in _is_cloud_host() for private, loopback, and

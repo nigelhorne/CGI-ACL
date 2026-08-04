@@ -296,8 +296,19 @@ where the same C<CGI::ACL> object survives across many requests.
 
 Creates and returns a new CGI::ACL object.
 
-When called on an existing object it returns a shallow clone of that object,
-optionally overriding fields with the supplied arguments.
+When called on an existing object it returns a deep clone of that object,
+optionally overriding public fields with the supplied arguments.  The public
+data hashes (C<allowed_ips>, C<deny_countries>, C<allow_countries>) are
+copied so that mutations to the clone do not affect the original.
+Derived/private keys (C<_cidrlist>, C<_cloud_cache>) are always cleared;
+they are rebuilt from the cloned public state on the next C<all_denied()>
+call.
+
+B<Security note:> private C<_*> keys are stripped from all constructor
+arguments, including those supplied via environment variables or a config
+file.  Accepting C<_cloud_cache> entries from outside the process would
+allow an attacker with environment-variable access to pre-seed the DNS
+result cache and bypass C<deny_cloud()> for specific IP addresses.
 
 Constructor arguments may also be supplied via environment variables of the
 form C<CGI__ACL__E<lt>fieldE<gt>> or via a config file; see L<Object::Configure>
@@ -360,10 +371,13 @@ B<Action:> Change the call to C<< CGI::ACL->new(...) >>.
       class  : ClassName ∪ ACLState
       params : ACLState?
       ─────────────────────────────────────────────────────────────────
+      -- strip_private: removes keys whose names begin with '_'
       blessed(class) ⟹
-        result! = bless( class ∪ params, ref(class) )   -- clone
+        result! = bless( deepcopy(class) ∪ strip_private(params),
+                         ref(class) )                    -- clone
       ¬blessed(class) ⟹
-        result! = bless( configure(class, params), class )
+        result! = bless( strip_private(configure(class, params)),
+                         class )
     ──────────────────────────────────────────────────────────────────
 
 =cut
@@ -441,8 +455,9 @@ by an entry in the set is denied (subject to C<deny_cloud> taking precedence).
 =item ip (required)
 
 A string containing an IPv4 address, an IPv6 address, or a CIDR block
-(e.g. C<10.0.0.0/8>).  The value is stored verbatim; invalid addresses
-will be silently ignored during lookup.
+(e.g. C<10.0.0.0/8>).  The format is validated before storage;
+syntactically invalid values are rejected with a carp warning and the
+object is returned unchanged.
 
 =back
 
@@ -452,8 +467,14 @@ The object itself, to allow method chaining.
 
 =head3 SIDE EFFECTS
 
-Invalidates the internal CIDR lookup cache so the next call to
-C<all_denied()> will rebuild it with the new entry included.
+On the first call (even if the supplied address is invalid), initialises
+C<< $self->{allowed_ips} >> to an empty hashref so that C<all_denied()>
+treats the ACL as having IP restrictions configured.  This ensures
+fail-closed behaviour: an ACL whose only C<allow_ip()> calls all supplied
+invalid addresses denies all traffic rather than allowing it.
+
+On a successful (valid) call, also invalidates the internal CIDR lookup
+cache so the next call to C<all_denied()> rebuilds it with the new entry.
 
 =head3 API SPECIFICATION
 
@@ -481,16 +502,32 @@ supplying the C<ip> key.
 B<Action:> Pass a scalar IP/CIDR string: C<allow_ip('192.0.2.1')> or
 C<allow_ip(ip =E<gt> '192.0.2.1')>.
 
+=item C<< allow_ip: 'X' is not a valid IP address or CIDR block >>
+
+B<Severity:> carp (warning).
+B<Cause:> The supplied string does not parse as a syntactically valid IPv4
+address, IPv6 address, or CIDR block.  The value (truncated to 60 chars in
+the message) was not stored.  C<$self->{allowed_ips}> is still initialised
+so the ACL remains in fail-closed mode.
+B<Action:> Check the supplied string for typos.  Use dotted-quad notation
+for IPv4 (e.g. C<192.0.2.1>), colon-hex for IPv6 (e.g. C<2001:db8::1>),
+or slash-notation for CIDR (e.g. C<10.0.0.0/8>).
+
 =back
 
 =head3 FORMAL SPECIFICATION
 
     ─────────────── AllowIP ──────────────────────────────────────────
       ΔACL
-      ip? : IP_Str
+      ip? : IP_Str                 -- must satisfy valid_ip(ip?)
       ─────────────────────────────────────────────────────────────────
-      allowed_ips' = allowed_ips ∪ { ip? ↦ 1 }
-      _cidrlist'   = ∅          -- cache invalidated
+      allowed_ips' = allowed_ips₀ // {}   -- initialised on every call
+      valid_ip(ip?) ⟹
+        allowed_ips' = allowed_ips' ∪ { ip? ↦ 1 }
+        _cidrlist'   = ∅          -- cache invalidated
+      ¬valid_ip(ip?) ⟹
+        allowed_ips' = allowed_ips' -- only initialisation, no entry
+        _cidrlist'   = _cidrlist
       deny_countries' = deny_countries
       allow_countries' = allow_countries
       deny_cloud'     = deny_cloud
@@ -1043,7 +1080,8 @@ C<1> if access is denied, C<0> if access is allowed.
 =head3 SIDE EFFECTS
 
 May populate or update C<< $self->{_cidrlist} >> (the memoised CIDR lookup
-structure) as a performance optimisation.
+structure) and C<< $self->{_cloud_cache} >> (the per-object DNS result
+cache, keyed by IP address string) as performance optimisations.
 
 =head3 API SPECIFICATION
 
@@ -1078,9 +1116,13 @@ C<all_denied(lingua =E<gt> $lingua)>.
     IF no restrictions configured THEN
         RETURN 0  (allow -- fast path)
 
-    addr := REMOTE_ADDR // '127.0.0.1'
-    IF addr not a valid IPv4 or IPv6 address THEN
+    raw := REMOTE_ADDR // '127.0.0.1'
+    -- \A and \z anchors (not ^ / $): \z never matches before a trailing \n
+    IF raw not matched by /\A IPv4-or-IPv6 \z/ THEN
         RETURN 1  (deny -- bad or injected address)
+    -- Detaint: extract addr via character-class capture so the value
+    -- is clean under Perl -T taint mode for all downstream callers
+    addr := capture [0-9A-Fa-f:.]+ from raw
 
     IF deny_cloud is set THEN
         consult per-object cache keyed by addr (TTL 300 s)
@@ -1619,7 +1661,7 @@ in-memory cache) beyond this module's current dependency set.
 
 Notable changes per release.  See the F<Changes> file for the full list.
 
-=head2 0.10 (development)
+=head2 0.10
 
 =over 4
 
@@ -1669,6 +1711,43 @@ namespace pollution: C<use Socket qw(AF_INET SOCK_STREAM inet_aton inet_ntoa)>.
 
 Corrected pragma order to the conventional C<use strict>, C<use warnings>,
 C<use autodie> sequence.
+
+=item *
+
+B<Security:> Fixed the IP address validator in C<all_denied()> to use
+C<\A> and C<\z> anchors instead of C<^> and C<$>.  Perl's C<$> matches
+before a terminating C<\n>; C<\z> never does.  A REMOTE_ADDR value of
+C<"1.2.3.4\n"> could previously slip past C<$>-anchored validation.
+Added a capture-based detaint step so that C<$addr> is never a tainted
+value under Perl's C<-T> taint mode.
+
+=item *
+
+B<Security:> Fixed C<new()> to strip private C<_*> keys from all
+constructor arguments (both the clone path and the class path via
+C<Object::Configure>).  Previously a caller could pass
+C<_cloud_cache =E<gt> { ... }> to pre-seed the DNS result cache and
+permanently suppress C<deny_cloud()> for a targeted IP address.
+C<CGI__ACL___cloud_cache> environment variables had the same effect.
+
+=item *
+
+B<Security:> Fixed C<allow_ip()> to validate IP/CIDR format before
+storage.  Injection strings such as C<'"; DROP TABLE; --'> were
+previously stored and silently discarded by the eval-wrapped
+C<Net::CIDR> calls; they are now rejected early with a carp, preventing
+memory accumulation in persistent processes and C<O(n)> C<cidradd>
+overhead per request.  C<$self-E<gt>{allowed_ips}> is initialised to
+C<{}> on the first call (even when the value is invalid) so the
+early-return guard treats the ACL as having IP restrictions configured,
+ensuring fail-closed rather than fail-open behaviour.
+
+=item *
+
+B<Security:> Fixed C<_is_cloud_host()> to reject DNS PTR hostnames longer
+than 253 characters (the RFC 1035 §3.1 maximum) before running any cloud
+pattern matches.  Protocol-invalid hostnames returned by a compromised
+resolver are now discarded without any regex work.
 
 =back
 

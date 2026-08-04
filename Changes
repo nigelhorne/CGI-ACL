@@ -30,6 +30,16 @@ Revision history for CGI-ACL
 	- Add =head3 FORMAL SPECIFICATION (Z-calculus) inline per public method,
 	  replacing the old monolithic =head2 FORMAL SPECIFICATION bulk section
 	- Rename =head3 USAGE → =head3 EXAMPLE in all public-method POD blocks
+	- Expand =head1 SYNOPSIS from one example to six labelled real-world patterns
+	  covering: cloud-only block, IP allowlist, country deny-list, country
+	  allowlist (deny_all_countries + allow_country), combined production-grade
+	  policy, and ACL cloning
+	- Add =head1 COMMON PITFALLS section documenting eight common mistakes:
+	  allow_country alone has no effect, deny_cloud overrides allow_ip, localhost
+	  not automatically allowed, missing lingua causes deny, VPN/proxy bypass,
+	  country code case handling, DNS cache not shared between CGI requests
+	- Add =head1 VERSION HISTORY section with per-release summaries from 0.01
+	  through 0.10 in plain English
 	[ Tests ]
 	- Add 5 subtests for deny_all_countries() in t/function.t (319 total)
 

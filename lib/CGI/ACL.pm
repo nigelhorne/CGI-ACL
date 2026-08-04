@@ -87,25 +87,208 @@ our $VERSION = '0.09';
 
 =head1 SYNOPSIS
 
-Provides access control for CGI scripts based on IP address, CIDR block,
-geographic country, and cloud-provider origin.
+CGI::ACL controls who can run your CGI script.  You build a set of rules
+and then call C<all_denied()> on every request.  If it returns C<1>,
+send an error response or redirect; if it returns C<0>, allow the request.
+
+Rules can be stacked in any order using method chaining.  An unrestricted
+object (no rules added) allows everything.
+
+=head2 Block all cloud-hosted visitors
+
+The simplest use case -- no country list or lingua object needed.
+
+    use CGI::ACL;
+
+    my $acl = CGI::ACL->new()->deny_cloud();
+
+    if ($acl->all_denied()) {
+        print "Content-Type: text/plain\n\n";
+        print "Automated cloud traffic is not permitted.\n";
+        exit;
+    }
+
+=head2 Allow only specific IP addresses or CIDR ranges
+
+Localhost is NOT automatically allowed once any restriction is set.
+Add it explicitly if your script is called from the same machine.
+
+    use CGI::ACL;
+
+    my $acl = CGI::ACL->new()
+        ->allow_ip('127.0.0.1')        # local machine
+        ->allow_ip('203.0.113.0/24')   # office CIDR block
+        ->allow_ip('2001:db8::1');     # single IPv6 address
+
+    if ($acl->all_denied()) {
+        print "Content-Type: text/plain\n\n";
+        print "Your IP address is not on the allow list.\n";
+        exit;
+    }
+
+=head2 Block visitors from specific countries
+
+Deny mode: allow everyone except the listed countries.
 
     use CGI::Lingua;
     use CGI::ACL;
 
-    # Allow only UK visitors from a specific subnet
-    my $acl = CGI::ACL->new()
-        ->deny_country('*')
-        ->allow_country('GB')
-        ->allow_ip('192.0.2.0/24');
+    my $lingua = CGI::Lingua->new(supported => ['en']);
 
-    if ($acl->all_denied(lingua => CGI::Lingua->new(supported => ['en']))) {
+    my $acl = CGI::ACL->new()
+        ->deny_country('CN')
+        ->deny_country(country => ['RU', 'KP']);
+
+    if ($acl->all_denied(lingua => $lingua)) {
+        print "Content-Type: text/plain\n\n";
+        print "Access from your country is not permitted.\n";
+        exit;
+    }
+
+=head2 Allow only specific countries (allowlist)
+
+Default-deny mode: block everyone except the listed countries.
+Use C<deny_all_countries()> to turn on default-deny, then list
+each permitted country with C<allow_country()>.
+
+    use CGI::Lingua;
+    use CGI::ACL;
+
+    my $lingua = CGI::Lingua->new(supported => ['en', 'de', 'fr']);
+
+    my $acl = CGI::ACL->new()
+        ->deny_all_countries()
+        ->allow_country('GB')
+        ->allow_country('US')
+        ->allow_country('DE');
+
+    if ($acl->all_denied(lingua => $lingua)) {
+        print "Content-Type: text/plain\n\n";
+        print "This service is available in GB, US, and DE only.\n";
+        exit;
+    }
+
+=head2 Production-grade: IP allowlist + country allowlist + cloud block
+
+Combine all three rule types.  Rules are evaluated in this fixed order:
+cloud check, IP check, country check.
+
+    use CGI::Lingua;
+    use CGI::ACL;
+
+    my $lingua = CGI::Lingua->new(supported => ['en']);
+
+    my $acl = CGI::ACL->new()
+        ->deny_cloud()                  # block AWS, GCP, Azure, etc.
+        ->allow_ip('127.0.0.1')         # always allow localhost
+        ->allow_ip('198.51.100.0/24')   # corporate network
+        ->deny_all_countries()          # default-deny all countries...
+        ->allow_country('GB')           # ...except UK
+        ->allow_country('US');          # ...and US
+
+    if ($acl->all_denied(lingua => $lingua)) {
+        print "Content-Type: text/plain\n\n";
         print "Access denied.\n";
+        exit;
+    }
+
+=head2 Sharing a base ACL across routes with cloning
+
+Call C<new()> on an existing object to get an independent copy.
+Changing the copy does not affect the original.
+
+    use CGI::ACL;
+
+    # Shared base: block cloud for all routes
+    my $base_acl = CGI::ACL->new()->deny_cloud();
+
+    # Admin route: additionally restrict to a single IP
+    my $admin_acl = $base_acl->new()->allow_ip('198.51.100.1');
+
+    if ($admin_acl->all_denied()) {
+        print "Content-Type: text/plain\n\n";
+        print "Admin access denied.\n";
         exit;
     }
 
 The module optionally integrates with L<CGI::Lingua> for country detection.
 Runtime configuration is supported via L<Object::Configure>.
+
+=head1 COMMON PITFALLS
+
+The following mistakes are easy to make.  Read this section before filing
+a bug report.
+
+=head2 allow_country alone has no effect
+
+C<allow_country()> only restricts access when default-deny mode is active.
+Default-deny mode is activated by C<deny_country('*')> or
+C<deny_all_countries()>.  Without it, C<allow_country()> is silently
+ignored and everyone is still allowed.
+
+    # WRONG -- this allows everyone; allow_country is ignored
+    my $acl = CGI::ACL->new()->allow_country('US');
+
+    # RIGHT -- deny all countries first, then add permitted ones
+    my $acl = CGI::ACL->new()->deny_all_countries()->allow_country('US');
+
+=head2 deny_cloud overrides allow_ip
+
+Cloud detection has the highest priority.  An IP address that is listed
+in C<allow_ip()> is still blocked if its reverse DNS resolves to a cloud
+provider hostname.  This is intentional: cloud IPs can be reassigned, so
+the rDNS check is more reliable than the IP address alone.
+
+    # This STILL blocks the IP if it is a cloud host
+    my $acl = CGI::ACL->new()
+        ->deny_cloud()
+        ->allow_ip('198.51.100.5');   # blocked if rDNS says EC2
+
+=head2 Localhost is not automatically allowed
+
+Once any restriction is set, C<127.0.0.1> is subject to the same rules
+as any other address.  If you need to allow local access (for example,
+a health-check endpoint), add it explicitly.
+
+    my $acl = CGI::ACL->new()
+        ->allow_ip('127.0.0.1')   # must be explicit
+        ->deny_all_countries()
+        ->allow_country('US');
+
+=head2 Forgetting the lingua argument
+
+When country restrictions are active and C<all_denied()> is called without
+a C<lingua> argument, the module emits a C<carp> warning and denies the
+request.  Always pass a C<CGI::Lingua> object when country rules are in use.
+
+    # WRONG -- will carp and deny every request
+    my $acl = CGI::ACL->new()->deny_all_countries()->allow_country('US');
+    $acl->all_denied();
+
+    # RIGHT
+    my $lingua = CGI::Lingua->new(supported => ['en']);
+    $acl->all_denied(lingua => $lingua);
+
+=head2 VPN and proxy users bypass IP and country checks
+
+A visitor who connects through a VPN, Tor exit node, or anonymous proxy
+will appear to come from the proxy's IP address and country, not their
+own.  CGI::ACL has no way to detect this.  Cloud blocking provides some
+mitigation for VPS-based proxies.
+
+=head2 Country codes are case-insensitive but stored lowercase
+
+C<deny_country('BR')> and C<deny_country('br')> are equivalent.  All
+country codes are stored in lowercase.  C<CGI::Lingua::country()> may
+return either case; C<all_denied()> normalises it with C<lc()> before
+comparing.
+
+=head2 The DNS result cache is not shared between CGI requests
+
+In traditional CGI (one process per request), the per-object DNS cache
+is destroyed at the end of every request.  The cache is only useful in
+persistent-process setups such as FastCGI, mod_perl, or Plack servers,
+where the same C<CGI::ACL> object survives across many requests.
 
 =head1 SUBROUTINES/METHODS
 
@@ -1340,6 +1523,185 @@ been implemented.  It would require persistent shared state (e.g. Redis or an
 in-memory cache) beyond this module's current dependency set.
 
 =back
+
+=head1 VERSION HISTORY
+
+Notable changes per release.  See the F<Changes> file for the full list.
+
+=head2 0.10 (development)
+
+=over 4
+
+=item *
+
+Added C<deny_all_countries()>: a readable alternative to
+C<deny_country('*')> for building country allowlists.
+
+=item *
+
+Factored out C<_get_param()>: a private helper that normalises the three
+supported calling styles (positional scalar, named key-value pairs, hashref)
+into one place.  Removes repeated dispatch code from C<allow_ip()>,
+C<deny_country()>, C<allow_country()>, and C<all_denied()>.
+
+=item *
+
+Fixed minimum Perl version declaration: changed from C<use 5.006_001> to
+C<use 5.014>.  C<Socket::getaddrinfo> and C<Socket::getnameinfo> require
+Socket 2.000, which first shipped with Perl 5.14.  The declaration in
+F<Makefile.PL> was corrected to match.
+
+=item *
+
+Fixed C<$@> not being cleared after catching errors from the DNS eval
+block and from the C<lingua->country()> eval block.  A stale C<$@>
+would confuse any outer eval in the caller.
+
+=item *
+
+Moved C<=encoding utf-8> to be the first POD directive in the file,
+before C<=head1 NAME>.  This is required for the POD parser to correctly
+handle the Z-calculus Unicode symbols used in the formal specifications.
+
+=item *
+
+Removed the vacuous C</o> modifier from the C<if ($ip =~ /:/)> pattern.
+C</o> tells Perl to interpolate variables only once; it is a no-op on
+patterns that contain no interpolated variables.
+
+=item *
+
+Replaced implicit C<use Socket> with an explicit import list to prevent
+namespace pollution: C<use Socket qw(AF_INET SOCK_STREAM inet_aton inet_ntoa)>.
+
+=item *
+
+Corrected pragma order to the conventional C<use strict>, C<use warnings>,
+C<use autodie> sequence.
+
+=back
+
+=head2 0.09
+
+=over 4
+
+=item *
+
+Added private-IP short-circuit in C<_is_cloud_host()>: DNS is skipped
+entirely for loopback (127.0.0.0/8, ::1), RFC 1918 private blocks
+(10/8, 172.16/12, 192.168/16), and link-local addresses (169.254/16,
+fe80::/10, fc00::/7).  These addresses can never be cloud provider IPs.
+
+=item *
+
+Added a per-object DNS result cache in C<all_denied()> with a 300-second
+TTL.  Repeated requests from the same IP skip both DNS round-trips.
+DNS errors are not cached; they are retried on the next request.
+
+=back
+
+=head2 0.08
+
+=over 4
+
+=item *
+
+Fixed seven security and correctness bugs discovered in a full code review:
+C<REMOTE_ADDR> defined-or fix, empty-arrayref no-op in country setters,
+undef filter in C<_set_countries()>, Net::CIDR eval wrapping, non-blessed
+lingua crash, missing C<country()> method crash, DNS exception propagation.
+
+=item *
+
+Fixed C<deny_cloud()> being bypassed when used without other restrictions.
+
+=item *
+
+Fixed IPv6 addresses bypassing cloud detection because C<inet_aton> is
+IPv4-only.  C<_verified_rdns()> now uses C<Socket::inet_pton> for IPv6.
+
+=item *
+
+Fixed SIGALRM race: C<alarm(0)> is now called inside the eval block as
+well as outside, closing the window where a late alarm could kill the
+CGI process.
+
+=item *
+
+Added CIDR list cache in C<all_denied()> to avoid rebuilding the
+C<Net::CIDR> list on every call.
+
+=item *
+
+Added 10-second DNS timeout on non-Windows platforms.
+
+=back
+
+=head2 0.07
+
+=over 4
+
+=item *
+
+Added runtime configuration support via L<Object::Configure>.  Constructor
+arguments can now be supplied as environment variables
+(e.g., C<CGI__ACL__allowed_ips>) or from a config file.
+
+=back
+
+=head2 0.06
+
+=over 4
+
+=item *
+
+Added C<deny_cloud()> to block requests from major cloud-hosting providers
+using verified reverse DNS matching.
+
+=item *
+
+Added validation of C<REMOTE_ADDR> as a syntactically correct IP address.
+Malformed or injected values are denied.
+
+=back
+
+=head2 0.05
+
+=over 4
+
+=item *
+
+Calling C<new()> on an existing object now returns a clone of that object
+instead of an empty default object.
+
+=back
+
+=head2 0.04
+
+=over 4
+
+=item *
+
+Access is now denied when the visitor's country cannot be determined,
+rather than defaulting to allow.  Localhost (127.0.0.1) is no longer
+automatically permitted once any restriction is configured.
+
+=back
+
+=head2 0.03
+
+=over 4
+
+=item *
+
+Added C<allow_country()> and support for C<deny_country('*')>
+(default-deny mode for countries).
+
+=back
+
+=head2 0.01 -- 0.02
+
+Initial release.  Basic IP allowlist and country deny-list support.
 
 =head1 LICENSE AND COPYRIGHT
 

@@ -7,9 +7,9 @@ package CGI::ACL;
 
 
 use 5.014;    # Socket::getaddrinfo/getnameinfo require Socket 2.000 (Perl 5.14)
-use autodie qw(:all);
-use warnings;
 use strict;
+use warnings;
+use autodie qw(:all);
 
 # namespace::clean removes imported helper names from the public method list
 use namespace::clean;
@@ -21,7 +21,7 @@ use Params::Get;
 use Readonly;
 use Regexp::Common qw(net);
 use Scalar::Util qw(blessed);
-use Socket;
+use Socket qw(AF_INET SOCK_STREAM inet_aton inet_ntoa);
 
 # ── Compile-time constants ─────────────────────────────────────────────────────
 
@@ -198,7 +198,7 @@ sub new {
 	} elsif(blessed($class)) {
 		# Called on an existing object: return a clone with deep-copied sub-hashes
 		# so that mutations to the clone do not affect the original.
-		$params ||= {};
+		$params //= {};
 		my %copy = %{$class};
 		for my $key (qw(allowed_ips deny_countries allow_countries)) {
 			$copy{$key} = { %{$copy{$key}} } if ref($copy{$key}) eq 'HASH';
@@ -435,7 +435,7 @@ sub deny_country {
 	# An empty arrayref is a no-op — do not create deny_countries = {}.
 	if(defined $c) {
 		return $self if ref($c) eq 'ARRAY' && !@{$c};
-		_set_countries($self->{deny_countries} ||= {}, $c);
+		_set_countries($self->{deny_countries} //= {}, $c);
 	} else {
 		Carp::carp('Usage: deny_country($country)');
 	}
@@ -550,7 +550,7 @@ sub allow_country {
 	# An empty arrayref is a no-op — do not create allow_countries = {}.
 	if(defined $c) {
 		return $self if ref($c) eq 'ARRAY' && !@{$c};
-		_set_countries($self->{allow_countries} ||= {}, $c);
+		_set_countries($self->{allow_countries} //= {}, $c);
 	} else {
 		Carp::carp('Usage: allow_country($country)');
 	}
@@ -725,7 +725,7 @@ sub deny_all_countries {
 
 	# Sugar for deny_country('*'): sets the wildcard sentinel that switches
 	# all_denied() into default-deny mode for country checks.
-	_set_countries($self->{deny_countries} ||= {}, $WILDCARD);
+	_set_countries($self->{deny_countries} //= {}, $WILDCARD);
 	return $self;
 }
 
@@ -1168,7 +1168,7 @@ sub _verified_rdns {
 	if($^O ne 'MSWin32') {
 		# Non-Windows: guard against indefinitely-blocking DNS calls
 		local $SIG{ALRM} = sub { die "DNS timeout: $ip" };
-		my $old_alarm = alarm($DNS_TIMEOUT) || 0;
+		my $old_alarm = alarm($DNS_TIMEOUT) // 0;
 		eval {
 			# Step 1: reverse lookup (IP -> hostname)
 			$hostname = gethostbyaddr($packed, $family);

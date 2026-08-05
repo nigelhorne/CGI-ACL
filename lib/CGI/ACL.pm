@@ -359,7 +359,7 @@ sub new {
 	my $class = shift;
 
 	# Parse arguments uniformly (hashref, named pairs, or no args)
-	my $params = Params::Get::get_params(undef, @_);
+	my $params = Params::Get::get_params(undef, \@_);
 
 	# Handle the rare case of being called as a plain function: CGI::ACL::new()
 	if(!defined($class)) {
@@ -1460,7 +1460,6 @@ A VPN or proxy will most likely bypass IP-based access control.
 =item * CPAN Testers: L<http://matrix.cpantesters.org/?dist=CGI-ACL>
 
 =back
-
 
 =head1 LIMITATIONS
 

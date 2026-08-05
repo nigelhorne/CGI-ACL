@@ -4,7 +4,7 @@ CGI::ACL - Decide whether to allow a client to run a CGI script
 
 # VERSION
 
-Version 0.09
+Version 0.10
 
 # SYNOPSIS
 

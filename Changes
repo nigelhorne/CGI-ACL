@@ -1,12 +1,9 @@
 Revision history for CGI-ACL
 
-0.10
+0.10	Wed Aug  5 10:12:35 AM EDT 2026
 	[ Enhancements ]
 	- Add deny_all_countries() convenience method: sugar for deny_country('*'),
 	  switches all_denied() into default-deny mode for country checks
-	- Factor _get_param() private helper to eliminate repeated
-	  positional/named/hashref dispatch boilerplate in allow_ip(),
-	  deny_country(), allow_country(), and all_denied()
 	- Fix $@ not cleared after capturing DNS eval error and lingua->country()
 	  eval error; callers were seeing stale $@ state
 	- Fix `my $ip = $_[0]` → `my ($ip) = @_` in _is_cloud_host and
@@ -55,9 +52,6 @@ Revision history for CGI-ACL
 	  multi-A hostname and the confirming IP is not the first record returned.
 	  Falls back to inet_aton() on resolvers that return no results for a
 	  dotted-quad string (resolver-configuration-dependent behaviour)
-	- _get_param(): add a fast path for the most common calling style (two-element
-	  list, key eq $args[0]): avoids allocating a throwaway hash just to extract
-	  one key
 	[ Bug Fixes ]
 	- Correct minimum Perl version to 5.014 (was 5.006_001); Socket::getaddrinfo
 	  and Socket::getnameinfo require Socket 2.000, first shipped with Perl 5.14
@@ -94,7 +88,7 @@ Revision history for CGI-ACL
 	  unlisted IPs without carping about a missing lingua (339 tests total)
 	- Fix stale comment in t/extended_tests.t "deny_cloud + allow_country" subtest:
 	  the country check no longer runs in that case; the cloud fast-path returns 0
-	- Add t/function.t: 32 new white-box subtests covering _get_param() all dispatch
+	- Add t/function.t: 32 new white-box subtests covering all dispatch
 	  paths, new() clone isolation and cache-clearing, deny_country/allow_country empty-
 	  arrayref no-op and undef-element filtering, _set_countries() undef filtering,
 	  all_denied() absent-REMOTE_ADDR default, DNS exception fail-safe, $@ clearing
@@ -160,18 +154,7 @@ Revision history for CGI-ACL
 	  allow_country("*") alone does not deny (wildcard is inert without deny_country),
 	  multi-level clone chain (three levels, independent state), typeglob value in
 	  constructor argument (no crash, object still functional) (524 tests total)
-	[ Refactoring ]
-	- Remove _get_param() private helper: it was equivalent to
-	  Params::Get::get_params($key, @args)->{$key} for all documented calling
-	  styles (hashref, named key-value pair, positional scalar); the only
-	  distinction was a fast path avoiding a throwaway hash allocation for the
-	  two-arg form, which is negligible against real CGI workloads involving DNS.
-	  Each call site now calls Params::Get directly with an @_ guard for the
-	  zero-args case (get_params confesses on zero args; the prior _get_param
-	  returned undef, letting the existing caller guards emit the correct carp).
-	  Removes 7 white-box subtests from t/function.t (517 tests total).
 	[ Distribution ]
-	- Bump $VERSION to 0.10 in lib/CGI/ACL.pm, README, and README.md
 	- Fix =encoding utf-8 placement: was after =head1 NAME / =head1 VERSION; moved
 	  to be the very first POD directive so parsers see it before any Unicode content
 	- Add Readonly to PREREQ_PM and cpanfile requires: used at runtime for every

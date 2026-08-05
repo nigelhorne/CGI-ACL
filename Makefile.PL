@@ -19,10 +19,18 @@ WriteMakefile(
 	ABSTRACT_FROM	=> 'lib/CGI/ACL.pm',
 	((defined($ExtUtils::MakeMaker::VERSION) &&
 	 ($ExtUtils::MakeMaker::VERSION >= 6.3002))
-	  ? ('LICENSE'=> 'GPL')
+	  ? ('LICENSE'=> 'gpl_2')
 	  : ()),
 	PL_FILES	=> {},
-	TEST_REQUIRES => {
+	PREREQ_PM => {
+		'Carp' => 0,
+		'File::Spec' => 3.4,
+		'namespace::clean' => 0,
+		'Net::CIDR' => 0,
+		'Object::Configure' => 0,
+		'Params::Get' => 0,
+		'Regexp::Common' => 0
+	}, TEST_REQUIRES => {
 		'CGI::Lingua' => 0.15,
 		'Data::Dumper' => 0,
 		'English' => 0,
@@ -38,21 +46,13 @@ WriteMakefile(
 		'Test::Returns' => 0.03,
 		'File::Spec' => 0,
 		'Test::NoWarnings' => 0,
+		'Test::Without::Module' => 0,
 		'autodie' => 0,
 		'strict' => 0,
 		'warnings' => 0,
 		'IPC::System::Simple' => 0,
 		'WWW::RT::CPAN' => 0
-	}, PREREQ_PM => {
-		'Carp' => 0,
-		'File::Spec' => 3.4,
-		'namespace::clean' => 0,
-		'Net::CIDR' => 0,
-		'Object::Configure' => 0,
-		'Params::Get' => 0,
-		'Regexp::Common' => 0
-	},
-	dist => $dist,
+	}, dist => $dist,
 	clean		=> { FILES => 'CGI-ACL-*' },
 	META_MERGE		=> {
 		'meta-spec' => { version => 2 },

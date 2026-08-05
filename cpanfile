@@ -26,7 +26,7 @@ on 'test' => sub {
 	requires 'Test::Most';
 	requires 'Test::Needs';
 	requires 'Test::NoWarnings';
-	requires 'Test::Returns';
+	requires 'Test::Returns', '0.03';
 	requires 'WWW::RT::CPAN';
 	requires 'autodie';
 	requires 'strict';

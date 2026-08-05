@@ -21,6 +21,7 @@ use Readonly;
 use Regexp::Common qw(net);
 use Scalar::Util qw(blessed);
 use Socket qw(AF_INET SOCK_STREAM inet_aton inet_ntoa);
+use Sub::Protected;
 
 # ── Compile-time constants ─────────────────────────────────────────────────────
 
@@ -68,6 +69,8 @@ Readonly my @CLOUD_PATTERNS => (
 	qr/^ip-\d{1,3}-\d{1,3}-\d{1,3}-\d{1,3}\.eu$/i,   # OVH European IP range
 );
 
+=encoding utf-8
+
 =head1 NAME
 
 CGI::ACL - Decide whether to allow a client to run a CGI script
@@ -79,8 +82,6 @@ Version 0.09
 =cut
 
 our $VERSION = '0.09';
-
-=encoding utf-8
 
 =head1 SYNOPSIS
 
@@ -501,7 +502,7 @@ sub allow_ip {
 	}
 
 	# Guard 2: require a non-undef 'ip' value (missing key or empty call)
-	my $ip = _get_param('ip', @_);
+	my $ip = @_ ? Params::Get::get_params('ip', @_)->{'ip'} : undef;
 	unless(defined $ip) {
 		Carp::carp('Usage: allow_ip($ip_address)');
 		return $self;
@@ -631,7 +632,7 @@ sub deny_country {
 	}
 
 	# Guard 2: require a non-undef 'country' value
-	my $c = _get_param('country', @_);
+	my $c = @_ ? Params::Get::get_params('country', @_)->{'country'} : undef;
 	unless(defined $c) {
 		Carp::carp('Usage: deny_country($country)');
 		return $self;
@@ -733,7 +734,7 @@ sub allow_country {
 	}
 
 	# Guard 2: require a non-undef 'country' value
-	my $c = _get_param('country', @_);
+	my $c = @_ ? Params::Get::get_params('country', @_)->{'country'} : undef;
 	unless(defined $c) {
 		Carp::carp('Usage: allow_country($country)');
 		return $self;
@@ -1165,7 +1166,7 @@ sub all_denied {
 	if($self->{deny_countries}) {
 		# Premise: we are inside this block iff deny_countries is defined and non-empty.
 		# Transitive reduction: all inner $self->{deny_countries} && guards are redundant.
-		my $lingua = _get_param('lingua', @_);
+		my $lingua = @_ ? Params::Get::get_params('lingua', @_)->{'lingua'} : undef;
 
 		unless($lingua) {
 			# Country restrictions active but no lingua was provided
@@ -1218,7 +1219,7 @@ sub all_denied {
 # Side effects: Modifies the caller-supplied hashref.
 #
 # Notes:      Keys are forced to lower case for case-insensitive comparison.
-sub _set_countries {
+sub _set_countries :Protected {
 	my ($hashref, $value) = @_;
 
 	# Handle both a single country code and a list reference.
@@ -1229,29 +1230,6 @@ sub _set_countries {
 		$hashref->{lc $value} = 1;
 	}
 	return;
-}
-
-# _get_param
-#
-# Purpose:    Normalise the three supported calling conventions — positional
-#             scalar, named key-value pairs, and hashref — and extract one
-#             named parameter from the caller's remaining @_ (after $self shift).
-#             Bad-reference validation must be done by the caller BEFORE calling
-#             this helper.
-#
-# Entry:      $key  - the parameter name to extract
-#             @args - the method's remaining @_ after `my $self = shift`
-#
-# Exit:       Returns the value associated with $key, or undef if absent.
-#             No side effects; does not modify @args or @_.
-sub _get_param {
-	my ($key, @args) = @_;
-	return $args[0]{$key}                       if ref($args[0]) eq 'HASH';
-	# Fast path for the most common calling style (name => value): avoids
-	# allocating a throwaway hash just to extract one key.
-	return $args[1] if @args == 2 && $args[0] eq $key;
-	return { @args }->{$key}                    if @args % 2 == 0;
-	return $args[0];    # positional: single value, no key
 }
 
 # _is_cloud_host
@@ -1270,7 +1248,7 @@ sub _get_param {
 # Notes:      An IP with no PTR record, or whose forward confirmation fails,
 #             returns 0 (not cloud).  This is the safe default because
 #             legitimate cloud providers consistently set rDNS records.
-sub _is_cloud_host {
+sub _is_cloud_host :Protected {
 	my ($ip) = @_;
 
 	# Private, loopback, and link-local addresses are never cloud provider IPs.
@@ -1315,7 +1293,7 @@ sub _is_cloud_host {
 #             prevent CGI workers from blocking indefinitely on slow resolvers.
 #             alarm(0) is called inside the eval to close the race window
 #             between eval exit and the outer alarm(0) call.
-sub _verified_rdns {
+sub _verified_rdns :Protected {
 	my ($ip) = @_;
 
 	# Determine address family and produce the packed binary address
@@ -1500,7 +1478,7 @@ maintains an independent cache.
 =item *
 
 Private methods (C<_is_cloud_host>, C<_verified_rdns>, C<_rdns_forward>,
-C<_set_countries>, C<_get_param>) are not enforced as private with
+C<_set_countries>) are not enforced as private with
 C<Sub::Private> because this module's white-box test suite (C<t/function.t>,
 C<t/extended_tests.t>, etc.) calls them directly by fully-qualified name to
 exercise specific code paths.  The C<namespace::clean> pragma removes them
@@ -1519,257 +1497,6 @@ been implemented.  It would require persistent shared state (e.g. Redis or an
 in-memory cache) beyond this module's current dependency set.
 
 =back
-
-=head1 VERSION HISTORY
-
-Notable changes per release.  See the F<Changes> file for the full list.
-
-=head2 0.10
-
-=over 4
-
-=item *
-
-Added C<deny_all_countries()>: a readable alternative to
-C<deny_country('*')> for building country allowlists.
-
-=item *
-
-Factored out C<_get_param()>: a private helper that normalises the three
-supported calling styles (positional scalar, named key-value pairs, hashref)
-into one place.  Removes repeated dispatch code from C<allow_ip()>,
-C<deny_country()>, C<allow_country()>, and C<all_denied()>.
-
-=item *
-
-Fixed minimum Perl version declaration: changed from C<use 5.006_001> to
-C<use 5.014>.  C<Socket::getaddrinfo> and C<Socket::getnameinfo> require
-Socket 2.000, which first shipped with Perl 5.14.  The declaration in
-F<Makefile.PL> was corrected to match.
-
-=item *
-
-Fixed C<$@> not being cleared after catching errors from the DNS eval
-block and from the C<lingua->country()> eval block.  A stale C<$@>
-would confuse any outer eval in the caller.
-
-=item *
-
-Moved C<=encoding utf-8> to be the first POD directive in the file,
-before C<=head1 NAME>.  This is required for the POD parser to correctly
-handle the Z-calculus Unicode symbols used in the formal specifications.
-
-=item *
-
-Removed the vacuous C</o> modifier from the C<if ($ip =~ /:/)> pattern.
-C</o> tells Perl to interpolate variables only once; it is a no-op on
-patterns that contain no interpolated variables.
-
-=item *
-
-Replaced implicit C<use Socket> with an explicit import list to prevent
-namespace pollution: C<use Socket qw(AF_INET SOCK_STREAM inet_aton inet_ntoa)>.
-
-=item *
-
-Corrected pragma order to the conventional C<use strict>, C<use warnings>,
-C<use autodie> sequence.
-
-=item *
-
-B<Security:> Fixed the IP address validator in C<all_denied()> to use
-C<\A> and C<\z> anchors instead of C<^> and C<$>.  Perl's C<$> matches
-before a terminating C<\n>; C<\z> never does.  A REMOTE_ADDR value of
-C<"1.2.3.4\n"> could previously slip past C<$>-anchored validation.
-Added a capture-based detaint step so that C<$addr> is never a tainted
-value under Perl's C<-T> taint mode.
-
-=item *
-
-B<Security:> Fixed C<new()> to strip private C<_*> keys from all
-constructor arguments (both the clone path and the class path via
-C<Object::Configure>).  Previously a caller could pass
-C<_cloud_cache =E<gt> { ... }> to pre-seed the DNS result cache and
-permanently suppress C<deny_cloud()> for a targeted IP address.
-C<CGI__ACL___cloud_cache> environment variables had the same effect.
-
-=item *
-
-B<Security:> Fixed C<allow_ip()> to validate IP/CIDR format before
-storage.  Injection strings such as C<'"; DROP TABLE; --'> were
-previously stored and silently discarded by the eval-wrapped
-C<Net::CIDR> calls; they are now rejected early with a carp, preventing
-memory accumulation in persistent processes and C<O(n)> C<cidradd>
-overhead per request.  C<$self-E<gt>{allowed_ips}> is initialised to
-C<{}> on the first call (even when the value is invalid) so the
-early-return guard treats the ACL as having IP restrictions configured,
-ensuring fail-closed rather than fail-open behaviour.
-
-=item *
-
-B<Security:> Fixed C<_is_cloud_host()> to reject DNS PTR hostnames longer
-than 253 characters (the RFC 1035 §3.1 maximum) before running any cloud
-pattern matches.  Protocol-invalid hostnames returned by a compromised
-resolver are now discarded without any regex work.
-
-=item *
-
-Added C<t/unit.t>: 51 black-box subtests covering every public method's
-documented API contract.  A C<%ledger> tracking hash records every
-documented carp message and return state from the POD; entries are deleted
-as each condition is triggered and the ledger is asserted empty at the end,
-so any undocumented or untested path is caught immediately.  A file-level
-DNS mock prevents real network calls across all subtests.
-
-=item *
-
-Extended C<t/integration.t> with nine new end-to-end subtests: the
-C<deny_all_countries()> workflow with real C<CGI::Lingua>, clone
-cloud-cache isolation, concurrent country ACLs, the SYNOPSIS §5
-production-grade combined policy (cloud + IP allowlist + country permit
-list), the SYNOPSIS §6 base-to-admin ACL cloning pattern,
-C<deny_cloud+allow_country> fast-path (lingua not consulted when only
-C<allow_countries> is set), C<Object::Configure> C<_cloud_cache>
-environment-variable injection stripping, CIDR cache invalidation after
-C<allow_ip()>, and C<Test::Without::Module> verification that IP-only ACLs
-work correctly when C<CGI::Lingua> is not installed.
-
-=item *
-
-Extended C<t/edge_cases.t> with twenty new destructive, boundary, and
-security subtests, including: C<\z>-anchor regression for
-C<"1.2.3.4\n"> in C<REMOTE_ADDR> (old C<$> anchor accepted it); whitespace
-padding in C<REMOTE_ADDR>; typeglob and hashref argument paths for
-C<allow_ip()>; impossible CIDR prefix C</33> (eval guard, fail-closed); IPv6
-CIDR block; 100-entry allow-list stress test; dying, 64 KiB, and typeglob
-lingua objects; cloud cache TTL expiry; private-IP C<_verified_rdns> bypass;
-CRLF-contaminated PTR hostname; three C<$@>-hygiene regression checks;
-injection-string safety in C<deny_country()>; C<allow_country("*")> wildcard
-boundary; multi-level clone independence; and typeglob constructor argument.
-
-=back
-
-=head2 0.09
-
-=over 4
-
-=item *
-
-Added private-IP short-circuit in C<_is_cloud_host()>: DNS is skipped
-entirely for loopback (127.0.0.0/8, ::1), RFC 1918 private blocks
-(10/8, 172.16/12, 192.168/16), and link-local addresses (169.254/16,
-fe80::/10, fc00::/7).  These addresses can never be cloud provider IPs.
-
-=item *
-
-Added a per-object DNS result cache in C<all_denied()> with a 300-second
-TTL.  Repeated requests from the same IP skip both DNS round-trips.
-DNS errors are not cached; they are retried on the next request.
-
-=back
-
-=head2 0.08
-
-=over 4
-
-=item *
-
-Fixed seven security and correctness bugs discovered in a full code review:
-C<REMOTE_ADDR> defined-or fix, empty-arrayref no-op in country setters,
-undef filter in C<_set_countries()>, Net::CIDR eval wrapping, non-blessed
-lingua crash, missing C<country()> method crash, DNS exception propagation.
-
-=item *
-
-Fixed C<deny_cloud()> being bypassed when used without other restrictions.
-
-=item *
-
-Fixed IPv6 addresses bypassing cloud detection because C<inet_aton> is
-IPv4-only.  C<_verified_rdns()> now uses C<Socket::inet_pton> for IPv6.
-
-=item *
-
-Fixed SIGALRM race: C<alarm(0)> is now called inside the eval block as
-well as outside, closing the window where a late alarm could kill the
-CGI process.
-
-=item *
-
-Added CIDR list cache in C<all_denied()> to avoid rebuilding the
-C<Net::CIDR> list on every call.
-
-=item *
-
-Added 10-second DNS timeout on non-Windows platforms.
-
-=back
-
-=head2 0.07
-
-=over 4
-
-=item *
-
-Added runtime configuration support via L<Object::Configure>.  Constructor
-arguments can now be supplied as environment variables
-(e.g., C<CGI__ACL__allowed_ips>) or from a config file.
-
-=back
-
-=head2 0.06
-
-=over 4
-
-=item *
-
-Added C<deny_cloud()> to block requests from major cloud-hosting providers
-using verified reverse DNS matching.
-
-=item *
-
-Added validation of C<REMOTE_ADDR> as a syntactically correct IP address.
-Malformed or injected values are denied.
-
-=back
-
-=head2 0.05
-
-=over 4
-
-=item *
-
-Calling C<new()> on an existing object now returns a clone of that object
-instead of an empty default object.
-
-=back
-
-=head2 0.04
-
-=over 4
-
-=item *
-
-Access is now denied when the visitor's country cannot be determined,
-rather than defaulting to allow.  Localhost (127.0.0.1) is no longer
-automatically permitted once any restriction is configured.
-
-=back
-
-=head2 0.03
-
-=over 4
-
-=item *
-
-Added C<allow_country()> and support for C<deny_country('*')>
-(default-deny mode for countries).
-
-=back
-
-=head2 0.01 -- 0.02
-
-Initial release.  Basic IP allowlist and country deny-list support.
 
 =head1 FORMAL SPECIFICATION
 

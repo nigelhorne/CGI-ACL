@@ -3,19 +3,20 @@
 requires 'perl', '5.014';
 
 requires 'Carp';
-requires 'File::Spec', '3.4';
 requires 'Net::CIDR';
 requires 'Object::Configure';
 requires 'Params::Get';
+requires 'Readonly';
 requires 'Regexp::Common';
+requires 'Scalar::Util';
+requires 'Socket', '2.000';
 requires 'namespace::clean';
 
 on 'test' => sub {
 	requires 'CGI::Lingua', '0.15';
-	requires 'Data::Dumper';
 	requires 'English';
-	requires 'File::Spec';
 	requires 'IPC::System::Simple';
+	requires 'Readonly';
 	requires 'Test::Carp';
 	requires 'Test::CleanNamespaces';
 	requires 'Test::DescribeMe';
@@ -27,11 +28,8 @@ on 'test' => sub {
 	requires 'Test::Needs';
 	requires 'Test::NoWarnings';
 	requires 'Test::Returns', '0.03';
+	requires 'Test::Warn';
 	requires 'Test::Without::Module';
-	requires 'WWW::RT::CPAN';
-	requires 'autodie';
-	requires 'strict';
-	requires 'warnings';
 };
 
 on 'develop' => sub {
@@ -39,4 +37,5 @@ on 'develop' => sub {
 	requires 'Perl::Critic';
 	requires 'Test::Pod';
 	requires 'Test::Pod::Coverage';
+	requires 'WWW::RT::CPAN';
 };

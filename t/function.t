@@ -931,52 +931,6 @@ subtest '_rdns_forward() - IPv6: getnameinfo error is skipped' => sub {
 };
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Subtest: _get_param() (internal helper)
-# Purpose: verify every dispatch path — hashref, named-pair fast-path,
-# even-length list, and positional scalar.  This helper centralises the
-# three calling conventions; a bug here breaks every public setter.
-# ─────────────────────────────────────────────────────────────────────────────
-subtest '_get_param() - hashref: extracts keyed value' => sub {
-	my $result = CGI::ACL::_get_param('ip', { ip => $config{RFC5737_IP} });
-	is($result, $config{RFC5737_IP}, 'hashref dispatch returns correct value');
-};
-
-subtest '_get_param() - hashref: missing key returns undef' => sub {
-	my $result = CGI::ACL::_get_param('ip', {});
-	is($result, undef, 'hashref with no matching key returns undef');
-};
-
-# The fast path avoids allocating a throw-away hash for the most common style
-subtest '_get_param() - named-pair fast path: key matches first arg' => sub {
-	my $result = CGI::ACL::_get_param('ip', 'ip', $config{RFC5737_IP});
-	is($result, $config{RFC5737_IP}, 'fast path (key eq arg[0]) returns arg[1]');
-};
-
-subtest '_get_param() - named-pair fast path: key mismatch falls to hash path' => sub {
-	# Two args but $args[0] ne $key -> even-length list path -> {foo=>val}->{ip} = undef
-	my $result = CGI::ACL::_get_param('ip', 'foo', $config{RFC5737_IP});
-	is($result, undef, 'key mismatch in 2-arg form returns undef');
-};
-
-subtest '_get_param() - even-length list: correct key extracted from 4-arg list' => sub {
-	my $result = CGI::ACL::_get_param('ip',
-		'country', $config{COUNTRY_GB}, 'ip', $config{RFC5737_IP});
-	is($result, $config{RFC5737_IP}, '4-arg even list: correct key extracted via hash construction');
-};
-
-subtest '_get_param() - positional scalar: single odd arg returned as-is' => sub {
-	# 1 arg -> odd-length -> positional path ($args[0] is the value)
-	my $result = CGI::ACL::_get_param('ip', $config{RFC5737_IP});
-	is($result, $config{RFC5737_IP}, 'single positional arg returned directly');
-};
-
-subtest '_get_param() - empty args returns undef' => sub {
-	# 0 args -> 0 % 2 == 0 -> even-length path -> {}->{key} = undef
-	my $result = CGI::ACL::_get_param('ip');
-	is($result, undef, 'empty args returns undef via even-length path');
-};
-
-# ─────────────────────────────────────────────────────────────────────────────
 # Subtest: new() — clone isolation (deep copy)
 # Purpose: mutations to a clone must never propagate back to the original.
 # The deep copy covers allowed_ips, deny_countries, and allow_countries.
@@ -1496,7 +1450,7 @@ subtest 'deny_country() - multiple sequential calls accumulate countries' => sub
 
 subtest 'allow_country() - named param scalar form stores country correctly' => sub {
 	# Confirm the two-arg named-pair form (not an arrayref) works: allow_country(country => 'US')
-	# This exercises _get_param's fast path (2-arg, key matches arg[0]).
+	# Confirm the two-arg named-pair form routes through Params::Get correctly.
 	my $acl = CGI::ACL->new();
 	$acl->allow_country(country => $config{COUNTRY_US_UPPER});
 	diag "allow_countries after named-scalar: " . join(', ', sort keys %{$acl->{allow_countries}}) if $ENV{TEST_VERBOSE};

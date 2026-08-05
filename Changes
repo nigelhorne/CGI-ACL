@@ -160,6 +160,41 @@ Revision history for CGI-ACL
 	  allow_country("*") alone does not deny (wildcard is inert without deny_country),
 	  multi-level clone chain (three levels, independent state), typeglob value in
 	  constructor argument (no crash, object still functional) (524 tests total)
+	[ Refactoring ]
+	- Remove _get_param() private helper: it was equivalent to
+	  Params::Get::get_params($key, @args)->{$key} for all documented calling
+	  styles (hashref, named key-value pair, positional scalar); the only
+	  distinction was a fast path avoiding a throwaway hash allocation for the
+	  two-arg form, which is negligible against real CGI workloads involving DNS.
+	  Each call site now calls Params::Get directly with an @_ guard for the
+	  zero-args case (get_params confesses on zero args; the prior _get_param
+	  returned undef, letting the existing caller guards emit the correct carp).
+	  Removes 7 white-box subtests from t/function.t (517 tests total).
+	[ Distribution ]
+	- Bump $VERSION to 0.10 in lib/CGI/ACL.pm, README, and README.md
+	- Fix =encoding utf-8 placement: was after =head1 NAME / =head1 VERSION; moved
+	  to be the very first POD directive so parsers see it before any Unicode content
+	- Add Readonly to PREREQ_PM and cpanfile requires: used at runtime for every
+	  module constant ($PRIVATE_IP_RE, @CLOUD_PATTERNS, $DNS_TIMEOUT, etc.) but was
+	  previously undeclared, causing installation failure on clean systems
+	- Add Scalar::Util to PREREQ_PM and cpanfile requires: used at runtime for
+	  blessed() in the lingua type check; was undeclared
+	- Add Socket >= 2.000 to PREREQ_PM and cpanfile requires: getaddrinfo,
+	  getnameinfo, inet_pton, inet_ntop, AF_INET6, and NI_NUMERICHOST all require
+	  Socket 2.000; MIN_PERL_VERSION 5.014 implies it but the explicit pin is
+	  clearer and guards against a manually downgraded Socket on a 5.14 system
+	- Remove File::Spec from PREREQ_PM: the module itself does not use File::Spec;
+	  it was only needed by Makefile.PL (which is not installed); it was also
+	  listed twice with conflicting versions (3.4 in PREREQ_PM, 0 in TEST_REQUIRES)
+	- Add Test::Warn to TEST_REQUIRES and cpanfile test block: used by t/edge_cases.t
+	  for warning_is{} but was undeclared, causing test failures on clean installers
+	- Add Readonly to TEST_REQUIRES and cpanfile test block: used in 8 test files
+	- Remove Data::Dumper from TEST_REQUIRES: confirmed unused in all test files
+	- Remove autodie, strict, warnings from TEST_REQUIRES: core pragmas always
+	  available at MIN_PERL_VERSION 5.014; listing them adds install noise
+	- Move WWW::RT::CPAN from TEST_REQUIRES to cpanfile develop block: only used
+	  by t/noopentickets.t which is gated by Test::DescribeMe qw(author) and skips
+	  gracefully when the module is absent; not a burden for normal installers
 
 0.09	Sun Aug  2 08:54:20 PM EDT 2026
 	[ Performance ]

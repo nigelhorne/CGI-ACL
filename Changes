@@ -34,8 +34,8 @@ Revision history for CGI-ACL
 	  cloud detection gaps, DNS blocking latency, cache not shared between
 	  processes, Sub::Private white-box exemption, Windows alarm limitation,
 	  deferred rate-limiter
-	- Add =head3 PSEUDOCODE to all_denied() (public method > 15 lines)
-	- Add =head3 FORMAL SPECIFICATION (Z-calculus) inline per public method,
+	- Add PSEUDOCODE to all_denied() (public method > 15 lines)
+	- Add FORMAL SPECIFICATION (Z-calculus) inline per public method,
 	  replacing the old monolithic =head2 FORMAL SPECIFICATION bulk section
 	- Rename =head3 USAGE → =head3 EXAMPLE in all public-method POD blocks
 	- Expand =head1 SYNOPSIS from one example to six labelled real-world patterns
@@ -130,6 +130,36 @@ Revision history for CGI-ACL
 	- Add t/edge_cases.t: two new security subtests — private cache key injection via
 	  new() (clone and class paths), and allow_ip() injection string behaviour change
 	  (carp+fail-closed instead of silent-store+deny) (373 tests total)
+	- Add t/unit.t: 51 new black-box subtests covering every public method's
+	  documented API contracts via a %ledger tracking hash; each entry represents
+	  a documented carp message or return state from the POD, deleted as conditions
+	  are triggered, asserted empty at the end; file-level DNS mock prevents real
+	  DNS calls; covers all three argument forms (positional, named key-value,
+	  hashref), $@ hygiene after DNS/lingua exceptions, and all method-chaining
+	  return-$self paths
+	- Extend t/integration.t: 9 new end-to-end subtests — deny_all_countries()
+	  workflow with real CGI::Lingua, clone cloud-cache isolation, concurrent
+	  country ACLs, SYNOPSIS §5 combined production policy (cloud + IP + country),
+	  SYNOPSIS §6 base→admin clone, deny_cloud+allow_country fast-path (no lingua
+	  consulted), Object::Configure _cloud_cache env-var injection stripping,
+	  CIDR cache invalidation after allow_ip(), and Test::Without::Module
+	  verification that IP-only ACLs work without CGI::Lingua installed
+	- Extend t/edge_cases.t: 20 new destructive/boundary/security subtests —
+	  REMOTE_ADDR \z anchor regression ("1.2.3.4\n" must be denied; $ passed it),
+	  leading/trailing whitespace in REMOTE_ADDR, typeglob as allow_ip argument
+	  (carps "not a valid", returns $self), hashref {ip=>addr} positive path,
+	  allow_ip with impossible CIDR prefix /33 (no carp, eval guard, fail-closed),
+	  IPv6 CIDR allow_ip (2001:db8::/32), 100-entry allow-list stress test, dying
+	  lingua->country() caught by eval (treated as unknown → deny), 64 KiB lingua
+	  return (no crash), typeglob as lingua argument (carps, returns 1), cloud
+	  cache TTL expiry forces re-query (DNS call count verified), 127.0.0.1
+	  bypasses _verified_rdns entirely (private IP short-circuit), CRLF-contaminated
+	  PTR hostname (no crash, no false cloud match), $@ cleared after DNS exception,
+	  $@ cleared after lingua->country() exception, $@ clean after normal call,
+	  injection string in deny_country (stored as literal lowercase, no execution),
+	  allow_country("*") alone does not deny (wildcard is inert without deny_country),
+	  multi-level clone chain (three levels, independent state), typeglob value in
+	  constructor argument (no crash, object still functional) (524 tests total)
 
 0.09	Sun Aug  2 08:54:20 PM EDT 2026
 	[ Performance ]

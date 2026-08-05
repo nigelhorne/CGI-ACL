@@ -5,7 +5,6 @@ package CGI::ACL;
 #
 # Usage is subject to licence terms.
 
-
 use 5.014;    # Socket::getaddrinfo/getnameinfo require Socket 2.000 (Perl 5.14)
 use strict;
 use warnings;
@@ -69,10 +68,6 @@ Readonly my @CLOUD_PATTERNS => (
 	qr/^ip-\d{1,3}-\d{1,3}-\d{1,3}-\d{1,3}\.eu$/i,   # OVH European IP range
 );
 
-# ── Version ────────────────────────────────────────────────────────────────────
-
-=encoding utf-8
-
 =head1 NAME
 
 CGI::ACL - Decide whether to allow a client to run a CGI script
@@ -84,6 +79,8 @@ Version 0.09
 =cut
 
 our $VERSION = '0.09';
+
+=encoding utf-8
 
 =head1 SYNOPSIS
 
@@ -356,30 +353,6 @@ B<Action:> Change the call to C<< CGI::ACL->new(...) >>.
 
 =back
 
-=head3 FORMAL SPECIFICATION
-
-    ──────────────── ACLState ────────────────────────────────────────
-      allowed_ips    : IP_Str ⇸ Bool
-      deny_countries : Country ⇸ Bool
-      allow_countries: Country ⇸ Bool
-      deny_cloud     : Bool
-      _cidrlist      : [CIDR_Str]?   -- memoised; cleared on allow_ip
-      _cloud_cache   : IP_Str ⇸ {result: Bool, expires: Nat}?
-    ──────────────────────────────────────────────────────────────────
-
-    ─────────────── New ──────────────────────────────────────────────
-      class  : ClassName ∪ ACLState
-      params : ACLState?
-      ─────────────────────────────────────────────────────────────────
-      -- strip_private: removes keys whose names begin with '_'
-      blessed(class) ⟹
-        result! = bless( deepcopy(class) ∪ strip_private(params),
-                         ref(class) )                    -- clone
-      ¬blessed(class) ⟹
-        result! = bless( strip_private(configure(class, params)),
-                         class )
-    ──────────────────────────────────────────────────────────────────
-
 =cut
 
 sub new {
@@ -515,24 +488,6 @@ or slash-notation for CIDR (e.g. C<10.0.0.0/8>).
 
 =back
 
-=head3 FORMAL SPECIFICATION
-
-    ─────────────── AllowIP ──────────────────────────────────────────
-      ΔACL
-      ip? : IP_Str                 -- must satisfy valid_ip(ip?)
-      ─────────────────────────────────────────────────────────────────
-      allowed_ips' = allowed_ips₀ // {}   -- initialised on every call
-      valid_ip(ip?) ⟹
-        allowed_ips' = allowed_ips' ∪ { ip? ↦ 1 }
-        _cidrlist'   = ∅          -- cache invalidated
-      ¬valid_ip(ip?) ⟹
-        allowed_ips' = allowed_ips' -- only initialisation, no entry
-        _cidrlist'   = _cidrlist
-      deny_countries' = deny_countries
-      allow_countries' = allow_countries
-      deny_cloud'     = deny_cloud
-    ──────────────────────────────────────────────────────────────────
-
 =cut
 
 sub allow_ip {
@@ -663,22 +618,6 @@ C<deny_country('BR')> or C<deny_country(country =E<gt> ['BR','CN'])>.
 
 =back
 
-=head3 FORMAL SPECIFICATION
-
-    ─────────────── DenyCountry ─────────────────────────────────────
-      ΔACL
-      country? : ISO_Code ∪ {'*'} ∪ seq ISO_Code
-      ─────────────────────────────────────────────────────────────────
-      country? ∈ seq ISO_Code ⟹
-        deny_countries' = deny_countries ∪
-                          { lc(c) ↦ 1 | c ∈ country? }
-      country? ∉ seq ISO_Code ⟹
-        deny_countries' = deny_countries ∪ { lc(country?) ↦ 1 }
-      allow_countries' = allow_countries
-      allowed_ips'     = allowed_ips
-      deny_cloud'      = deny_cloud
-    ──────────────────────────────────────────────────────────────────
-
 =cut
 
 sub deny_country {
@@ -781,22 +720,6 @@ C<allow_country('US')> or C<allow_country(country =E<gt> ['GB','US'])>.
 
 =back
 
-=head3 FORMAL SPECIFICATION
-
-    ─────────────── AllowCountry ────────────────────────────────────
-      ΔACL
-      country? : ISO_Code ∪ seq ISO_Code
-      ─────────────────────────────────────────────────────────────────
-      country? ∈ seq ISO_Code ⟹
-        allow_countries' = allow_countries ∪
-                           { lc(c) ↦ 1 | c ∈ country? }
-      country? ∉ seq ISO_Code ⟹
-        allow_countries' = allow_countries ∪ { lc(country?) ↦ 1 }
-      deny_countries' = deny_countries
-      allowed_ips'    = allowed_ips
-      deny_cloud'     = deny_cloud
-    ──────────────────────────────────────────────────────────────────
-
 =cut
 
 sub allow_country {
@@ -890,18 +813,6 @@ C<$DNS_TIMEOUT>-second alarm is used to prevent indefinite blocking.
 
 This method emits no messages.
 
-=head3 FORMAL SPECIFICATION
-
-    ─────────────── DenyCloud ───────────────────────────────────────
-      ΔACL
-      ─────────────────────────────────────────────────────────────────
-      deny_cloud'     = 1
-      allowed_ips'    = allowed_ips
-      deny_countries' = deny_countries
-      allow_countries'= allow_countries
-      _cidrlist'      = _cidrlist
-    ──────────────────────────────────────────────────────────────────
-
 =cut
 
 sub deny_cloud {
@@ -950,7 +861,7 @@ The object itself, to allow method chaining.
 
 Sets C<< $self->{deny_countries}{'*'} >> to C<1>, activating default-deny
 mode.  C<allow_country()> calls made before or after this method both take
-effect — evaluation order is irrelevant because all data is applied at
+effect - evaluation order is irrelevant because all data is applied at
 C<all_denied()> call time.
 
 =head3 NOTES
@@ -973,17 +884,6 @@ C<deny_country('*')>) has also been called.
 =head3 MESSAGES
 
 This method emits no messages.
-
-=head3 FORMAL SPECIFICATION
-
-    ─────────────── DenyAllCountries ────────────────────────────────
-      ΔACL
-      ─────────────────────────────────────────────────────────────────
-      deny_countries' = deny_countries ∪ { '*' ↦ 1 }
-      allow_countries' = allow_countries
-      allowed_ips'    = allowed_ips
-      deny_cloud'     = deny_cloud
-    ──────────────────────────────────────────────────────────────────
 
 =cut
 
@@ -1161,42 +1061,6 @@ C<all_denied(lingua =E<gt> $lingua)>.
     END IF
 
     RETURN 1  (deny -- no rule permitted the request)
-
-=head3 FORMAL SPECIFICATION
-
-    ──────────────────────── AllDenied ──────────────────────────────
-      ΞACL                          -- state unchanged (modulo cache)
-      addr    : IPv4 ∪ IPv6         -- REMOTE_ADDR or DEFAULT_ADDR
-      lingua? : Lingua              -- country resolver (optional)
-      result! : {0, 1}              -- 0 = allow, 1 = deny
-      ─────────────────────────────────────────────────────────────────
-      no_restrictions(self) ⟹ result! = 0
-
-      ¬valid_ip(addr) ⟹ result! = 1
-
-      deny_cloud = 1 ∧ is_cloud(addr) ⟹ result! = 1
-      deny_cloud = 1 ∧ ¬is_cloud(addr)
-        ∧ allowed_ips = ∅ ∧ deny_countries = ∅ ⟹ result! = 0
-        -- allow_countries is intentionally absent: it never changes the result
-        -- without deny_countries('*'), so it is not a meaningful restriction.
-
-      addr ∈ dom(allowed_ips) ⟹ result! = 0
-      cidr_match(addr, allowed_ips) ⟹ result! = 0
-
-      deny_countries ≠ ∅ ∧ lingua? = ∅ ⟹ result! = 1
-        -- allow_countries alone is vacuous; only deny_countries triggers the check.
-      lingua?.country() = undef ⟹ result! = 1
-
-      deny_countries('*') = 1
-        ∧ allow_countries(lc(lingua?.country())) = 1 ⟹ result! = 0
-      deny_countries('*') = 1
-        ∧ allow_countries(lc(lingua?.country())) ≠ 1 ⟹ result! = 1
-
-      deny_countries('*') ≠ 1
-        ∧ deny_countries(lc(lingua?.country())) = 1 ⟹ result! = 1
-      deny_countries('*') ≠ 1
-        ∧ deny_countries(lc(lingua?.country())) ≠ 1 ⟹ result! = 0
-    ──────────────────────────────────────────────────────────────────
 
 =cut
 
@@ -1749,6 +1613,41 @@ than 253 characters (the RFC 1035 §3.1 maximum) before running any cloud
 pattern matches.  Protocol-invalid hostnames returned by a compromised
 resolver are now discarded without any regex work.
 
+=item *
+
+Added C<t/unit.t>: 51 black-box subtests covering every public method's
+documented API contract.  A C<%ledger> tracking hash records every
+documented carp message and return state from the POD; entries are deleted
+as each condition is triggered and the ledger is asserted empty at the end,
+so any undocumented or untested path is caught immediately.  A file-level
+DNS mock prevents real network calls across all subtests.
+
+=item *
+
+Extended C<t/integration.t> with nine new end-to-end subtests: the
+C<deny_all_countries()> workflow with real C<CGI::Lingua>, clone
+cloud-cache isolation, concurrent country ACLs, the SYNOPSIS §5
+production-grade combined policy (cloud + IP allowlist + country permit
+list), the SYNOPSIS §6 base-to-admin ACL cloning pattern,
+C<deny_cloud+allow_country> fast-path (lingua not consulted when only
+C<allow_countries> is set), C<Object::Configure> C<_cloud_cache>
+environment-variable injection stripping, CIDR cache invalidation after
+C<allow_ip()>, and C<Test::Without::Module> verification that IP-only ACLs
+work correctly when C<CGI::Lingua> is not installed.
+
+=item *
+
+Extended C<t/edge_cases.t> with twenty new destructive, boundary, and
+security subtests, including: C<\z>-anchor regression for
+C<"1.2.3.4\n"> in C<REMOTE_ADDR> (old C<$> anchor accepted it); whitespace
+padding in C<REMOTE_ADDR>; typeglob and hashref argument paths for
+C<allow_ip()>; impossible CIDR prefix C</33> (eval guard, fail-closed); IPv6
+CIDR block; 100-entry allow-list stress test; dying, 64 KiB, and typeglob
+lingua objects; cloud cache TTL expiry; private-IP C<_verified_rdns> bypass;
+CRLF-contaminated PTR hostname; three C<$@>-hygiene regression checks;
+injection-string safety in C<deny_country()>; C<allow_country("*")> wildcard
+boundary; multi-level clone independence; and typeglob constructor argument.
+
 =back
 
 =head2 0.09
@@ -1872,6 +1771,141 @@ Added C<allow_country()> and support for C<deny_country('*')>
 =head2 0.01 -- 0.02
 
 Initial release.  Basic IP allowlist and country deny-list support.
+
+=head1 FORMAL SPECIFICATION
+
+=head2 new
+
+    ──────────────── ACLState ────────────────────────────────────────
+      allowed_ips    : IP_Str ⇸ Bool
+      deny_countries : Country ⇸ Bool
+      allow_countries: Country ⇸ Bool
+      deny_cloud     : Bool
+      _cidrlist      : [CIDR_Str]?   -- memoised; cleared on allow_ip
+      _cloud_cache   : IP_Str ⇸ {result: Bool, expires: Nat}?
+    ──────────────────────────────────────────────────────────────────
+
+    ─────────────── New ──────────────────────────────────────────────
+      class  : ClassName ∪ ACLState
+      params : ACLState?
+      ─────────────────────────────────────────────────────────────────
+      -- strip_private: removes keys whose names begin with '_'
+      blessed(class) ⟹
+        result! = bless( deepcopy(class) ∪ strip_private(params),
+                         ref(class) )                    -- clone
+      ¬blessed(class) ⟹
+        result! = bless( strip_private(configure(class, params)),
+                         class )
+    ──────────────────────────────────────────────────────────────────
+
+=head2 allow_ip
+
+    ─────────────── AllowIP ──────────────────────────────────────────
+      ΔACL
+      ip? : IP_Str                 -- must satisfy valid_ip(ip?)
+      ─────────────────────────────────────────────────────────────────
+      allowed_ips' = allowed_ips₀ // {}   -- initialised on every call
+      valid_ip(ip?) ⟹
+        allowed_ips' = allowed_ips' ∪ { ip? ↦ 1 }
+        _cidrlist'   = ∅          -- cache invalidated
+      ¬valid_ip(ip?) ⟹
+        allowed_ips' = allowed_ips' -- only initialisation, no entry
+        _cidrlist'   = _cidrlist
+      deny_countries' = deny_countries
+      allow_countries' = allow_countries
+      deny_cloud'     = deny_cloud
+    ──────────────────────────────────────────────────────────────────
+
+=head2 deny_country
+
+    ─────────────── DenyCountry ─────────────────────────────────────
+      ΔACL
+      country? : ISO_Code ∪ {'*'} ∪ seq ISO_Code
+      ─────────────────────────────────────────────────────────────────
+      country? ∈ seq ISO_Code ⟹
+        deny_countries' = deny_countries ∪
+                          { lc(c) ↦ 1 | c ∈ country? }
+      country? ∉ seq ISO_Code ⟹
+        deny_countries' = deny_countries ∪ { lc(country?) ↦ 1 }
+      allow_countries' = allow_countries
+      allowed_ips'     = allowed_ips
+      deny_cloud'      = deny_cloud
+    ──────────────────────────────────────────────────────────────────
+
+=head2 allow_country
+
+    ─────────────── AllowCountry ────────────────────────────────────
+      ΔACL
+      country? : ISO_Code ∪ seq ISO_Code
+      ─────────────────────────────────────────────────────────────────
+      country? ∈ seq ISO_Code ⟹
+        allow_countries' = allow_countries ∪
+                           { lc(c) ↦ 1 | c ∈ country? }
+      country? ∉ seq ISO_Code ⟹
+        allow_countries' = allow_countries ∪ { lc(country?) ↦ 1 }
+      deny_countries' = deny_countries
+      allowed_ips'    = allowed_ips
+      deny_cloud'     = deny_cloud
+    ──────────────────────────────────────────────────────────────────
+
+=head2 deny_cloud
+
+    ─────────────── DenyCloud ───────────────────────────────────────
+      ΔACL
+      ─────────────────────────────────────────────────────────────────
+      deny_cloud'     = 1
+      allowed_ips'    = allowed_ips
+      deny_countries' = deny_countries
+      allow_countries'= allow_countries
+      _cidrlist'      = _cidrlist
+    ──────────────────────────────────────────────────────────────────
+
+=head2 deny_all_countries
+
+    ─────────────── DenyAllCountries ────────────────────────────────
+      ΔACL
+      ─────────────────────────────────────────────────────────────────
+      deny_countries' = deny_countries ∪ { '*' ↦ 1 }
+      allow_countries' = allow_countries
+      allowed_ips'    = allowed_ips
+      deny_cloud'     = deny_cloud
+    ──────────────────────────────────────────────────────────────────
+
+=head2 all_denied
+
+    ──────────────────────── AllDenied ──────────────────────────────
+      ΞACL                          -- state unchanged (modulo cache)
+      addr    : IPv4 ∪ IPv6         -- REMOTE_ADDR or DEFAULT_ADDR
+      lingua? : Lingua              -- country resolver (optional)
+      result! : {0, 1}              -- 0 = allow, 1 = deny
+      ─────────────────────────────────────────────────────────────────
+      no_restrictions(self) ⟹ result! = 0
+
+      ¬valid_ip(addr) ⟹ result! = 1
+
+      deny_cloud = 1 ∧ is_cloud(addr) ⟹ result! = 1
+      deny_cloud = 1 ∧ ¬is_cloud(addr)
+        ∧ allowed_ips = ∅ ∧ deny_countries = ∅ ⟹ result! = 0
+        -- allow_countries is intentionally absent: it never changes the result
+        -- without deny_countries('*'), so it is not a meaningful restriction.
+
+      addr ∈ dom(allowed_ips) ⟹ result! = 0
+      cidr_match(addr, allowed_ips) ⟹ result! = 0
+
+      deny_countries ≠ ∅ ∧ lingua? = ∅ ⟹ result! = 1
+        -- allow_countries alone is vacuous; only deny_countries triggers the check.
+      lingua?.country() = undef ⟹ result! = 1
+
+      deny_countries('*') = 1
+        ∧ allow_countries(lc(lingua?.country())) = 1 ⟹ result! = 0
+      deny_countries('*') = 1
+        ∧ allow_countries(lc(lingua?.country())) ≠ 1 ⟹ result! = 1
+
+      deny_countries('*') ≠ 1
+        ∧ deny_countries(lc(lingua?.country())) = 1 ⟹ result! = 1
+      deny_countries('*') ≠ 1
+        ∧ deny_countries(lc(lingua?.country())) ≠ 1 ⟹ result! = 0
+    ──────────────────────────────────────────────────────────────────
 
 =head1 LICENSE AND COPYRIGHT
 

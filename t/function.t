@@ -1249,6 +1249,294 @@ for my $case (
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
+# new() — _* key stripping (security: constructor injection prevention)
+# Purpose: private/derived keys (names beginning with '_') must be stripped
+# from all constructor arguments so a caller cannot pre-seed internal caches.
+# Accepting _cloud_cache would let a caller mark any IP as non-cloud permanently.
+# Accepting _cidrlist would inject a fabricated CIDR lookup structure.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Strategy: pass _cloud_cache as a constructor argument and confirm it is absent
+# from the resulting object.  The test IPs are RFC 5737 documentation addresses.
+subtest 'new() - _cloud_cache stripped from class constructor params' => sub {
+	my $acl = CGI::ACL->new(
+		deny_cloud   => 1,
+		_cloud_cache => { $config{RFC5737_IP} => { result => 0, expires => 9_999_999_999 } },
+	);
+	ok(!defined($acl->{_cloud_cache}),
+		'_cloud_cache is stripped from class-path constructor arguments');
+	is($acl->{deny_cloud}, 1, 'public deny_cloud is preserved through _* stripping');
+};
+
+subtest 'new() - _cidrlist stripped from class constructor params' => sub {
+	my $acl = CGI::ACL->new(
+		_cidrlist => ['0.0.0.0/0'],   # allow-everything fabrication — must be stripped
+	);
+	ok(!defined($acl->{_cidrlist}),
+		'_cidrlist is stripped from class-path constructor arguments');
+};
+
+subtest 'new() - _cloud_cache stripped from clone constructor params' => sub {
+	# Exploit: $base->new(_cloud_cache => {...}) pre-seeds the DNS cache so
+	# that a cloud IP is treated as non-cloud, bypassing deny_cloud() silently.
+	my $orig  = CGI::ACL->new()->deny_cloud();
+	my $clone = $orig->new(
+		_cloud_cache => { $config{RFC5737_IP} => { result => 0, expires => 9_999_999_999 } },
+	);
+	ok(!defined($clone->{_cloud_cache}),
+		'_cloud_cache is stripped from clone-path constructor arguments');
+	is($clone->{deny_cloud}, 1, 'public deny_cloud is preserved through _* stripping in clone');
+};
+
+subtest 'new() - _cidrlist stripped from clone constructor params' => sub {
+	my $orig  = CGI::ACL->new()->allow_ip($config{LOCAL_IP});
+	my $clone = $orig->new(
+		_cidrlist    => ['0.0.0.0/0'],   # fabricated; must not reach cidrlookup
+	);
+	ok(!defined($clone->{_cidrlist}),
+		'_cidrlist is stripped from clone-path constructor arguments');
+	# The clone's CIDR list must be re-derived from its own allowed_ips on next use
+	is(denied_with_addr($clone, $config{RFC5737_IP}), 1,
+		'non-listed IP denied; fabricated _cidrlist was not used');
+};
+
+# ─────────────────────────────────────────────────────────────────────────────
+# _is_cloud_host() — RFC 1035 §3.1 hostname-length guard (added in 0.10)
+# Purpose: a PTR record longer than 253 characters is protocol-invalid and
+# must be rejected BEFORE any @CLOUD_PATTERNS regex work.  This prevents a
+# compromised resolver from crafting an overlong hostname that embeds a cloud
+# pattern at a position beyond the boundary.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Constant for boundary testing: ".compute-1.amazonaws.com" is 24 chars.
+# 253 - 24 = 229 prefix chars => total exactly 253 chars (accepted).
+# 230 prefix chars => total exactly 254 chars (rejected by > 253 guard).
+Readonly my $CLOUD_SUFFIX_LEN => length('.compute-1.amazonaws.com');
+
+subtest '_is_cloud_host() - PTR hostname exactly 253 chars passes length guard (cloud match)' => sub {
+	# The RFC 1035 guard is `> 253`, so 253 is the last allowed length.
+	# A 253-char cloud hostname must still be detected as cloud.
+	my $prefix        = 'a' x (253 - $CLOUD_SUFFIX_LEN);
+	my $hostname_253  = $prefix . '.compute-1.amazonaws.com';
+	is(length($hostname_253), 253, 'precondition: hostname is exactly 253 chars');
+
+	my $guard = mock_scoped 'CGI::ACL::_verified_rdns' => sub { $hostname_253 };
+	diag "_is_cloud_host: 253-char AWS hostname -> expect 1" if $ENV{TEST_VERBOSE};
+	is(CGI::ACL::_is_cloud_host($config{RFC5737_IP}), 1,
+		'253-char cloud hostname detected (RFC 1035 guard does not fire at boundary)');
+};
+
+subtest '_is_cloud_host() - PTR hostname > 253 chars is rejected before pattern matching' => sub {
+	# 254-char hostname: must return 0 regardless of content (length guard fires first).
+	# We intentionally embed a valid cloud suffix so the only possible return-0 path
+	# is the RFC 1035 length check — if patterns ran, the result would be 1.
+	my $prefix        = 'a' x (254 - $CLOUD_SUFFIX_LEN);
+	my $hostname_254  = $prefix . '.compute-1.amazonaws.com';
+	is(length($hostname_254), 254, 'precondition: hostname is exactly 254 chars');
+
+	my $guard = mock_scoped 'CGI::ACL::_verified_rdns' => sub { $hostname_254 };
+	diag "_is_cloud_host: 254-char hostname with cloud suffix -> expect 0 (RFC 1035 guard)" if $ENV{TEST_VERBOSE};
+	is(CGI::ACL::_is_cloud_host($config{RFC5737_IP}), 0,
+		'254-char hostname rejected by RFC 1035 guard; cloud pattern never consulted');
+};
+
+# ─────────────────────────────────────────────────────────────────────────────
+# all_denied() — cloud cache internals (white-box TTL / expiry probes)
+# Purpose: verify the exact cache structure and the expiry / non-caching paths.
+# These are internal implementation details that the black-box tests in other
+# files cannot reach.
+# ─────────────────────────────────────────────────────────────────────────────
+
+subtest 'all_denied() - successful DNS lookup populates cache with correct TTL' => sub {
+	# After a successful (non-error) DNS lookup the cache entry must have:
+	# - result == 0 (non-cloud per mock)
+	# - expires set to approximately now + 300 seconds
+	my $guard = mock_scoped 'CGI::ACL::_verified_rdns' => sub { undef };
+	my $acl   = CGI::ACL->new()->deny_cloud();
+	ok(!defined($acl->{_cloud_cache}), 'cache absent before any all_denied call');
+
+	my $t_before = time();
+	denied_with_addr($acl, $config{RFC5737_IP});
+	my $t_after = time();
+
+	diag "Cache after lookup: " . join(', ', map { "$_=>" . ($acl->{_cloud_cache}{$config{RFC5737_IP}}{$_} // 'undef') } qw(result expires)) if $ENV{TEST_VERBOSE};
+
+	ok(defined($acl->{_cloud_cache}), 'cache hashref created after first call');
+	my $entry = $acl->{_cloud_cache}{ $config{RFC5737_IP} };
+	ok(defined($entry), 'cache entry exists for the queried IP');
+	is($entry->{result}, 0, 'cached result is 0 (non-cloud per mock)');
+	ok($entry->{expires} > $t_after,        'expiry is in the future');
+	ok($entry->{expires} <= $t_after + 301, 'expiry is within expected TTL window (~300s)');
+};
+
+subtest 'all_denied() - expired cache entry is evicted and DNS re-queried' => sub {
+	# Strategy: perform one successful lookup to populate the cache, then
+	# manually back-date the expiry to force a re-lookup on the next call.
+	# The DNS call count must increment from 1 to 2.
+	my $calls = 0;
+	my $guard = mock_scoped 'CGI::ACL::_verified_rdns' => sub { $calls++; return undef; };
+	my $acl   = CGI::ACL->new()->deny_cloud();
+
+	denied_with_addr($acl, $config{RFC5737_IP});
+	is($calls, 1, 'first call triggers one DNS lookup');
+
+	# Back-date the TTL so the entry looks expired
+	$acl->{_cloud_cache}{ $config{RFC5737_IP} }{expires} = time() - 1;
+	diag "Cache entry expired manually; second call should re-query DNS" if $ENV{TEST_VERBOSE};
+
+	denied_with_addr($acl, $config{RFC5737_IP});
+	is($calls, 2, 'second call re-queries DNS because cache entry is expired');
+};
+
+subtest 'all_denied() - DNS error result is NOT cached (retried on next call)' => sub {
+	# When _verified_rdns (called inside _is_cloud_host) dies, the eval in
+	# all_denied() captures $dns_error; the result is NOT written to the cache.
+	# The next request must re-attempt the lookup rather than using a cached error.
+	my $calls = 0;
+	my $guard = mock_scoped 'CGI::ACL::_verified_rdns' => sub {
+		$calls++;
+		die "simulated resolver timeout\n";
+	};
+	my $acl = CGI::ACL->new()->deny_cloud();
+
+	denied_with_addr($acl, $config{RFC5737_IP});
+	is($calls, 1, 'first call triggers DNS (which fails)');
+
+	# Cache must remain empty after a failed lookup
+	ok(!defined($acl->{_cloud_cache}{ $config{RFC5737_IP} }),
+		'failed lookup result is NOT stored in cache');
+	diag "Cache entry absent after DNS error; next call must retry" if $ENV{TEST_VERBOSE};
+
+	denied_with_addr($acl, $config{RFC5737_IP});
+	is($calls, 2, 'second call retries DNS — error result was not cached');
+};
+
+subtest 'all_denied() - deny_cloud + allow_ip: non-cloud IP not in allow list is denied' => sub {
+	# After the cloud check passes (non-cloud), the IP allow-list check fires.
+	# An IP not in the allow list must fall through and be denied.
+	my $guard = mock_scoped 'CGI::ACL::_verified_rdns' => sub { undef };
+	my $acl   = CGI::ACL->new()->deny_cloud()->allow_ip($config{RFC5737_IP});
+
+	is(denied_with_addr($acl, $config{RFC5737_IP}),  0, 'listed non-cloud IP allowed');
+	is(denied_with_addr($acl, $config{RFC5737_IP2}), 1, 'unlisted non-cloud IP denied');
+};
+
+# ─────────────────────────────────────────────────────────────────────────────
+# all_denied() — country normalisation and falsy-country edge cases
+# Purpose: all_denied() must call lc() on the value returned by lingua->country()
+# before comparing it against the stored (already-lowercased) deny/allow sets.
+# Additionally, any falsy country value (undef, '', '0') must trigger deny.
+# ─────────────────────────────────────────────────────────────────────────────
+
+subtest 'all_denied() - uppercase country code from lingua is normalised with lc()' => sub {
+	# deny_country() stores 'cn' (lowercase); lingua returns 'CN' (uppercase).
+	# The lc() in all_denied() must normalise before the hash lookup so the
+	# comparison still fires correctly.
+	my $acl = CGI::ACL->new()->deny_country('CN');
+	local $ENV{REMOTE_ADDR} = $config{LOCAL_IP};
+	diag "Checking lc() normalisation: lingua returns 'CN', stored as 'cn'" if $ENV{TEST_VERBOSE};
+
+	is($acl->all_denied(lingua => Test::FakeLingua->new('CN')), 1,
+		'uppercase CN from lingua matches lowercase-stored deny entry');
+	is($acl->all_denied(lingua => Test::FakeLingua->new('cn')), 1,
+		'lowercase cn from lingua also matches (control)');
+	is($acl->all_denied(lingua => Test::FakeLingua->new('GB')), 0,
+		'non-denied country (GB) still allowed with lc() in place');
+};
+
+subtest 'all_denied() - uppercase country code normalised in wildcard-deny + allow list' => sub {
+	# deny_country('*') + allow_country('GB') — lingua returns 'GB' (uppercase).
+	# The stored allow key is 'gb'.  lc() must normalise before the allow lookup.
+	my $acl = CGI::ACL->new()
+		->deny_all_countries()
+		->allow_country('GB');
+	local $ENV{REMOTE_ADDR} = $config{LOCAL_IP};
+
+	is($acl->all_denied(lingua => Test::FakeLingua->new('GB')), 0,
+		'uppercase GB from lingua is allowed (lc normalisation matches stored key)');
+	is($acl->all_denied(lingua => Test::FakeLingua->new('US')), 1,
+		'non-allowed uppercase US is denied');
+};
+
+subtest 'all_denied() - empty-string country from lingua causes deny' => sub {
+	# Empty string is Perl-falsy; the `$country = $country_val or return 1` guard
+	# must treat it as "unknown country" and deny — the same as undef.
+	my $acl = CGI::ACL->new()->deny_country($config{COUNTRY_BR});
+	local $ENV{REMOTE_ADDR} = $config{LOCAL_IP};
+	is($acl->all_denied(lingua => Test::FakeLingua->new('')), 1,
+		'empty-string country is treated as unknown and denied');
+};
+
+subtest 'all_denied() - "0" country string from lingua causes deny (Perl-falsy)' => sub {
+	# The string "0" is Perl-falsy.  A lingua whose country() returns "0" must
+	# be treated the same as undef (unknown country → deny).
+	my $acl = CGI::ACL->new()->deny_country($config{COUNTRY_BR});
+	local $ENV{REMOTE_ADDR} = $config{LOCAL_IP};
+	is($acl->all_denied(lingua => Test::FakeLingua->new('0')), 1,
+		'"0" country string treated as falsy/unknown and denied');
+};
+
+# ─────────────────────────────────────────────────────────────────────────────
+# deny_country() / allow_country() — additional calling-style and accumulation tests
+# ─────────────────────────────────────────────────────────────────────────────
+
+subtest 'deny_country() - multiple sequential calls accumulate countries' => sub {
+	# Each call must ADD to deny_countries, not replace it.
+	my $acl = CGI::ACL->new()
+		->deny_country('CN')
+		->deny_country('RU')
+		->deny_country('KP');
+	diag "deny_countries keys: " . join(', ', sort keys %{$acl->{deny_countries}}) if $ENV{TEST_VERBOSE};
+
+	ok($acl->{deny_countries}{cn}, 'CN accumulated after first call');
+	ok($acl->{deny_countries}{ru}, 'RU accumulated after second call');
+	ok($acl->{deny_countries}{kp}, 'KP accumulated after third call');
+	is(scalar keys %{$acl->{deny_countries}}, 3, 'exactly 3 countries stored (no overwrite)');
+};
+
+subtest 'allow_country() - named param scalar form stores country correctly' => sub {
+	# Confirm the two-arg named-pair form (not an arrayref) works: allow_country(country => 'US')
+	# This exercises _get_param's fast path (2-arg, key matches arg[0]).
+	my $acl = CGI::ACL->new();
+	$acl->allow_country(country => $config{COUNTRY_US_UPPER});
+	diag "allow_countries after named-scalar: " . join(', ', sort keys %{$acl->{allow_countries}}) if $ENV{TEST_VERBOSE};
+
+	ok($acl->{allow_countries}{ $config{COUNTRY_US} }, 'US stored via named-scalar form');
+	ok(!$acl->{allow_countries}{ $config{COUNTRY_US_UPPER} }, 'uppercase key absent (stored lowercase)');
+};
+
+subtest 'deny_country() - named param scalar form stores country correctly' => sub {
+	# Mirror of the allow_country test — same calling convention, different target hash.
+	my $acl = CGI::ACL->new();
+	$acl->deny_country(country => $config{COUNTRY_BR});
+	ok($acl->{deny_countries}{ $config{COUNTRY_BR} }, 'BR stored via named-scalar deny_country form');
+};
+
+# ─────────────────────────────────────────────────────────────────────────────
+# allow_ip() — fail-closed initialisation guarantee (white-box)
+# Purpose: even when EVERY allow_ip() call receives an invalid value and carps,
+# allowed_ips must be initialised to {} (not left as undef).  Without this,
+# the early-return guard in all_denied() would treat the ACL as unrestricted
+# and allow all traffic — a fail-open security regression.
+# ─────────────────────────────────────────────────────────────────────────────
+
+subtest 'allow_ip() - fail-closed: allowed_ips initialised to {} even on all-invalid input' => sub {
+	# The `$self->{allowed_ips} //= {}` line runs BEFORE format validation.
+	# Verify the resulting object has a defined (empty) hashref so the guard
+	# in all_denied() enters the IP-check branch and finds no match → deny.
+	my $acl = CGI::ACL->new();
+	does_carp(sub { $acl->allow_ip('not-an-ip-at-all') });
+
+	ok(defined($acl->{allowed_ips}),   'allowed_ips is defined (not undef) after invalid allow_ip');
+	is(ref($acl->{allowed_ips}), 'HASH', 'allowed_ips is a HASH ref');
+	ok(!%{$acl->{allowed_ips}},        'allowed_ips is empty — invalid entry was not stored');
+
+	# The empty hashref triggers the IP-check branch which finds no match → deny.
+	is(denied_with_addr($acl, $config{RFC5737_IP}), 1,
+		'all-invalid allow_ip ACL fails closed (denies all traffic)');
+};
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Subtest: memory cycle checks
 # Purpose: objects must be garbage-collectible (no circular refs)
 # ─────────────────────────────────────────────────────────────────────────────
